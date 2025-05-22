@@ -73,6 +73,7 @@ scripts/test.sh
 - 2025-05-22 16:29 Price/index.php, docs/js_index.md – добавлена документация по JavaScript.
 - 2025-05-22 16:50 agents.md, docs/css_index.md, docs/js_index.md – добавлены журналы изменений для CSS и JS.
 - 2025-05-26 12:00 docs/css_index.md – добавлено описание разбиения стилей на файлы.
+- 2025-05-22 16:58 Price/index.php, Price/js/table.js – стили вынесены в каталог `css`.
 
 ## Рекомендации по улучшению
 
