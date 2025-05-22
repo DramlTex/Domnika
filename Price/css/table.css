@@ -1,11 +1,12 @@
   /* =========================================================
      5) TABLE + LOADER
      ========================================================= */
-  .table-wrapper {
-    margin: 20px 0px;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  }
+.table-wrapper {
+  margin: 20px 0px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+}
   .table-wrapper.hidden, 
   #tabs.hidden {
     display: none;
@@ -37,23 +38,24 @@
   }
   
   /* TABLE */
-  table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    border-radius: 6px;
-    background-color: #fff;
-  }
-  thead th {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    background-color: #fff;
-    color: #000000;
-    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.2);
-    padding: 10px;
-    margin: 5px;
-  }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  border-radius: 6px;
+  background-color: #fff;
+}
+thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: #fff;
+  color: #000000;
+  box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  margin: 5px;
+  border-bottom: 2px solid #bbb;
+}
   tbody tr {
     border-bottom: 1px solid #eee;
     transition: background-color 0.2s ease;
@@ -64,17 +66,18 @@
   tbody tr:hover {
     background-color: #ddeeff;
   }
-  td {
-    padding: 10px;
-    vertical-align: middle;
-    font-size: 14px;
-    color: #333;
-  }
-  th {
-    padding: 10px;
-    font-size: 14px;
-    border: none;
-  }
+td {
+  padding: 10px;
+  vertical-align: middle;
+  font-size: 14px;
+  color: #333;
+  border: 1px solid #ddd;
+}
+th {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+}
   
   /* RESPONSIVE: таблица */
   @media (max-width: 768px) {

@@ -57,3 +57,4 @@
 - 2025-05-22 17:28 Price/js/table.js, Price/css/table.css – добавлено выделение типов товаров классом `.type-row`.
 - 2025-05-27 10:00 Price/index.php, Price/js/table.js, Price/css/table.css – для колонок "Тип" и "Страна" добавлены классы `.type-cell` и `.country-cell`.
 - 2025-05-27 11:30 Price/css/table.css, docs/table.md – расширены стили `.country-row` и `.type-row`: добавлены `text-align` и `font-size`.
+- 2025-05-27 12:00 Price/css/table.css, docs/table_css.md – добавлены границы ячеек и прокрутка таблицы.
