@@ -78,6 +78,7 @@ scripts/test.sh
 - 2025-05-22 17:28 Price/js/table.js, Price/css/table.css – добавлено разделение по типам с классом `.type-row`.
 - 2025-05-27 10:00 Price/index.php, Price/js/table.js, Price/css/table.css – ячейки колонок "Тип" и "Страна" получили классы `.type-cell` и `.country-cell`.
 - 2025-05-22 18:22 docs/export_excel.md – описан процесс экспорта прайса в Excel.
+- 2025-05-27 12:40 Price/index.php, Price/css/table.css – расширена колонка названия, добавлены классы `.name-cell` и `.num-cell`.
 
 ## Рекомендации по улучшению
 

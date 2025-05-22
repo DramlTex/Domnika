@@ -172,10 +172,10 @@ function fillTable(data) {
       }
 
       tr.innerHTML = `
-        <td>${rowNumber}</td>
+        <td class="num-cell">${rowNumber}</td>
         <td>${item.articul}</td>
         <td class="photo-cell">${photoCell}</td>
-        <td>${item.name}</td>
+        <td class="name-cell">${item.name}</td>
         <td>${item.uom}</td>
         <td class="type-cell">${item.tip}</td>
         <td class="country-cell">${item.supplier}</td>

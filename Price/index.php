@@ -164,10 +164,10 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
   <table id="priceList">
     <thead>
       <tr>
-      <th>№</th>
+      <th class="num-col">№</th>
       <th>Артикул</th>
       <th>Фото</th>
-      <th>Название</th>
+      <th class="name-col">Название</th>
       <th>Стандарт</th>
       <th class="type-col">Тип</th>
       <th class="country-col">Страна</th>
