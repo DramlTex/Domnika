@@ -16,6 +16,13 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 set_time_limit(300);
 ini_set('memory_limit', '512M');
 
+// Порядок сортировки стран и типов, аналогичный JavaScript
+$COUNTRY_ORDER = [
+    'ИНДИЯ', 'ЦЕЙЛОН', 'ИРАН', 'ВЬЕТНАМ',
+    'КИТАЙ', 'КЕНИЯ', 'ЕГИПЕТ', 'НИГЕРИЯ', 'ЮЖНАЯ АФРИКА'
+];
+$TYPE_ORDER = [];
+
 // Проверка данных
 $jsonData = $_POST['jsonData'] ?? '';
 if (!$jsonData) die(json_encode(['error' => 'Нет данных для экспорта.']));
@@ -59,6 +66,62 @@ $hyperlinkStyle = [
         'underline' => Font::UNDERLINE_SINGLE
     ]
 ];
+
+// Стили для строк со страной и типом, повторяющие оформление из JS
+$countryRowStyle = [
+    'font' => ['bold' => true, 'size' => 18],
+    'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'F2F2F2']],
+    'alignment' => [
+        'horizontal' => Alignment::HORIZONTAL_CENTER,
+        'vertical'   => Alignment::VERTICAL_CENTER,
+    ]
+];
+
+$typeRowStyle = [
+    'font' => ['italic' => true, 'size' => 16],
+    'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'FAFAFA']],
+    'alignment' => [
+        'horizontal' => Alignment::HORIZONTAL_CENTER,
+        'vertical'   => Alignment::VERTICAL_CENTER,
+    ]
+];
+
+function normalizeCountry(string $value): string
+{
+    return mb_strtoupper(trim($value));
+}
+
+function sortItems(array $items, array $countryOrder, array $typeOrder): array
+{
+    $countryMap = array_flip($countryOrder);
+    $typeMap    = array_flip($typeOrder);
+
+    usort($items, function ($a, $b) use ($countryMap, $typeMap, $countryOrder, $typeOrder) {
+        $aCountry = normalizeCountry($a['supplier'] ?? '');
+        $bCountry = normalizeCountry($b['supplier'] ?? '');
+        $ai = $countryMap[$aCountry] ?? count($countryOrder);
+        $bi = $countryMap[$bCountry] ?? count($countryOrder);
+        if ($ai !== $bi) {
+            return $ai <=> $bi;
+        }
+
+        $aType = $a['tip'] ?? '';
+        $bType = $b['tip'] ?? '';
+        $ati = $typeMap[$aType] ?? count($typeOrder);
+        $bti = $typeMap[$bType] ?? count($typeOrder);
+        if ($ati !== $bti) {
+            return $ati <=> $bti;
+        }
+
+        if ($aType !== $bType) {
+            return strcmp($aType, $bType);
+        }
+
+        return strcmp($a['articul'] ?? '', $b['articul'] ?? '');
+    });
+
+    return $items;
+}
 
 // Удобная функция для применения заливки и границ к диапазону
 function applyBorderFill(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet,
@@ -169,23 +232,50 @@ foreach ($groupedData as $groupName => $items) {
     $sheet->getStyle("A{$dataStartRow}:L{$dataStartRow}")->applyFromArray($headerStyle);
     applyBorderFill($sheet, "A{$dataStartRow}:L{$dataStartRow}");
 
-    // 4. Заполнение данных
-    foreach ($items as $i => $row) {
-        $rowNum = $dataStartRow + 1 + $i;
-        
-        $sheet->setCellValue("A{$rowNum}", $i + 1);
+    // 4. Сортировка и заполнение данных с группировкой по стране и типу
+    $items = sortItems($items, $COUNTRY_ORDER, $TYPE_ORDER);
+
+    $rowNum = $dataStartRow;
+    $counter = 1;
+    $currentCountry = null;
+    $currentType = null;
+
+    foreach ($items as $row) {
+        $country = $row['supplier'] ?? '';
+        $type    = $row['tip'] ?? '';
+
+        if ($currentCountry !== $country) {
+            $rowNum++;
+            $sheet->mergeCells("A{$rowNum}:L{$rowNum}");
+            $sheet->setCellValue("A{$rowNum}", $country);
+            $sheet->getStyle("A{$rowNum}:L{$rowNum}")->applyFromArray($countryRowStyle);
+            applyBorderFill($sheet, "A{$rowNum}:L{$rowNum}");
+            $currentCountry = $country;
+            $currentType = null;
+        }
+
+        if ($currentType !== $type) {
+            $rowNum++;
+            $sheet->mergeCells("A{$rowNum}:L{$rowNum}");
+            $sheet->setCellValue("A{$rowNum}", $type);
+            $sheet->getStyle("A{$rowNum}:L{$rowNum}")->applyFromArray($typeRowStyle);
+            applyBorderFill($sheet, "A{$rowNum}:L{$rowNum}");
+            $currentType = $type;
+        }
+
+        $rowNum++;
+        $sheet->setCellValue("A{$rowNum}", $counter);
         $sheet->setCellValue("B{$rowNum}", $row['articul'] ?? '');
         $sheet->setCellValue("C{$rowNum}", $row['name'] ?? '');
         $sheet->setCellValue("D{$rowNum}", $row['uom'] ?? '');
-        $sheet->setCellValue("E{$rowNum}", $row['tip'] ?? '');
-        $sheet->setCellValue("F{$rowNum}", $row['supplier'] ?? '');
+        $sheet->setCellValue("E{$rowNum}", $type);
+        $sheet->setCellValue("F{$rowNum}", $country);
         $sheet->setCellValue("G{$rowNum}", $row['mass'] ?? '');
         $sheet->setCellValue("H{$rowNum}", $row['price'] ?? '');
         $sheet->setCellValue("I{$rowNum}", $row['stock'] ?? '');
         $sheet->setCellValue("J{$rowNum}", $row['volumeWeight'] ?? '');
         $sheet->setCellValue("K{$rowNum}", $row['min_order_qty'] ?? '');
-        
-        // Гиперссылка на фото
+
         if (!empty($row['photoUrl'])) {
             $sheet->setCellValue("L{$rowNum}", 'фото');
             $hyperlink = $sheet->getCell("L{$rowNum}")->getHyperlink();
@@ -195,20 +285,22 @@ foreach ($groupedData as $groupName => $items) {
         } else {
             $sheet->setCellValue("L{$rowNum}", '');
         }
+
+        $counter++;
     }
     // Настройка высоты строк
-$headerRowHeight = 30;    // Высота строки заголовков
-$dataRowHeight = 30;      // Высота строк с данными
+    $headerRowHeight = 30;    // Высота строки заголовков
+    $dataRowHeight = 30;      // Высота строк с данными
 
-// Устанавливаем высоту строки заголовков
-$sheet->getRowDimension($dataStartRow)->setRowHeight($headerRowHeight);
+    // Устанавливаем высоту строки заголовков
+    $sheet->getRowDimension($dataStartRow)->setRowHeight($headerRowHeight);
 
-// Устанавливаем высоту для всех строк с данными
-foreach (range($dataStartRow + 1, $dataStartRow + count($items)) as $rowNum) {
-    $sheet->getRowDimension($rowNum)->setRowHeight($dataRowHeight);
-}
+    // Устанавливаем высоту для всех строк с данными
+    foreach (range($dataStartRow + 1, $rowNum) as $r) {
+        $sheet->getRowDimension($r)->setRowHeight($dataRowHeight);
+    }
     // Форматирование чисел
-    $lastRow = $dataStartRow + count($items);
+    $lastRow = $rowNum;
     $sheet->getStyle("G".($dataStartRow+1).":G{$lastRow}")
           ->getNumberFormat()
           ->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
