@@ -122,6 +122,7 @@ function fillTable(data) {
   const chunkSize = 50;
   let rowNumber = 1;
   let currentCountry = null;
+  let currentType = null;
 
   function processChunk() {
     const end = Math.min(index + chunkSize, sorted.length);
@@ -142,6 +143,15 @@ function fillTable(data) {
         header.innerHTML = `<td colspan="11">${item.supplier}</td>`;
         tbody.appendChild(header);
         currentCountry = item.supplier;
+        currentType = null;
+      }
+
+      if (currentType !== (item.tip || '')) {
+        const typeHeader = document.createElement('tr');
+        typeHeader.className = 'type-row';
+        typeHeader.innerHTML = `<td colspan="11">${item.tip || ''}</td>`;
+        tbody.appendChild(typeHeader);
+        currentType = item.tip || '';
       }
 
       const tr = document.createElement('tr');

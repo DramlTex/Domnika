@@ -75,6 +75,7 @@ scripts/test.sh
 - 2025-05-26 12:00 docs/css_index.md – добавлено описание разбиения стилей на файлы.
 - 2025-05-22 16:58 Price/index.php, Price/js/table.js – стили вынесены в каталог `css`.
 - 2025-05-22 17:10 Price/js/table.js, Price/css/table.css – добавлена сортировка по странам и стиль заголовков; создан файл docs/table.md.
+- 2025-05-22 17:28 Price/js/table.js, Price/css/table.css – добавлено разделение по типам с классом `.type-row`.
 
 ## Рекомендации по улучшению
 
