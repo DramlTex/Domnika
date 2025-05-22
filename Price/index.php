@@ -169,8 +169,8 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
       <th>Фото</th>
       <th>Название</th>
       <th>Стандарт</th>
-      <th>Тип</th>
-      <th>Страна</th>
+      <th class="type-col">Тип</th>
+      <th class="country-col">Страна</th>
       <th>Вес тарного места</th>
       <th>Цена</th>
       <th>Наличие в кг</th>
