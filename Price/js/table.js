@@ -3,7 +3,25 @@
  * of the array to control their position.
  * @type {string[]}
  */
-const COUNTRY_ORDER = ['Россия', 'Китай', 'Германия'];
+const COUNTRY_ORDER = [
+  'ИНДИЯ',
+  'ЦЕЙЛОН',
+  'ИРАН',
+  'ВЬЕТНАМ',
+  'КИТАЙ',
+  'КЕНИЯ',
+  'ЕГИПЕТ',
+  'НИГЕРИЯ',
+  'ЮЖНАЯ АФРИКА'
+];
+
+/**
+ * Optional order of types within each country. Keep empty to sort
+ * alphabetically. Add new types at the end of the array to override the
+ * alphabetical order.
+ * @type {string[]}
+ */
+const TYPE_ORDER = [];
 
 /**
  * Sort array of products according to `COUNTRY_ORDER` and article.
@@ -11,14 +29,27 @@ const COUNTRY_ORDER = ['Россия', 'Китай', 'Германия'];
  * @returns {Array<Object>} sorted copy of data
  */
 function sortByCountry(data) {
-  const map = COUNTRY_ORDER.reduce((acc, c, i) => {
+  const countryMap = COUNTRY_ORDER.reduce((acc, c, i) => {
     acc[c] = i;
     return acc;
   }, {});
+  const typeMap = TYPE_ORDER.reduce((acc, t, i) => {
+    acc[t] = i;
+    return acc;
+  }, {});
   return data.slice().sort((a, b) => {
-    const ai = map.hasOwnProperty(a.supplier) ? map[a.supplier] : COUNTRY_ORDER.length;
-    const bi = map.hasOwnProperty(b.supplier) ? map[b.supplier] : COUNTRY_ORDER.length;
+    const ai = countryMap.hasOwnProperty(a.supplier) ? countryMap[a.supplier] : COUNTRY_ORDER.length;
+    const bi = countryMap.hasOwnProperty(b.supplier) ? countryMap[b.supplier] : COUNTRY_ORDER.length;
     if (ai !== bi) return ai - bi;
+
+    const aType = a.tip || '';
+    const bType = b.tip || '';
+    const ati = typeMap.hasOwnProperty(aType) ? typeMap[aType] : TYPE_ORDER.length;
+    const bti = typeMap.hasOwnProperty(bType) ? typeMap[bType] : TYPE_ORDER.length;
+    if (ati !== bti) return ati - bti;
+
+    if (aType !== bType) return aType.localeCompare(bType);
+
     return a.articul.localeCompare(b.articul);
   });
 }
@@ -37,6 +68,24 @@ function orderCountriesList(list) {
     const ai = map.hasOwnProperty(a) ? map[a] : COUNTRY_ORDER.length;
     const bi = map.hasOwnProperty(b) ? map[b] : COUNTRY_ORDER.length;
     return ai - bi;
+  });
+}
+
+/**
+ * Order list of types using TYPE_ORDER when provided, otherwise alphabetically.
+ * @param {string[]} list
+ * @returns {string[]}
+ */
+function orderTypesList(list) {
+  const map = TYPE_ORDER.reduce((acc, t, i) => {
+    acc[t] = i;
+    return acc;
+  }, {});
+  return list.slice().sort((a, b) => {
+    const ai = map.hasOwnProperty(a) ? map[a] : TYPE_ORDER.length;
+    const bi = map.hasOwnProperty(b) ? map[b] : TYPE_ORDER.length;
+    if (ai !== bi) return ai - bi;
+    return a.localeCompare(b);
   });
 }
 
@@ -143,8 +192,9 @@ function fillTable(data) {
 function fillFilters(data) {
   const tipSelect = document.getElementById('filterTip');
   const types = [...new Set(data.map(i => i.tip).filter(Boolean))];
+  const orderedTypes = orderTypesList(types);
   tipSelect.innerHTML = '<option value="">(Все)</option>';
-  types.forEach(t => {
+  orderedTypes.forEach(t => {
     const opt = document.createElement('option');
     opt.value = t;
     opt.textContent = t;
