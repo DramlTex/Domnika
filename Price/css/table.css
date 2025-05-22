@@ -91,3 +91,9 @@
   background-color: #f2f2f2;
   font-weight: bold;
 }
+
+/* TYPE HEADER ROW */
+.type-row td {
+  background-color: #fafafa;
+  font-style: italic;
+}

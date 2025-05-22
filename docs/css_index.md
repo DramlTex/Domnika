@@ -54,3 +54,4 @@
 - 2025-05-26 12:00 docs/css_index.md – добавлено описание разделения стилей на файлы.
 - 2025-05-22 16:58 Price/index.php, Price/js/table.js – CSS разбит на файлы в каталоге `css/`.
 - 2025-05-22 17:10 Price/css/table.css – добавлен стиль `.country-row` для заголовков стран в таблице.
+- 2025-05-22 17:28 Price/js/table.js, Price/css/table.css – добавлено выделение типов товаров классом `.type-row`.
