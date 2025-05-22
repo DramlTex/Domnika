@@ -1,0 +1,134 @@
+[
+    {
+        "uom": {
+            "meta": {
+                "href": "https://api.moysklad.ru/api/remap/1.2/entity/uom/95d5155e-d333-11ef-0a80-11b5000cf629",
+                "metadataHref": "https://api.moysklad.ru/api/remap/1.2/entity/uom/metadata",
+                "type": "uom",
+                "mediaType": "application/json"
+            }
+        },
+        "quantity": 0.03
+    },
+    {
+        "uom": {
+            "meta": {
+                "href": "https://api.moysklad.ru/api/remap/1.2/entity/uom/ddf9f2b6-d334-11ef-0a80-11b5000d4d4b",
+                "metadataHref": "https://api.moysklad.ru/api/remap/1.2/entity/uom/metadata",
+                "type": "uom",
+                "mediaType": "application/json"
+            }
+        },
+        "quantity": 0.05
+    },
+    {
+        "uom": {
+            "meta": {
+                "href": "https://api.moysklad.ru/api/remap/1.2/entity/uom/df3658e6-d333-11ef-0a80-0bd3000ce77b",
+                "metadataHref": "https://api.moysklad.ru/api/remap/1.2/entity/uom/metadata",
+                "type": "uom",
+                "mediaType": "application/json"
+            }
+        },
+        "quantity": 0.1
+    },
+    {
+        "uom": {
+            "meta": {
+                "href": "https://api.moysklad.ru/api/remap/1.2/entity/uom/e488a11b-d333-11ef-0a80-03b6000c5879",
+                "metadataHref": "https://api.moysklad.ru/api/remap/1.2/entity/uom/metadata",
+                "type": "uom",
+                "mediaType": "application/json"
+            }
+        },
+        "quantity": 0.2
+    },
+    {
+        "uom": {
+            "meta": {
+                "href": "https://api.moysklad.ru/api/remap/1.2/entity/uom/eb12ed1d-d333-11ef-0a80-0937000c5b76",
+                "metadataHref": "https://api.moysklad.ru/api/remap/1.2/entity/uom/metadata",
+                "type": "uom",
+                "mediaType": "application/json"
+            }
+        },
+        "quantity": 0.25
+    },
+    {
+        "uom": {
+            "meta": {
+                "href": "https://api.moysklad.ru/api/remap/1.2/entity/uom/ec18d708-d334-11ef-0a80-0937000c8f4e",
+                "metadataHref": "https://api.moysklad.ru/api/remap/1.2/entity/uom/metadata",
+                "type": "uom",
+                "mediaType": "application/json"
+            }
+        },
+        "quantity": 0.5
+    },
+    {
+        "uom": {
+            "meta": {
+                "href": "https://api.moysklad.ru/api/remap/1.2/entity/uom/207225c3-d335-11ef-0a80-16bc000d2b89",
+                "metadataHref": "https://api.moysklad.ru/api/remap/1.2/entity/uom/metadata",
+                "type": "uom",
+                "mediaType": "application/json"
+            }
+        },
+        "quantity": 0.03
+    },
+    {
+        "uom": {
+            "meta": {
+                "href": "https://api.moysklad.ru/api/remap/1.2/entity/uom/30b79273-d335-11ef-0a80-04e0000cb1d8",
+                "metadataHref": "https://api.moysklad.ru/api/remap/1.2/entity/uom/metadata",
+                "type": "uom",
+                "mediaType": "application/json"
+            }
+        },
+        "quantity": 0.05
+    },
+    {
+        "uom": {
+            "meta": {
+                "href": "https://api.moysklad.ru/api/remap/1.2/entity/uom/37bb37d7-d335-11ef-0a80-03b6000c956d",
+                "metadataHref": "https://api.moysklad.ru/api/remap/1.2/entity/uom/metadata",
+                "type": "uom",
+                "mediaType": "application/json"
+            }
+        },
+        "quantity": 0.1
+    },
+    {
+        "uom": {
+            "meta": {
+                "href": "https://api.moysklad.ru/api/remap/1.2/entity/uom/40f0297e-d335-11ef-0a80-0d16000d0852",
+                "metadataHref": "https://api.moysklad.ru/api/remap/1.2/entity/uom/metadata",
+                "type": "uom",
+                "mediaType": "application/json"
+            }
+        },
+        "quantity": 0.2
+    },
+    {
+        "uom": {
+            "meta": {
+                "href": "https://api.moysklad.ru/api/remap/1.2/entity/uom/46619ba3-d335-11ef-0a80-16bc000d31d4",
+                "metadataHref": "https://api.moysklad.ru/api/remap/1.2/entity/uom/metadata",
+                "type": "uom",
+                "mediaType": "application/json"
+            }
+        },
+        "quantity": 0.25
+    },
+    {
+        "uom": {
+            "meta": {
+                "href": "https://api.moysklad.ru/api/remap/1.2/entity/uom/4c0396e0-d335-11ef-0a80-03b6000c9a4a",
+                "metadataHref": "https://api.moysklad.ru/api/remap/1.2/entity/uom/metadata",
+                "type": "uom",
+                "mediaType": "application/json"
+            }
+        },
+        "quantity": 0.5
+    }
+]
