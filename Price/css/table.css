@@ -86,6 +86,27 @@
   
 .photo-cell { text-align: center; }
 
+/* TYPE & COUNTRY COLUMNS */
+.type-cell {
+  font-style: italic;
+  color: #285682;
+}
+
+.country-cell {
+  font-weight: bold;
+  color: #333;
+}
+
+th.type-col {
+  font-style: italic;
+  color: #285682;
+}
+
+th.country-col {
+  font-weight: bold;
+  color: #333;
+}
+
 /* COUNTRY HEADER ROW */
 .country-row td {
   background-color: #f2f2f2;

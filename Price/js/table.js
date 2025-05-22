@@ -177,8 +177,8 @@ function fillTable(data) {
         <td class="photo-cell">${photoCell}</td>
         <td>${item.name}</td>
         <td>${item.uom}</td>
-        <td>${item.tip}</td>
-        <td>${item.supplier}</td>
+        <td class="type-cell">${item.tip}</td>
+        <td class="country-cell">${item.supplier}</td>
         <td>${formatNumber(item.mass)}</td>
         <td>${formatNumber(item.price)}</td>
         <td>${formatNumber(stockVal)}</td>

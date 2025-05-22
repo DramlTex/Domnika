@@ -20,6 +20,8 @@
 Основные стили таблицы находятся в `Price/css/table.css`. Для выделения групп товаров по странам добавлен класс `.country-row`, который окрашивает строку и делает текст полужирным.
 Дополнительный класс `.type-row` применяется для заголовков типов внутри каждой страны.
 
+Также ячейки колонок "Тип" и "Страна" помечены классами `.type-cell` и `.country-cell` для более заметного форматирования текста.
+
 ```css
 .country-row td {
   background-color: #f2f2f2;
@@ -29,6 +31,16 @@
 .type-row td {
   background-color: #fafafa;
   font-style: italic;
+}
+
+.type-cell {
+  font-style: italic;
+  color: #285682;
+}
+
+.country-cell {
+  font-weight: bold;
+  color: #333;
 }
 ```
 
