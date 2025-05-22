@@ -77,6 +77,7 @@ scripts/test.sh
 - 2025-05-22 17:10 Price/js/table.js, Price/css/table.css – добавлена сортировка по странам и стиль заголовков; создан файл docs/table.md.
 - 2025-05-22 17:28 Price/js/table.js, Price/css/table.css – добавлено разделение по типам с классом `.type-row`.
 - 2025-05-27 10:00 Price/index.php, Price/js/table.js, Price/css/table.css – ячейки колонок "Тип" и "Страна" получили классы `.type-cell` и `.country-cell`.
+- 2025-05-22 18:22 docs/export_excel.md – описан процесс экспорта прайса в Excel.
 
 ## Рекомендации по улучшению
 
