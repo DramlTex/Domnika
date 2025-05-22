@@ -48,7 +48,8 @@ table {
 thead th {
   position: sticky;
   top: 0;
-  z-index: 2;
+  /* Поднимаем шапку над баннером */
+  z-index: 20;
   background-color: #fff;
   color: #000000;
   box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.2);

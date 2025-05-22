@@ -17,3 +17,4 @@
 
 - 2025-05-27 12:00 Price/css/table.css – добавлены границы ячеек и прокрутка в `.table-wrapper`.
 - 2025-05-27 12:40 Price/css/table.css, Price/index.php – добавлены классы `.name-cell` и `.num-cell`, расширен столбец названия.
+- 2025-05-27 13:20 Price/css/table.css – увеличен z-index заголовка таблицы.
