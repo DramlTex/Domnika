@@ -181,7 +181,7 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
     </thead>
     <tbody>
     </tbody>
-    </table>
+  </table>
   </div>
 </div>
 
