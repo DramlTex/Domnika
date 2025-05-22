@@ -1,0 +1,471 @@
+/* =========================================================
+   1) RESET & GLOBAL
+   ========================================================= */
+   * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    color: #333;
+    background-color: #d5d5d5;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* =========================================================
+     2) BANNER (шапка)
+     ========================================================= */
+  .banner {
+    position: relative;
+    width: 100%;
+    min-height: 265px;
+    background: url("http://85.193.91.150/Domnika/price/image_2025-02-21_12-49-11.png") center/cover no-repeat;
+    filter: grayscale(100%);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .banner::before {
+    content: "";
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0) 10%, #000 57%),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0) 70%, #000 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .logo {
+    position: absolute;
+    top: 35%;
+    left: 25%;
+    transform: translate(-50%, -50%);
+    width: 180px;
+    z-index: 2;
+  }
+  .white-svg {
+    filter: brightness(0) invert(1);
+  }
+  .left-text {
+    position: absolute;
+    bottom: 30px;
+    left: 150px;
+    color: #fff;
+    z-index: 2;
+  }
+  .left-text h1 {
+    font-size: 30px;
+    margin-bottom: 6px;
+  }
+  .left-text p {
+    font-size: 18px;
+    text-align: center;
+  }
+  .divider {
+    position: absolute;
+    top: 20%;
+    bottom: 20%;
+    left: 46%;
+    width: 3px;
+    background: #fff;
+    z-index: 2;
+  }
+  .banner-right {
+    position: absolute;
+    top: 0; bottom: 0; left: 49%; right: 0;
+    z-index: 2;
+    color: #fff;
+    padding: 30px 20px;
+  }
+  .banner-right p,
+  .banner-right li {
+    margin-bottom: 6px;
+  }
+  .banner-right a {
+    color: #fff;
+    text-decoration: none;
+  }
+  .banner-right a:hover {
+    text-decoration: underline;
+  }
+  .banner-right h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+  .banner-right ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  .bi {
+    margin-right: 4px;
+  }
+  
+  /* =========================================================
+     3) FILTERS + FORMS
+     ========================================================= */
+  .filters-container {
+    background-color: #f9f9f9;
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.2);
+    border: 1px solid #ddd;
+    border-radius: 2px;
+    padding: 15px;
+    margin: 10px 0px;
+  }
+  .filters-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+  }
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+  }
+  .filter-group label {
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #444;
+  }
+  .filter-group input,
+  .filter-group select {
+    padding: 6px 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .range-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .range-group input {
+    width: 60px;
+    text-align: right;
+  }
+  .filter-group.btns {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: end;
+    justify-content: flex-start;
+  }
+  #filterPriceMax,
+  #filterPriceMin,
+  #filterMassMax,
+  #filterMassMin {
+    width: 48%;
+  }
+  
+  /* RESPONSIVE: фильтры */
+  @media (max-width: 768px) {
+    .filters-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  /* =========================================================
+     4) BUTTONS
+     ========================================================= */
+  .btn {
+    padding: 8px 20px;
+    border: 1px solid #999;
+    background-color: #e4e4e4;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  }
+  .btn:hover {
+    background-color: #ddd;
+  }
+  .btn.primary {
+    background-color: #3a74a3;
+    color: #fff;
+    font-weight: 600;
+  }
+  .btn.primary:hover {
+    background-color: #285682;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* ----------------------------------
+     Ссылка "Выйти" (logout-link)
+  ---------------------------------- */
+  .logout-link {
+    display: inline-block;       /* Чтобы вела себя как кнопка */
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: #d9534f;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+  }
+  .logout-link:hover {
+    background-color: #c9302c;
+  }
+  
+  /* =========================================================
+     5) TABLE + LOADER
+     ========================================================= */
+  .table-wrapper {
+    margin: 20px 0px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+  .table-wrapper.hidden, 
+  #tabs.hidden {
+    display: none;
+  }
+  
+  /* LOADER (прелоадер) */
+  .loader-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+  }
+  .loader-spinner {
+    width: 50px; 
+    height: 50px;
+    margin: 0 auto 10px;
+    border: 5px solid #ccc;
+    border-top-color: #3498db;
+    border-radius: 50%;
+    animation: spinner 1s linear infinite;
+  }
+  @keyframes spinner {
+    to { transform: rotate(360deg); }
+  }
+  
+  /* TABLE */
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 6px;
+    background-color: #fff;
+  }
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: #fff;
+    color: #000000;
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    margin: 5px;
+  }
+  tbody tr {
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s ease;
+  }
+  tbody tr:nth-child(even) {
+    background-color: #f7f7f7;
+  }
+  tbody tr:hover {
+    background-color: #ddeeff;
+  }
+  td {
+    padding: 10px;
+    vertical-align: middle;
+    font-size: 14px;
+    color: #333;
+  }
+  th {
+    padding: 10px;
+    font-size: 14px;
+    border: none;
+  }
+  
+  /* RESPONSIVE: таблица */
+  @media (max-width: 768px) {
+    #priceList {
+      display: block;
+      overflow-x: auto;
+    }
+  }
+  
+  /* =========================================================
+     6) MODAL - LARGE PHOTO
+     ========================================================= */
+  #imageModal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+  #imageModal .modal-content {
+    display: block;
+    margin: 5% auto;
+    max-width: 90%;
+    max-height: 90%;
+    border: 3px solid #fff;
+    border-radius: 6px;
+    background: #fff;
+  }
+  #modalClose {
+    position: absolute;
+    top: 20px; right: 30px;
+    color: #fff;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1000;
+  }
+  #modalImg {
+    display: block;
+    width: 100%;
+  }
+  
+  /* =========================================================
+     7) RIGHT PANEL (ПАНЕЛЬ ДЕТАЛЕЙ ТОВАРА)
+     ========================================================= */
+  #productModal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 400px;
+    max-width: 80%;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
+    transform: translateX(100%);
+    transition: transform 0.4s ease-in-out;
+    z-index: 9999;
+  }
+  #productModal.open {
+    transform: translateX(0);
+  }
+  #productModal .close-modal {
+    position: absolute;
+    top: 10px; right: 15px;
+    color: #333;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1000;
+  }
+  #productModalContent {
+    display: block;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    background: #fff;
+    height: 100%;
+    overflow-y: auto;
+  }
+  #productModal .modal-body {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 20px;
+  }
+  .modal-left,
+  .modal-right {
+    flex: 0 0 auto;
+    max-width: 100%;
+  }
+  #productModalImg {
+    max-width: 300px;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+  }
+  #productModalName {
+    margin-bottom: 10px;
+    font-size: 20px;
+    color: #333;
+  }
+  
+  /* =========================================================
+     8) THUMBNAILS, ZOOM & HOVER-PREVIEW
+     ========================================================= */
+  .image-container {
+    position: relative;
+    display: inline-block;
+    cursor: zoom-in;
+  }
+  .mini-img {
+    max-width: 60px;
+    border-radius: 4px;
+  }
+  .zoom-icon {
+    position: absolute;
+    top: 5px; right: 5px;
+    width: 24px; height: 24px;
+    background: url('data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMzMzIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiI+PHBhdGggZD0iTTEwLjYyIDEwLjIyYzEuNjc1IDEuNjc1IDQuM382IDEuNzUgNS45NTMtLjczNS43MzUtMS4zNzUgMS4zNzUtMi4zNzUgMS4zNzUtLjU4NSAwLTEuMTUtLjE3NS0xLjYyNS0uNTQ3bC0yLjUwMy0yLjUwM0g0djItMyAxLjI1IDEuMjUuMTI1LjUuNS4xMjUgMmgydi0yLS41LS4xMjUtLjM3NS0xLjI1LS4xMjVIM3YtMmgyLjE0NGwtMi41MDMtMi41MDNBLjk4NS45ODUgMCAwIDAgMiA0Ljg3NSAxIDIgMCAxIDAgMy4xMjUgMi45NWg4LjE3NXYyLjA2N2wtMi41MDMtMi41MDNhMSAxIDAgMCAwLTEuNjI1LjU0N0wyIDUuODc1di0ySDEuODc1bDMuNjI1IDMuNjI1TDEgMTIuODc1djIuMGMtLjUgNS4yNSAyLjUgMi41IDQuMjUgIDIuNS45NzUgMCAyLjQ2NS0uNTgyIDIuOTUtMS4zNzV6Ii8+PC9zdmc=') no-repeat center/contain;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    pointer-events: none;
+  }
+  .image-container:hover .zoom-icon {
+    opacity: 1;
+  }
+  .hover-preview {
+    display: none;
+    position: absolute;
+    top: 0; left: 110%;
+    z-index: 999;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* =========================================================
+     9) TABS (ВКЛАДКИ) - снизу
+     ========================================================= */
+  .tabs-container {
+    display: none;
+    position: sticky;
+    bottom: 0; left: 50%;
+    max-width: 1200px;
+    width: 100%;
+    background-color: #fff;
+    z-index: 10;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+  }
+  .tabs-container.visible {
+    display: block;
+  }
+  .tab-button {
+    padding: 8px 15px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    font-size: 15px;
+    border-radius: 4px;
+  }
+  .tab-button:hover {
+    background-color: #ddd;
+  }
+  .tab-button.active {
+    background-color: rgb(55, 111, 158);
+    color: white;
+  }
+  
+  /* =========================================================
+     10) ANIMATIONS & SPECIAL EFFECTS
+     ========================================================= */
+  .hover-effect {
+    animation: highlight 0.5s ease-in-out;
+  }
+  @keyframes highlight {
+    0%   { transform: scale(1); background-color: #285682; }
+    50%  { transform: scale(1.02); background-color: #3a74a3; }
+    100% { transform: scale(1); background-color: #285682; }
+  }
+  
