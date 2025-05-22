@@ -19,7 +19,16 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="styles_main.css">
+  <link rel="stylesheet" type="text/css" href="css/reset.css">
+  <link rel="stylesheet" type="text/css" href="css/banner.css">
+  <link rel="stylesheet" type="text/css" href="css/filters.css">
+  <link rel="stylesheet" type="text/css" href="css/buttons.css">
+  <link rel="stylesheet" type="text/css" href="css/table.css">
+  <link rel="stylesheet" type="text/css" href="css/modal-photo.css">
+  <link rel="stylesheet" type="text/css" href="css/product-panel.css">
+  <link rel="stylesheet" type="text/css" href="css/thumbnails.css">
+  <link rel="stylesheet" type="text/css" href="css/tabs.css">
+  <link rel="stylesheet" type="text/css" href="css/effects.css">
 </head>
 
 <body>
@@ -75,7 +84,7 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
 </div>
 
 <!-- ИНФОРМАЦИЯ О ПОЛЬЗОВАТЕЛЕ -->
-<p style="margin: 10px 20px;"><!-- TODO: вынести margin в CSS -->
+<p class="user-info"><!-- margin moved to CSS -->
 
   Вы вошли как: <strong><?php echo htmlspecialchars($username); ?></strong>
   <a href="logout.php" class="logout-link">Выйти</a>

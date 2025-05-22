@@ -1,0 +1,44 @@
+  /* =========================================================
+     4) BUTTONS
+     ========================================================= */
+  .btn {
+    padding: 8px 20px;
+    border: 1px solid #999;
+    background-color: #e4e4e4;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  }
+  .btn:hover {
+    background-color: #ddd;
+  }
+  .btn.primary {
+    background-color: #3a74a3;
+    color: #fff;
+    font-weight: 600;
+  }
+  .btn.primary:hover {
+    background-color: #285682;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* ----------------------------------
+     Ссылка "Выйти" (logout-link)
+  ---------------------------------- */
+  .logout-link {
+    display: inline-block;       /* Чтобы вела себя как кнопка */
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: #d9534f;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+  }
+  .logout-link:hover {
+    background-color: #c9302c;
+  }
+  

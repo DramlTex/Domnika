@@ -1,0 +1,35 @@
+  /* =========================================================
+     6) MODAL - LARGE PHOTO
+     ========================================================= */
+  #imageModal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+  #imageModal .modal-content {
+    display: block;
+    margin: 5% auto;
+    max-width: 90%;
+    max-height: 90%;
+    border: 3px solid #fff;
+    border-radius: 6px;
+    background: #fff;
+  }
+  #modalClose {
+    position: absolute;
+    top: 20px; right: 30px;
+    color: #fff;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1000;
+  }
+  #modalImg {
+    display: block;
+    width: 100%;
+  }
+  

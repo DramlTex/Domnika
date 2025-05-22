@@ -1,0 +1,35 @@
+  /* =========================================================
+     8) THUMBNAILS, ZOOM & HOVER-PREVIEW
+     ========================================================= */
+  .image-container {
+    position: relative;
+    display: inline-block;
+    cursor: zoom-in;
+  }
+  .mini-img {
+    max-width: 60px;
+    border-radius: 4px;
+  }
+  .zoom-icon {
+    position: absolute;
+    top: 5px; right: 5px;
+    width: 24px; height: 24px;
+    background: url('data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMzMzIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiI+PHBhdGggZD0iTTEwLjYyIDEwLjIyYzEuNjc1IDEuNjc1IDQuM382IDEuNzUgNS45NTMtLjczNS43MzUtMS4zNzUgMS4zNzUtMi4zNzUgMS4zNzUtLjU4NSAwLTEuMTUtLjE3NS0xLjYyNS0uNTQ3bC0yLjUwMy0yLjUwM0g0djItMyAxLjI1IDEuMjUuMTI1LjUuNS4xMjUgMmgydi0yLS41LS4xMjUtLjM3NS0xLjI1LS4xMjVIM3YtMmgyLjE0NGwtMi41MDMtMi41MDNBLjk4NS45ODUgMCAwIDAgMiA0Ljg3NSAxIDIgMCAxIDAgMy4xMjUgMi45NWg4LjE3NXYyLjA2N2wtMi41MDMtMi41MDNhMSAxIDAgMCAwLTEuNjI1LjU0N0wyIDUuODc1di0ySDEuODc1bDMuNjI1IDMuNjI1TDEgMTIuODc1djIuMGMtLjUgNS4yNSAyLjUgMi41IDQuMjUgIDIuNS45NzUgMCAyLjQ2NS0uNTgyIDIuOTUtMS4zNzV6Ii8+PC9zdmc=') no-repeat center/contain;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    pointer-events: none;
+  }
+  .image-container:hover .zoom-icon {
+    opacity: 1;
+  }
+  .hover-preview {
+    display: none;
+    position: absolute;
+    top: 0; left: 110%;
+    z-index: 999;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  }
+  

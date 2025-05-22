@@ -38,7 +38,7 @@ function fillTable(data) {
       tr.innerHTML = `
         <td>${i + 1}</td>
         <td>${item.articul}</td>
-        <td style="text-align:center;">${photoCell}</td>
+        <td class="photo-cell">${photoCell}</td>
         <td>${item.name}</td>
         <td>${item.uom}</td>
         <td>${item.tip}</td>

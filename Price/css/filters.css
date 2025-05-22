@@ -1,0 +1,62 @@
+  /* =========================================================
+     3) FILTERS + FORMS
+     ========================================================= */
+  .filters-container {
+    background-color: #f9f9f9;
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.2);
+    border: 1px solid #ddd;
+    border-radius: 2px;
+    padding: 15px;
+    margin: 10px 0px;
+  }
+  .filters-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+  }
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+  }
+  .filter-group label {
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #444;
+  }
+  .filter-group input,
+  .filter-group select {
+    padding: 6px 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .range-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .range-group input {
+    width: 60px;
+    text-align: right;
+  }
+  .filter-group.btns {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: end;
+    justify-content: flex-start;
+  }
+  #filterPriceMax,
+  #filterPriceMin,
+  #filterMassMax,
+  #filterMassMin {
+    width: 48%;
+  }
+  
+  /* RESPONSIVE: фильтры */
+  @media (max-width: 768px) {
+    .filters-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  

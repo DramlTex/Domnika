@@ -1,0 +1,11 @@
+  /* =========================================================
+     10) ANIMATIONS & SPECIAL EFFECTS
+     ========================================================= */
+  .hover-effect {
+    animation: highlight 0.5s ease-in-out;
+  }
+  @keyframes highlight {
+    0%   { transform: scale(1); background-color: #285682; }
+    50%  { transform: scale(1.02); background-color: #3a74a3; }
+    100% { transform: scale(1); background-color: #285682; }
+  }
