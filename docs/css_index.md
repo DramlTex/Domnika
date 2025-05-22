@@ -59,3 +59,4 @@
 - 2025-05-27 11:30 Price/css/table.css, docs/table.md – расширены стили `.country-row` и `.type-row`: добавлены `text-align` и `font-size`.
 - 2025-05-27 12:00 Price/css/table.css, docs/table_css.md – добавлены границы ячеек и прокрутка таблицы.
 - 2025-05-27 12:40 Price/css/table.css, Price/index.php – введены стили `.name-cell` и `.num-cell` для ширины колонок.
+- 2025-05-27 13:20 Price/css/table.css – увеличен z-index заголовка таблицы для корректной фиксации.
