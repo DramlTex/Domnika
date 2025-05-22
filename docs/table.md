@@ -26,11 +26,15 @@
 .country-row td {
   background-color: #f2f2f2;
   font-weight: bold;
+  text-align: center;
+  font-size: 18px;
 }
 
 .type-row td {
   background-color: #fafafa;
   font-style: italic;
+  text-align: center;
+  font-size: 16px;
 }
 
 .type-cell {
