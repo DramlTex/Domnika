@@ -71,6 +71,7 @@ scripts/test.sh
 - Изначальная версия документа.
 - 2025-05-22 15:51 Price/index.php, docs/css_index.md – добавлена документация по CSS.
 - 2025-05-22 16:29 Price/index.php, docs/js_index.md – добавлена документация по JavaScript.
+- 2025-05-22 16:50 agents.md, docs/css_index.md, docs/js_index.md – добавлены журналы изменений для CSS и JS.
 
 ## Рекомендации по улучшению
 
