@@ -1,0 +1,9 @@
+[
+  {
+    "login": "admin",
+    "password_hash": "$2y$10$EXAMPLExHashxStringx..../abcdef", 
+    "role": "admin",
+    "counterparty_href": "",
+    "discount": 0
+  }
+]

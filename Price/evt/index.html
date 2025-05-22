@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Прайс лист ассортимента</title>
+
+  <!-- Иконки Bootstrap (можно удалить, если не нужны) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <!-- jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <!-- Библиотека XLSX для экспорта в Excel -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <style>
+    body {
+      margin: 0; 
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f7f8f9;
+      color: #333;
+    }
+
+    /* ШАПКА */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      background-color: #fff;
+      border-bottom: 1px solid #ddd;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .header-left h1 {
+      margin: 0; 
+      font-size: 18px; 
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* ПАНЕЛЬ ФИЛЬТРОВ */
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      padding: 10px 20px;
+      background-color: #fff;
+      border-bottom: 1px solid #ddd;
+    }
+    .filters label {
+      display: flex;
+      align-items: center;
+      font-weight: 500;
+      color: #444;
+    }
+    .filters label span {
+      margin-right: 6px;
+    }
+    .filters input, 
+    .filters select {
+      padding: 5px 8px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .filters button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      background-color: #3a74a3;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      margin-left: auto;
+    }
+    .filters button:hover {
+      background-color: #285682;
+    }
+    #export-button {
+      background-color: #f2f2f2;
+      color: #333;
+      margin-left: 10px;
+      border: 1px solid #ccc;
+    }
+    #export-button:hover {
+      background-color: #e6e6e6;
+    }
+    /* «Сбросить» отдельно стилизуем */
+    #btnReset {
+      margin-left: 10px;
+      background-color: #999;
+    }
+    #btnReset:hover {
+      background-color: #777;
+    }
+
+    /* ТЕКУЩЕЕ КОЛИЧЕСТВО НАЙДЕННЫХ ТОВАРОВ */
+    #itemsCount {
+      margin: 10px 20px;
+      font-size: 14px;
+    }
+
+    /* ТАБЛИЦА */
+    .table-wrapper {
+        margin: 20px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        overflow: hidden;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #fff;
+    }
+    thead th {
+      background-color: #f2f2f2;
+      text-align: left;
+      font-weight: 600;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+    tbody tr {
+      border-bottom: 1px solid #eee;
+      transition: background-color 0.2s;
+      cursor: pointer;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+    tbody tr:hover {
+      background-color: #e9f3ff;
+    }
+    td {
+      padding: 10px;
+      font-size: 14px;
+      color: #333;
+      vertical-align: middle;
+    }
+    th {
+      padding: 10px;
+      font-size: 14px;
+      border: none;
+    }
+    thead th {
+      position: sticky;
+      top: 0; 
+      background-color: #f2f2f2;
+      z-index: 1;
+    }
+
+    /* ИКОНКА-ПРЕВЬЮ */
+    .image-container {
+      position: relative; 
+      display: inline-block; 
+      cursor: zoom-in;
+    }
+    .mini-img {
+      max-width: 60px;
+      max-height: 60px;
+      object-fit: contain;
+    }
+    .hover-preview {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 110%;
+      z-index: 999;
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 5px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    }
+    .image-container:hover .hover-preview {
+      display: block;
+    }
+
+    /* МОДАЛЬ ДЛЯ КРУПНОГО ФОТО */
+    #imageModal {
+      display: none; 
+      position: fixed; 
+      z-index: 9999; 
+      left: 0; 
+      top: 0;
+      width: 100%; 
+      height: 100%; 
+      overflow: auto;
+      background-color: rgba(0,0,0,0.7);
+    }
+    #modalImg {
+      display: block;
+      margin: 50px auto;
+      max-width: 80%;
+      max-height: 80%;
+      border: 3px solid #fff;
+      border-radius: 6px;
+    }
+    .close-modal {
+      position: absolute; 
+      top: 20px; 
+      right: 30px; 
+      color: #fff;
+      font-size: 40px; 
+      font-weight: bold; 
+      cursor: pointer;
+    }
+
+    /* ВЫДВИЖНАЯ ПАНЕЛЬ (СПРАВА) ДЛЯ ДЕТАЛЕЙ ТОВАРА */
+    #productModal {
+      position: fixed;
+      top: 0;
+      right: -400px; /* спрятано за экраном */
+      width: 400px;
+      height: 100vh;
+      background-color: #fff;
+      box-shadow: -2px 0 6px rgba(0,0,0,0.2);
+      transition: right 0.3s ease;
+      z-index: 9998; 
+      display: flex;
+      flex-direction: column;
+    }
+    /* При «открытии» будет добавляться класс open, который выставляет right в 0 */
+    #productModal.open {
+      right: 0;
+    }
+    /* Шапка внутри панели (для кнопки закрытия) */
+    #productModalHeader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 15px;
+      border-bottom: 1px solid #ddd;
+      background-color: #f8f8f8;
+    }
+    #productModalHeader .close-panel {
+      font-size: 20px;
+      color: #333;
+      cursor: pointer;
+    }
+    /* Контент панели */
+    #productModalContent {
+      padding: 15px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    #productModalImg {
+      width: 100%;
+      max-width: 300px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    #productModalName {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 10px 0;
+    }
+    #productModalContent p {
+      margin: 4px 0;
+    }
+    #productModalContent p span {
+      font-weight: 500;
+    }
+    .product-info-block {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- «Шапка», без кнопки «Каталог» и поиска -->
+  <div class="header">
+    <div class="header-left">
+      <h1>ООО «Евразия Моторс»</h1>
+    </div>
+    <div class="header-right">
+      <!-- Пусто или можно вынести контактные данные -->
+    </div>
+  </div>
+
+  <!-- ПАНЕЛЬ ФИЛЬТРОВ -->
+  <div class="filters">
+    <label>
+      <span>Артикул:</span>
+      <input type="text" id="filterArticul">
+    </label>
+    <label>
+      <span>Название:</span>
+      <input type="text" id="filterName">
+    </label>
+    <label>
+      <span>Тип:</span>
+      <select id="filterTip">
+        <option value="">(Все)</option>
+      </select>
+    </label>
+
+    <!-- Множественный выбор для Страны -->
+    <label>
+      <span>Страна:</span>
+      <select id="filterCountry" multiple size="4" style="min-width:130px;">
+        <!-- Заполняется динамически -->
+      </select>
+    </label>
+
+    <!-- Множественный выбор для Склада -->
+    <label>
+      <span>Склад:</span>
+      <select id="filterStore" multiple size="4" style="min-width:130px;">
+        <option value="store1">Кросс-докинг</option>
+        <option value="store2">Татнефть реализация</option>
+        <option value="store3">Основной склад ЕМ</option>
+        <option value="store4">Склад уценка</option>
+      </select>
+    </label>
+
+    <label>
+      <span>Масса от:</span>
+      <input type="number" step="0.01" id="filterMassMin" style="width:70px;">
+      <span>до:</span>
+      <input type="number" step="0.01" id="filterMassMax" style="width:70px;">
+    </label>
+    <label>
+      <span>Цена от:</span>
+      <input type="number" step="0.01" id="filterPriceMin" style="width:70px;">
+      <span>до:</span>
+      <input type="number" step="0.01" id="filterPriceMax" style="width:70px;">
+    </label>
+
+    <button id="btnRefresh">Обновить</button>
+    <button id="export-button">Экспорт в Excel</button>
+    <button id="btnReset">Сбросить</button>
+  </div>
+
+  <!-- Отображение количества найденных товаров -->
+  <div id="itemsCount">Найдено: 0 товаров</div>
+
+  <!-- ТАБЛИЦА -->
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>№</th>
+          <th>Артикул</th>
+          <th>Фото</th>
+          <th>Название</th>
+          <th>Стандарт</th>
+          <th>Тип</th>
+          <th>Страна</th>
+          <th>Вес</th>
+          <th>Цена</th>
+          <th>Наличие</th>
+          <th>Объём</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Динамически заполняется из JS -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- МОДАЛЬ ДЛЯ УВЕЛИЧЕННОГО ФОТО -->
+  <div id="imageModal">
+    <span class="close-modal" id="modalClose">&times;</span>
+    <img id="modalImg" src="" alt="Фото">
+  </div>
+
+  <!-- ВЫДВИЖНАЯ ПАНЕЛЬ (СПРАВА) ДЛЯ ДЕТАЛЕЙ ТОВАРА -->
+  <div id="productModal">
+    <div id="productModalHeader">
+      <strong>Детали товара</strong>
+      <span class="close-panel" id="productModalClose">&times;</span>
+    </div>
+    <div id="productModalContent">
+      <img id="productModalImg" src="" alt="Фото товара">
+      <div id="productModalName"></div>
+      <div class="product-info-block">
+        <p><span>Артикул:</span> <span id="productModalArticul"></span></p>
+        <p><span>Описание:</span> <span id="productModalDescription"></span></p>
+        <p><span>Тип:</span> <span id="productModalTip"></span></p>
+        <p><span>Поставщик:</span> <span id="productModalSupplier"></span></p>
+      </div>
+      <div class="product-info-block">
+        <p><span>Вес тарного места:</span> <span id="productModalMass"></span></p>
+        <p><span>Цена:</span> <span id="productModalPrice"></span></p>
+      </div>
+      <div class="product-info-block">
+        <p><span>Общий остаток:</span> <span id="productModalStock"></span></p>
+        <p><span>Кросс-докинг:</span> <span id="productModalStock1"></span></p>
+        <p><span>Татнефть реализация:</span> <span id="productModalStock2"></span></p>
+        <p><span>Основной склад ЕМ:</span> <span id="productModalStock3"></span></p>
+        <p><span>Склад уценка:</span> <span id="productModalStock4"></span></p>
+      </div>
+      <p><span>Объём тарного места:</span> <span id="productModalVolume"></span></p>
+    </div>
+  </div>
+
+  <script>
+    // ЗАГРУЗКА ДАННЫХ (пример, путь меняйте на свой)
+    function loadData() {
+      fetch('http://85.193.91.150/Domnika/price/evr/data.php')
+        .then(response => response.json())
+        .then(json => {
+          if (json && json.rows) {
+            window.__productsData = json.rows;
+            applyFilters(); // Сразу применим фильтры (если нет, выведет всё)
+            fillFilters(json.rows); // Заполним список стран/типов и т.д.
+          } else {
+            console.error('Некорректный ответ:', json);
+          }
+        })
+        .catch(err => {
+          console.error('Ошибка при запросе:', err);
+        });
+    }
+
+    // ЗАПОЛНЕНИЕ ТАБЛИЦЫ
+    function fillTable(data) {
+      const tbody = document.querySelector('table tbody');
+      tbody.innerHTML = '';
+
+      // Анимация на кнопке
+      const btn = document.getElementById('btnRefresh');
+      if (btn) btn.classList.add('hover-effect');
+
+      // Выводим количество (для блока #itemsCount)
+      document.getElementById('itemsCount').textContent = `Найдено: ${data.length} товаров`;
+
+      // Пакетно (чанками), чтобы не тормозить
+      let index = 0;
+      const chunkSize = 50;
+
+      function processChunk() {
+        const end = Math.min(index + chunkSize, data.length);
+        for (let i = index; i < end; i++) {
+          const item = data[i];
+
+          // Генерация строки
+          const tr = document.createElement('tr');
+
+          // Фото-ячейка
+          let photoCellHtml = 'Нет фото';
+          if (item.photoMini) {
+            const mini = 'http://85.193.91.150/Domnika/price/evr/image_proxy.php?url=' + encodeURIComponent(item.photoMini);
+            const full = 'http://85.193.91.150/Domnika/price/evr/image_proxy.php?url=' + encodeURIComponent(item.photoFull);
+
+            photoCellHtml = `
+              <div class="image-container"
+                   onmouseover="showHoverPreview(this, '${full}')"
+                   onmouseout="hideHoverPreview(this)"
+                   onclick="openImageModal('${full}')">
+                <img src="${mini}" alt="Фото" class="mini-img">
+                <div class="hover-preview" data-loaded="no"></div>
+              </div>
+            `;
+          }
+
+          // Какой склад(ы) выбран(ы) обрабатывается при фильтрации; здесь просто берём общий остаток
+          const stockVal = item.stock || 0;
+
+          // Собираем HTML
+          tr.innerHTML = `
+            <td>${i + 1}</td>
+            <td>${item.articul || ''}</td>
+            <td style="text-align:center;">${photoCellHtml}</td>
+            <td>${item.name || ''}</td>
+            <td>${item.uom || ''}</td>
+            <td>${item.tip || ''}</td>
+            <td>${item.supplier || ''}</td>
+            <td>${item.mass || ''}</td>
+            <td>${item.price || ''}</td>
+            <td>${stockVal}</td>
+            <td>${item.volumeWeight || ''}</td>
+          `;
+
+          // Клик по строке (открываем панель справа)
+          tr.addEventListener('click', (e) => {
+            // Не открывать панель, если клик попал на картинку
+            if (e.target.closest('.image-container')) {
+              return;
+            }
+            openProductModal(item);
+          });
+
+          tbody.appendChild(tr);
+        }
+        index = end;
+
+        if (index < data.length) {
+          requestAnimationFrame(processChunk);
+        } else {
+          if (btn) {
+            setTimeout(() => btn.classList.remove('hover-effect'), 300);
+          }
+        }
+      }
+      requestAnimationFrame(processChunk);
+    }
+
+    // ПРЕВЬЮ ПРИ НАВЕДЕНИИ
+    function showHoverPreview(container, bigUrl) {
+      const previewBlock = container.querySelector('.hover-preview');
+      if (previewBlock.dataset.loaded === 'yes') {
+        previewBlock.style.display = 'block';
+        return;
+      }
+      const img = document.createElement('img');
+      img.src = bigUrl;
+      img.style.maxWidth = '200px';
+      img.style.maxHeight = '200px';
+      img.onload = () => {
+        previewBlock.innerHTML = '';
+        previewBlock.appendChild(img);
+        previewBlock.dataset.loaded = 'yes';
+      };
+      previewBlock.innerHTML = 'Загрузка...';
+    }
+    function hideHoverPreview(container) {
+      container.querySelector('.hover-preview').style.display = 'none';
+    }
+
+    // ФУНКЦИЯ ЗАПОЛНЕНИЯ ФИЛЬТРОВ (тип, страна)
+    function fillFilters(data) {
+      // Тип (выпадающий)
+      const tipSelect = document.getElementById('filterTip');
+      const types = [...new Set(data.map(i => i.tip).filter(Boolean))];
+      // Сбрасываем и оставляем (Все)
+      const savedTip = tipSelect.value; // чтобы сохранить выбор, если хотите
+      tipSelect.innerHTML = '<option value="">(Все)</option>';
+      types.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t;
+        opt.textContent = t;
+        tipSelect.appendChild(opt);
+      });
+      tipSelect.value = savedTip; // попытка вернуть выбор
+
+      // Страна (множественный)
+      const countrySelect = document.getElementById('filterCountry');
+      const countries = [...new Set(data.map(i => i.supplier).filter(Boolean))];
+      // Полностью пересоздаём
+      countrySelect.innerHTML = '';
+      countries.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        countrySelect.appendChild(opt);
+      });
+    }
+
+    // ПРИМЕНЕНИЕ ФИЛЬТРОВ
+    function applyFilters() {
+      const allData = window.__productsData || [];
+      const valArticul = document.getElementById('filterArticul').value.trim().toLowerCase();
+      const valName = document.getElementById('filterName').value.trim().toLowerCase();
+      const valTip = document.getElementById('filterTip').value;
+
+      // Собираем выбранные страны (массив)
+      const selectedCountries = Array.from(document.getElementById('filterCountry').selectedOptions).map(o => o.value);
+      // Собираем выбранные склады (массив)
+      const selectedStores = Array.from(document.getElementById('filterStore').selectedOptions).map(o => o.value);
+
+      const massMin = parseFloat(document.getElementById('filterMassMin').value) || null;
+      const massMax = parseFloat(document.getElementById('filterMassMax').value) || null;
+      const priceMin = parseFloat(document.getElementById('filterPriceMin').value) || null;
+      const priceMax = parseFloat(document.getElementById('filterPriceMax').value) || null;
+
+      const filtered = allData.filter(item => {
+        if (valArticul && !item.articul.toLowerCase().includes(valArticul)) return false;
+        if (valName && !item.name.toLowerCase().includes(valName)) return false;
+        if (valTip && item.tip !== valTip) return false;
+
+        // Страна: если массив не пуст, товарная страна должна быть в выбранных
+        if (selectedCountries.length > 0 && !selectedCountries.includes(item.supplier)) {
+          return false;
+        }
+
+        // Масса
+        const massVal = parseFloat(item.mass) || 0;
+        if (massMin !== null && massVal < massMin) return false;
+        if (massMax !== null && massVal > massMax) return false;
+
+        // Цена
+        const priceVal = parseFloat(item.price) || 0;
+        if (priceMin !== null && priceVal < priceMin) return false;
+        if (priceMax !== null && priceVal > priceMax) return false;
+
+        // Склады: если выбрано несколько, проверяем, есть ли остаток хотя бы на одном
+        if (selectedStores.length > 0) {
+          // Проверим, что есть хоть какой-то склад из списка, где остаток > 0
+          const hasStockOnSelected = selectedStores.some(store => (item['stock_'+store] || 0) > 0);
+          if (!hasStockOnSelected) return false;
+        }
+
+        return true;
+      });
+
+      fillTable(filtered);
+    }
+
+    // СБРОС ФИЛЬТРОВ
+    function resetFilters() {
+      document.getElementById('filterArticul').value = '';
+      document.getElementById('filterName').value = '';
+      document.getElementById('filterTip').value = '';
+      document.getElementById('filterMassMin').value = '';
+      document.getElementById('filterMassMax').value = '';
+      document.getElementById('filterPriceMin').value = '';
+      document.getElementById('filterPriceMax').value = '';
+
+      // Сбрасываем множественный выбор (убираем выделение)
+      const countrySelect = document.getElementById('filterCountry');
+      for (const opt of countrySelect.options) {
+        opt.selected = false;
+      }
+      const storeSelect = document.getElementById('filterStore');
+      for (const opt of storeSelect.options) {
+        opt.selected = false;
+      }
+
+      applyFilters();
+    }
+
+    // МОДАЛЬ ДЛЯ КРУПНОГО ФОТО
+    function openImageModal(fullUrl) {
+      const modal = document.getElementById('imageModal');
+      const modalImg = document.getElementById('modalImg');
+      modalImg.src = fullUrl;
+      modal.style.display = 'block';
+    }
+    function closeImageModal() {
+      const modal = document.getElementById('imageModal');
+      modal.style.display = 'none';
+      document.getElementById('modalImg').src = '';
+    }
+
+    // ВЫДВИЖНАЯ ПАНЕЛЬ СПРАВА ДЛЯ ДЕТАЛЕЙ ТОВАРА
+    function openProductModal(item) {
+      document.getElementById('productModalName').textContent = item.name || '—';
+      document.getElementById('productModalArticul').textContent = item.articul || '—';
+      document.getElementById('productModalDescription').textContent = item.description || '—';
+      document.getElementById('productModalTip').textContent = item.tip || '—';
+      document.getElementById('productModalSupplier').textContent = item.supplier || '—';
+      document.getElementById('productModalMass').textContent = item.mass || '—';
+      document.getElementById('productModalPrice').textContent = item.price || '0';
+
+      document.getElementById('productModalStock').textContent = item.stock || '0';
+      document.getElementById('productModalStock1').textContent = item.stock_store1 || '0';
+      document.getElementById('productModalStock2').textContent = item.stock_store2 || '0';
+      document.getElementById('productModalStock3').textContent = item.stock_store3 || '0';
+      document.getElementById('productModalStock4').textContent = item.stock_store4 || '0';
+
+      document.getElementById('productModalVolume').textContent = item.volumeWeight || '—';
+
+      // Фото
+      if (item.photoFull) {
+        const full = 'http://85.193.91.150/Domnika/price/evr/image_proxy.php?url=' + encodeURIComponent(item.photoFull);
+        document.getElementById('productModalImg').src = full;
+      } else {
+        document.getElementById('productModalImg').src = '';
+      }
+
+      // Открываем панель
+      document.getElementById('productModal').classList.add('open');
+    }
+    function closeProductModal() {
+      document.getElementById('productModal').classList.remove('open');
+    }
+
+    // ОБРАБОТЧИКИ
+    document.addEventListener('DOMContentLoaded', () => {
+      loadData();
+
+      // Кнопка «Обновить»
+      document.getElementById('btnRefresh').addEventListener('click', () => {
+        loadData();
+      });
+      // Кнопка «Сбросить»
+      document.getElementById('btnReset').addEventListener('click', resetFilters);
+
+      // Экспорт в Excel
+      document.getElementById('export-button').addEventListener('click', () => {
+        const tableElem = document.querySelector('.table-wrapper table');
+        if (!tableElem || tableElem.rows.length === 0) {
+          alert("Нет данных для экспорта.");
+          return;
+        }
+        const wb = XLSX.utils.table_to_book(tableElem, {
+          sheet: "Сводная таблица",
+          raw: true
+        });
+        XLSX.writeFile(wb, "Сводная_таблица.xlsx");
+      });
+
+      // Фильтры (сразу на изменение)
+      document.getElementById('filterArticul').addEventListener('input', applyFilters);
+      document.getElementById('filterName').addEventListener('input', applyFilters);
+      document.getElementById('filterTip').addEventListener('change', applyFilters);
+      document.getElementById('filterCountry').addEventListener('change', applyFilters);
+      document.getElementById('filterStore').addEventListener('change', applyFilters);
+      document.getElementById('filterMassMin').addEventListener('input', applyFilters);
+      document.getElementById('filterMassMax').addEventListener('input', applyFilters);
+      document.getElementById('filterPriceMin').addEventListener('input', applyFilters);
+      document.getElementById('filterPriceMax').addEventListener('input', applyFilters);
+
+      // Закрыть крупное фото
+      document.getElementById('modalClose').addEventListener('click', closeImageModal);
+      document.getElementById('imageModal').addEventListener('click', (e) => {
+        if (e.target.id === 'imageModal') {
+          closeImageModal();
+        }
+      });
+
+      // Закрыть панель справа
+      document.getElementById('productModalClose').addEventListener('click', closeProductModal);
+    });
+  </script>
+</body>
+</html>
