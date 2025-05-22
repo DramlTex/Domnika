@@ -1,8 +1,69 @@
 /**
+ * Order of countries in the table. Add new countries at the end
+ * of the array to control their position.
+ * @type {string[]}
+ */
+const COUNTRY_ORDER = ['Россия', 'Китай', 'Германия'];
+
+/**
+ * Sort array of products according to `COUNTRY_ORDER` and article.
+ * @param {Array<Object>} data
+ * @returns {Array<Object>} sorted copy of data
+ */
+function sortByCountry(data) {
+  const map = COUNTRY_ORDER.reduce((acc, c, i) => {
+    acc[c] = i;
+    return acc;
+  }, {});
+  return data.slice().sort((a, b) => {
+    const ai = map.hasOwnProperty(a.supplier) ? map[a.supplier] : COUNTRY_ORDER.length;
+    const bi = map.hasOwnProperty(b.supplier) ? map[b.supplier] : COUNTRY_ORDER.length;
+    if (ai !== bi) return ai - bi;
+    return a.articul.localeCompare(b.articul);
+  });
+}
+
+/**
+ * Return array of country names ordered according to COUNTRY_ORDER.
+ * @param {string[]} list
+ * @returns {string[]}
+ */
+function orderCountriesList(list) {
+  const map = COUNTRY_ORDER.reduce((acc, c, i) => {
+    acc[c] = i;
+    return acc;
+  }, {});
+  return list.slice().sort((a, b) => {
+    const ai = map.hasOwnProperty(a) ? map[a] : COUNTRY_ORDER.length;
+    const bi = map.hasOwnProperty(b) ? map[b] : COUNTRY_ORDER.length;
+    return ai - bi;
+  });
+}
+
+/*
+ * Пример пользовательской сортировки стран. Раскомментируйте функцию
+ * и замените вызов `sortByCountry` внутри `fillTable`, передав свой
+ * список стран в нужном порядке.
+ */
+// function sortByCustomCountryOrder(data, order) {
+//   const map = order.reduce((acc, c, i) => {
+//     acc[c] = i;
+//     return acc;
+//   }, {});
+//   return data.slice().sort((a, b) => {
+//     const ai = map.hasOwnProperty(a.supplier) ? map[a.supplier] : order.length;
+//     const bi = map.hasOwnProperty(b.supplier) ? map[b.supplier] : order.length;
+//     if (ai !== bi) return ai - bi;
+//     return a.articul.localeCompare(b.articul);
+//   });
+// }
+
+/**
  * Render product table in chunks for performance.
  * @param {Array<Object>} data
  */
 function fillTable(data) {
+  const sorted = sortByCountry(data);
   const tbody = document.querySelector('#priceList tbody');
   tbody.innerHTML = '';
   const btn = document.getElementById('btnRefresh');
@@ -10,11 +71,13 @@ function fillTable(data) {
 
   let index = 0;
   const chunkSize = 50;
+  let rowNumber = 1;
+  let currentCountry = null;
 
   function processChunk() {
-    const end = Math.min(index + chunkSize, data.length);
+    const end = Math.min(index + chunkSize, sorted.length);
     for (let i = index; i < end; i++) {
-      const item = data[i];
+      const item = sorted[i];
       const storeVal = document.getElementById('filterStore').value;
       let stockVal = item.stock;
       if (storeVal) stockVal = item['stock_' + storeVal] || 0;
@@ -23,6 +86,14 @@ function fillTable(data) {
         const number = parseFloat(num);
         return isNaN(number) ? num : number.toFixed(2).replace(/\.?0+$/, '');
       };
+
+      if (currentCountry !== item.supplier) {
+        const header = document.createElement('tr');
+        header.className = 'country-row';
+        header.innerHTML = `<td colspan="11">${item.supplier}</td>`;
+        tbody.appendChild(header);
+        currentCountry = item.supplier;
+      }
 
       const tr = document.createElement('tr');
       let photoCell = 'Нет фото';
@@ -36,7 +107,7 @@ function fillTable(data) {
       }
 
       tr.innerHTML = `
-        <td>${i + 1}</td>
+        <td>${rowNumber}</td>
         <td>${item.articul}</td>
         <td class="photo-cell">${photoCell}</td>
         <td>${item.name}</td>
@@ -52,9 +123,10 @@ function fillTable(data) {
         openProductModal(item);
       });
       tbody.appendChild(tr);
+      rowNumber++;
     }
     index = end;
-    if (index < data.length) {
+    if (index < sorted.length) {
       requestAnimationFrame(processChunk);
     } else if (btn) {
       setTimeout(() => btn.classList.remove('hover-effect'), 300);
@@ -81,8 +153,9 @@ function fillFilters(data) {
 
   const countrySelect = document.getElementById('filterCountry');
   const countries = [...new Set(data.map(i => i.supplier).filter(Boolean))];
+  const ordered = orderCountriesList(countries);
   countrySelect.innerHTML = '<option value="">(Все)</option>';
-  countries.forEach(c => {
+  ordered.forEach(c => {
     const opt = document.createElement('option');
     opt.value = c;
     opt.textContent = c;
