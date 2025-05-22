@@ -28,9 +28,13 @@ const TYPE_ORDER = [];
  * @param {Array<Object>} data
  * @returns {Array<Object>} sorted copy of data
  */
+function normalizeCountry(value) {
+  return (value || '').trim().toUpperCase();
+}
+
 function sortByCountry(data) {
   const countryMap = COUNTRY_ORDER.reduce((acc, c, i) => {
-    acc[c] = i;
+    acc[normalizeCountry(c)] = i;
     return acc;
   }, {});
   const typeMap = TYPE_ORDER.reduce((acc, t, i) => {
@@ -38,8 +42,10 @@ function sortByCountry(data) {
     return acc;
   }, {});
   return data.slice().sort((a, b) => {
-    const ai = countryMap.hasOwnProperty(a.supplier) ? countryMap[a.supplier] : COUNTRY_ORDER.length;
-    const bi = countryMap.hasOwnProperty(b.supplier) ? countryMap[b.supplier] : COUNTRY_ORDER.length;
+    const aCountry = normalizeCountry(a.supplier);
+    const bCountry = normalizeCountry(b.supplier);
+    const ai = countryMap.hasOwnProperty(aCountry) ? countryMap[aCountry] : COUNTRY_ORDER.length;
+    const bi = countryMap.hasOwnProperty(bCountry) ? countryMap[bCountry] : COUNTRY_ORDER.length;
     if (ai !== bi) return ai - bi;
 
     const aType = a.tip || '';
@@ -61,12 +67,12 @@ function sortByCountry(data) {
  */
 function orderCountriesList(list) {
   const map = COUNTRY_ORDER.reduce((acc, c, i) => {
-    acc[c] = i;
+    acc[normalizeCountry(c)] = i;
     return acc;
   }, {});
   return list.slice().sort((a, b) => {
-    const ai = map.hasOwnProperty(a) ? map[a] : COUNTRY_ORDER.length;
-    const bi = map.hasOwnProperty(b) ? map[b] : COUNTRY_ORDER.length;
+    const ai = map.hasOwnProperty(normalizeCountry(a)) ? map[normalizeCountry(a)] : COUNTRY_ORDER.length;
+    const bi = map.hasOwnProperty(normalizeCountry(b)) ? map[normalizeCountry(b)] : COUNTRY_ORDER.length;
     return ai - bi;
   });
 }
