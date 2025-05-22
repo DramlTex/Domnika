@@ -20,7 +20,6 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <link rel="stylesheet" type="text/css" href="styles_main.css">
-  <!-- Подробное описание классов см. в docs/css_index.md -->
 </head>
 
 <body>
