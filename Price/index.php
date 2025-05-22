@@ -20,6 +20,7 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <link rel="stylesheet" type="text/css" href="styles_main.css">
+  <!-- Подробное описание классов см. в docs/css_index.md -->
 </head>
 
 <body>
@@ -75,7 +76,8 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
 </div>
 
 <!-- ИНФОРМАЦИЯ О ПОЛЬЗОВАТЕЛЕ -->
-<p style="margin: 10px 20px;">
+<p style="margin: 10px 20px;"><!-- TODO: вынести margin в CSS -->
+
   Вы вошли как: <strong><?php echo htmlspecialchars($username); ?></strong>
   <a href="logout.php" class="logout-link">Выйти</a>
 </p>
@@ -391,7 +393,7 @@ function fillTable(data) {
       tr.innerHTML = `
         <td>${i + 1}</td>
         <td>${item.articul}</td>
-        <td style="text-align:center;">${photoCell}</td>
+        <td style="text-align:center;"  /* TODO: move to CSS */>${photoCell}</td>
         <td>${item.name}</td>
         <td>${item.uom}</td>
         <td>${item.tip}</td>
