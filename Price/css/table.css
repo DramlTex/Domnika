@@ -88,6 +88,16 @@ th {
   }
   
 .photo-cell { text-align: center; }
+.name-cell, th.name-col {
+  width: 30%;
+  font-size: 16px;
+  font-weight: bold;
+}
+.num-cell, th.num-col {
+  width: 50px;
+  text-align: center;
+  font-size: 16px;
+}
 
 /* TYPE & COUNTRY COLUMNS */
 .type-cell {
