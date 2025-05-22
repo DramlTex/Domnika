@@ -161,7 +161,8 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
 
 <!-- ОСНОВНАЯ ТАБЛИЦА -->
 <div class="table-wrapper">
-  <table id="priceList">
+  <div class="table-scroll">
+    <table id="priceList">
     <thead>
       <tr>
       <th class="num-col">№</th>
@@ -180,7 +181,8 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
     </thead>
     <tbody>
     </tbody>
-  </table>
+    </table>
+  </div>
 </div>
 
 <!-- ВКЛАДКИ (ТАБЫ) -->

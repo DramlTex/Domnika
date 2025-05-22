@@ -4,13 +4,17 @@
 
 ## HTML
 
-Таблица располагается в файле `Price/index.php` внутри блока `.table-wrapper`:
+Таблица располагается в файле `Price/index.php` внутри блоков `.table-wrapper` и `.table-scroll`:
 
 ```html
-<table id="priceList">
-  <thead>...</thead>
-  <tbody></tbody>
-</table>
+<div class="table-wrapper">
+  <div class="table-scroll">
+    <table id="priceList">
+      <thead>...</thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
 ```
 
 Количество колонок фиксировано и используется в скрипте. Для добавления новых колонок необходимо скорректировать функции из `table.js` и стили в `table.css`.
