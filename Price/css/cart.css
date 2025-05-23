@@ -40,9 +40,24 @@
 }
 .cart-item {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   padding: 5px 0;
   border-bottom: 1px solid #ccc;
+}
+
+.cart-item .cart-name {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.cart-store {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.cart-store:last-child {
+  margin-bottom: 0;
 }
 
 .cart-controls button {
@@ -57,8 +72,9 @@
   text-align: center;
 }
 
-.cart-controls .cart-remove {
+.cart-remove {
   margin-left: 8px;
+  cursor: pointer;
 }
 
 /* Hide number input spinners */

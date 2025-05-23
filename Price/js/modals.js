@@ -50,14 +50,20 @@ function openProductModal(item) {
   } else {
     modalImg.src = '';
   }
-  document.getElementById('productModalPlus').onclick = () => cartChange(item, 1);
-  document.getElementById('productModalMinus').onclick = () => cartChange(item, -1);
-
-  const qtyInput = document.getElementById('productModalQty');
-  qtyInput.oninput = () => {
-    cartSetQty(item, parseInt(qtyInput.value, 10) || 0);
-  };
-  qtyInput.max = parseFloat(item.stock) || '';
+  for (let i = 1; i <= 4; i++) {
+    const plus = document.getElementById('productModalPlus' + i);
+    const minus = document.getElementById('productModalMinus' + i);
+    const input = document.getElementById('productModalQty' + i);
+    const store = 'store' + i;
+    if (plus) plus.onclick = () => cartChange(item, 1, store);
+    if (minus) minus.onclick = () => cartChange(item, -1, store);
+    if (input) {
+      input.oninput = () => {
+        cartSetQty(item, parseInt(input.value, 10) || 0, store);
+      };
+      input.max = parseFloat(item['stock_' + store]) || '';
+    }
+  }
 
   updateProductModalQty(item.articul);
   document.getElementById('productModal').classList.add('open');

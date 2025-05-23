@@ -230,17 +230,41 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
         <p><strong>Вес тарного места:</strong> <span id="productModalMass"></span></p>
         <p><strong>Цена:</strong> <span id="productModalPrice"></span></p>
         <p><strong>Общий остаток:</strong> <span id="productModalStock"></span></p>
-        <p><strong>Алтуфьево:</strong> <span id="productModalStock1"></span></p>
-        <p><strong>Ивантеевка:</strong> <span id="productModalStock2"></span></p>
-        <p><strong>Купавна:</strong> <span id="productModalStock3"></span></p>
-        <p><strong>Можайск:</strong> <span id="productModalStock4"></span></p>
+
+        <div class="store-row">
+          <p><strong>Алтуфьево:</strong> <span id="productModalStock1"></span></p>
+          <div class="cart-controls">
+            <button id="productModalMinus1">-</button>
+            <input type="number" id="productModalQty1" value="0" min="0">
+            <button id="productModalPlus1">+</button>
+          </div>
+        </div>
+        <div class="store-row">
+          <p><strong>Ивантеевка:</strong> <span id="productModalStock2"></span></p>
+          <div class="cart-controls">
+            <button id="productModalMinus2">-</button>
+            <input type="number" id="productModalQty2" value="0" min="0">
+            <button id="productModalPlus2">+</button>
+          </div>
+        </div>
+        <div class="store-row">
+          <p><strong>Купавна:</strong> <span id="productModalStock3"></span></p>
+          <div class="cart-controls">
+            <button id="productModalMinus3">-</button>
+            <input type="number" id="productModalQty3" value="0" min="0">
+            <button id="productModalPlus3">+</button>
+          </div>
+        </div>
+        <div class="store-row">
+          <p><strong>Можайск:</strong> <span id="productModalStock4"></span></p>
+          <div class="cart-controls">
+            <button id="productModalMinus4">-</button>
+            <input type="number" id="productModalQty4" value="0" min="0">
+            <button id="productModalPlus4">+</button>
+          </div>
+        </div>
 
         <p><strong>Объём тарного места:</strong> <span id="productModalVolume"></span></p>
-        <div class="cart-controls">
-          <button id="productModalMinus">-</button>
-          <input type="number" id="productModalQty" value="0" min="0">
-          <button id="productModalPlus">+</button>
-        </div>
       </div>
     </div>
   </div>
