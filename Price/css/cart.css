@@ -5,6 +5,7 @@
   position: relative;
   width: 110px;
   text-align: center;
+  display: inline-block; /* override inline-flex from .filter-group */
 }
 #cartBadge {
   display: block;
