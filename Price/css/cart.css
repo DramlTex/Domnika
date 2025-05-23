@@ -48,9 +48,13 @@
 }
 
 .cart-controls input[type="number"] {
-  width: 40px;
+  width: 26px;
   margin: 0 8px;
   text-align: center;
+}
+
+.cart-controls .cart-remove {
+  margin-left: 8px;
 }
 
 /* Hide number input spinners */
