@@ -153,7 +153,7 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
     <div class="filter-group btns">
       <button class="btn primary" id="btnRefresh">Обновить</button>
       <button class="btn" id="export-button">Экспорт в Excel</button>
-      <button class="btn" id="openCartButton">Корзина <span id="cartBadge"></span></button>
+      <button class="btn" id="openCartButton">Корзина<br><span id="cartBadge"></span></button>
     </div>
 
 
