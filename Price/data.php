@@ -275,7 +275,7 @@ function createCombinedEntry($source, $checkAttrs) {
  *    - Если "variant" (модификация), добавляем остаток к родительскому товару (если он подходит).
  *    - Если обычный товар, создаём или обновляем запись в итоговом массиве $combined.
  */
-function processItemsFromStore($items, $storeKey, &$combined, $login, $password) {
+function processItemsFromStore($items, $storeKey, &$combined, $login, $password, $base_url) {
     foreach ($items as $item) {
         $type   = $item['meta']['type'] ?? '';
         $itemId = $item['id'] ?? '';
@@ -292,13 +292,10 @@ function processItemsFromStore($items, $storeKey, &$combined, $login, $password)
 
             // Если родитель ещё не загружен и не в $combined, догружаем и проверяем
             if (!isset($combined[$groupKey])) {
-                $productHref = $item['product']['meta']['href'] ?? '';
-                if (!$productHref) {
-                    continue;
-                }
-                $parentData = moysklad_request($productHref . '?expand=country,attributes,images', $login, $password);
+                $url = $base_url.'entity/product/'.$prodId.'?expand=country,attributes,images';
+                $parentData = moysklad_request($url, $login, $password);
                 if (!empty($parentData['error'])) {
-                    continue; 
+                    continue;
                 }
                 // Проверяем "Группа для счетов = Прайс"
                 $check = checkProductAttributes($parentData);
@@ -343,7 +340,7 @@ foreach ($storeIds as $key => $uuid) {
         'expand' => 'country,images,product'
     ];
     $items = fetchAllAssortment($login, $password, $base_url, $params);
-    processItemsFromStore($items, $key, $combinedItems, $login, $password);
+    processItemsFromStore($items, $key, $combinedItems, $login, $password, $base_url);
 }
 
 /**
