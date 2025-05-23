@@ -2,10 +2,22 @@
  * Simple client-side cart implementation.
  */
 let __cart = {};
+const STORES = ['store1', 'store2', 'store3', 'store4'];
+const STORE_LABELS = {
+  store1: 'Алтуфьево',
+  store2: 'Ивантеевка',
+  store3: 'Купавна',
+  store4: 'Можайск'
+};
 
 function cartLoad() {
   try {
     __cart = JSON.parse(localStorage.getItem('cart') || '{}');
+    for (const [id, entry] of Object.entries(__cart)) {
+      if (typeof entry.qty === 'number') {
+        entry.qty = { store1: entry.qty };
+      }
+    }
   } catch (e) {
     __cart = {};
   }
@@ -15,21 +27,38 @@ function cartSave() {
   localStorage.setItem('cart', JSON.stringify(__cart));
 }
 
-function cartGetQty(id) {
-  return __cart[id]?.qty || 0;
+function cartGetQty(id, store) {
+  const entry = __cart[id];
+  if (!entry) return 0;
+  if (store) {
+    return entry.qty?.[store] || 0;
+  }
+  return Object.values(entry.qty || {}).reduce((s, q) => s + q, 0);
 }
 
 
-function cartSetQty(item, qty) {
+function cartSetQty(item, qty, store) {
   const id = item.articul;
   if (!id) return;
-  const max = parseFloat(item.stock) || 0;
-  qty = Math.min(Math.max(0, qty), max);
-  if (qty <= 0) {
-    delete __cart[id];
-  } else {
-    __cart[id] = { item: item, qty: qty };
 
+  if (store) {
+    const max = parseFloat(item['stock_' + store]) || 0;
+    qty = Math.min(Math.max(0, qty), max);
+    if (!__cart[id]) {
+      __cart[id] = { item: item, qty: {} };
+    }
+    __cart[id].qty[store] = qty;
+    if (Object.values(__cart[id].qty).every(v => !v)) {
+      delete __cart[id];
+    }
+  } else {
+    const max = parseFloat(item.stock) || 0;
+    qty = Math.min(Math.max(0, qty), max);
+    if (qty <= 0) {
+      delete __cart[id];
+    } else {
+      __cart[id] = { item: item, qty: { store1: qty } };
+    }
   }
   cartSave();
   updateCartBadge();
@@ -38,24 +67,26 @@ function cartSetQty(item, qty) {
   if (isCartOpen()) renderCartItems();
 }
 
-function cartChange(item, delta) {
-  cartSetQty(item, cartGetQty(item.articul) + delta);
+function cartChange(item, delta, store) {
+  cartSetQty(item, cartGetQty(item.articul, store) + delta, store);
 
 }
 
 function updateCartBadge() {
   const badge = document.getElementById('cartBadge');
   if (!badge) return;
-  const total = Object.values(__cart).reduce((s, c) => s + c.qty, 0);
+  const total = Object.values(__cart).reduce((sum, c) => {
+    return sum + Object.values(c.qty || {}).reduce((s, q) => s + q, 0);
+  }, 0);
   badge.textContent = total > 0 ? total : '';
 }
 
 function updateProductModalQty(id) {
-
-  const input = document.getElementById('productModalQty');
-  if (input && id) {
-    input.value = cartGetQty(id);
-  }
+  if (!id) return;
+  STORES.forEach((s, i) => {
+    const input = document.getElementById('productModalQty' + (i + 1));
+    if (input) input.value = cartGetQty(id, s);
+  });
 }
 
 
@@ -70,28 +101,37 @@ function renderCartItems() {
   Object.values(__cart).forEach(c => {
     const div = document.createElement('div');
     div.className = 'cart-item';
-    div.innerHTML = `
-      <span class="cart-name">${c.item.name}</span>
-      <div class="cart-controls">
-        <button class="cart-minus" data-id="${c.item.articul}">-</button>
-        <input type="number" class="cart-qty" data-id="${c.item.articul}" value="${c.qty}" min="0">
-        <button class="cart-plus" data-id="${c.item.articul}">+</button>
-        <button class="cart-remove" data-id="${c.item.articul}">🗑️</button>
-      </div>`;
+    let html = `<span class="cart-name">${c.item.name}</span>`;
+    STORES.forEach((s, i) => {
+      const q = c.qty[s] || 0;
+      html += `
+        <div class="cart-store">
+          <span class="store-name">${STORE_LABELS[s]}:</span>
+          <div class="cart-controls">
+            <button class="cart-minus" data-id="${c.item.articul}" data-store="${s}">-</button>
+            <input type="number" class="cart-qty" data-id="${c.item.articul}" data-store="${s}" value="${q}" min="0">
+            <button class="cart-plus" data-id="${c.item.articul}" data-store="${s}">+</button>
+          </div>
+        </div>`;
+    });
+    html += `<button class="cart-remove" data-id="${c.item.articul}">🗑️</button>`;
+    div.innerHTML = html;
     list.appendChild(div);
   });
   list.querySelectorAll('.cart-minus').forEach(btn => {
     btn.addEventListener('click', () => {
       const id = btn.dataset.id;
+      const store = btn.dataset.store;
       const c = __cart[id];
-      if (c) cartSetQty(c.item, c.qty - 1);
+      if (c) cartSetQty(c.item, cartGetQty(id, store) - 1, store);
     });
   });
   list.querySelectorAll('.cart-plus').forEach(btn => {
     btn.addEventListener('click', () => {
       const id = btn.dataset.id;
+      const store = btn.dataset.store;
       const c = __cart[id];
-      if (c) cartSetQty(c.item, c.qty + 1);
+      if (c) cartSetQty(c.item, cartGetQty(id, store) + 1, store);
     });
   });
   list.querySelectorAll('.cart-remove').forEach(btn => {
@@ -104,8 +144,9 @@ function renderCartItems() {
   list.querySelectorAll('.cart-qty').forEach(input => {
     input.addEventListener('input', () => {
       const id = input.dataset.id;
+      const store = input.dataset.store;
       const c = __cart[id];
-      if (c) cartSetQty(c.item, parseInt(input.value, 10) || 0);
+      if (c) cartSetQty(c.item, parseInt(input.value, 10) || 0, store);
     });
 
   });
