@@ -1,0 +1,65 @@
+/* =========================================================
+   11) CART (корзина)
+   ========================================================= */
+#openCartButton {
+  position: relative;
+}
+#cartBadge {
+  display: inline-block;
+  min-width: 18px;
+  padding: 2px 4px;
+  margin-left: 4px;
+  background: #d9534f;
+  color: #fff;
+  border-radius: 10px;
+  font-size: 12px;
+}
+#cartModal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.7);
+}
+#cartModal .modal-content {
+  background: #fff;
+  margin: 5% auto;
+  padding: 20px;
+  border-radius: 6px;
+  max-width: 500px;
+}
+#cartItems {
+  margin-top: 10px;
+}
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid #ccc;
+}
+.cart-controls button {
+  width: 26px;
+  height: 26px;
+}
+.cart-controls input[type="number"] {
+  width: 40px;
+  margin: 0 8px;
+  text-align: center;
+}
+
+/* Hide number input spinners */
+#productModalQty::-webkit-outer-spin-button,
+#productModalQty::-webkit-inner-spin-button,
+.cart-qty::-webkit-outer-spin-button,
+.cart-qty::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+#productModalQty,
+.cart-qty {
+  -moz-appearance: textfield;
+}
