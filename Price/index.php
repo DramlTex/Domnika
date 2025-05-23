@@ -29,6 +29,7 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
   <link rel="stylesheet" type="text/css" href="css/thumbnails.css">
   <link rel="stylesheet" type="text/css" href="css/tabs.css">
   <link rel="stylesheet" type="text/css" href="css/effects.css">
+  <link rel="stylesheet" type="text/css" href="css/cart.css">
 </head>
 
 <body>
@@ -149,6 +150,7 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
     <div class="filter-group btns">
       <button class="btn primary" id="btnRefresh">Обновить</button>
       <button class="btn" id="export-button">Экспорт в Excel</button>
+      <button class="btn" id="openCartButton">Корзина <span id="cartBadge"></span></button>
     </div>
 
   </div>
@@ -182,6 +184,15 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
     <tbody>
     </tbody>
   </table>
+  </div>
+</div>
+
+<!-- КОРЗИНА -->
+<div id="cartModal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal" id="cartModalClose">&times;</span>
+    <h2>Корзина</h2>
+    <div id="cartItems"></div>
   </div>
 </div>
 
@@ -219,6 +230,11 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
         <p><strong>Купавна:</strong> <span id="productModalStock3"></span></p>
         <p><strong>Можайск:</strong> <span id="productModalStock4"></span></p>
         <p><strong>Объём тарного места:</strong> <span id="productModalVolume"></span></p>
+        <div class="cart-controls">
+          <button id="productModalMinus">-</button>
+          <span id="productModalQty">0</span>
+          <button id="productModalPlus">+</button>
+        </div>
       </div>
     </div>
   </div>
@@ -232,6 +248,7 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
 <script src="js/filters.js"></script>
 <script src="js/modals.js"></script>
 <script src="js/export-excel.js"></script>
+<script src="js/cart.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

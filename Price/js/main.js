@@ -23,4 +23,5 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.id === 'imageModal') closeModal();
   });
   document.getElementById('productModalClose').addEventListener('click', closeProductModal);
+  setupCart();
 });
