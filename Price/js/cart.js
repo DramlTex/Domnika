@@ -101,6 +101,17 @@ function updateProductModalQty(id) {
   });
 }
 
+function adjustCartLayout() {
+  const modal = document.getElementById('cartModal');
+  if (!modal || modal.style.display !== 'block') return;
+  const footer = modal.querySelector('.cart-footer');
+  const items = document.getElementById('cartItems');
+  if (!footer || !items) return;
+  const top = items.getBoundingClientRect().top;
+  const max = window.innerHeight - footer.offsetHeight - top - 10;
+  items.style.maxHeight = max + 'px';
+}
+
 
 function isCartOpen() {
   const modal = document.getElementById('cartModal');
@@ -171,6 +182,7 @@ function openCartModal() {
   loadCartDetails();
   updateCartTotal();
   document.getElementById('cartModal').style.display = 'block';
+  adjustCartLayout();
 
 }
 
@@ -216,4 +228,5 @@ function setupCart() {
   document.getElementById('cartModal').addEventListener('click', e => {
     if (e.target.id === 'cartModal') closeCartModal();
   });
+  window.addEventListener('resize', adjustCartLayout);
 }
