@@ -197,6 +197,13 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
   <div class="modal-content">
     <h2>Корзина</h2>
     <div id="cartItems"></div>
+    <div class="cart-footer">
+      <textarea id="cartComment" placeholder="Комментарий"></textarea>
+      <input type="text" id="cartInn" placeholder="ИНН">
+      <input type="date" id="cartDate">
+      <span class="cart-total">Итого: <span id="cartTotal">0</span></span>
+      <button id="cartSubmit" class="btn primary">Оформить заказ</button>
+    </div>
   </div>
 </div>
 

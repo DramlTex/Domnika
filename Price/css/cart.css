@@ -90,3 +90,36 @@
   -moz-appearance: textfield;
 
 }
+
+/* cart footer */
+#cartModal .cart-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+#cartModal .cart-footer textarea {
+  flex: 1 1 100%;
+  resize: vertical;
+}
+
+#cartModal .cart-footer input[type="text"],
+#cartModal .cart-footer input[type="date"] {
+  flex: 1 1 150px;
+}
+
+#cartModal .cart-footer .cart-total {
+  margin-left: auto;
+  font-weight: bold;
+  padding: 5px 0;
+}
+
+@media (min-width: 600px) {
+  #cartModal .cart-footer {
+    align-items: center;
+  }
+  #cartModal .cart-footer textarea {
+    flex: 1 1 auto;
+  }
+}
