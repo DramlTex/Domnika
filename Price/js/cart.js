@@ -76,7 +76,7 @@ function renderCartItems() {
         <button class="cart-minus" data-id="${c.item.articul}">-</button>
         <input type="number" class="cart-qty" data-id="${c.item.articul}" value="${c.qty}" min="0">
         <button class="cart-plus" data-id="${c.item.articul}">+</button>
-        <button class="cart-remove" data-id="${c.item.articul}">Удалить</button>
+        <button class="cart-remove" data-id="${c.item.articul}">🗑️</button>
       </div>`;
     list.appendChild(div);
   });
