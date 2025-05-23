@@ -43,8 +43,12 @@
     display: flex;
     flex-direction: row;
     gap: 10px;
-    align-items: end;
+    align-items: flex-end;
     justify-content: flex-start;
+  }
+  .filter-group.btns .btn {
+    display: inline-flex;
+    align-items: center;
   }
   #filterPriceMax,
   #filterPriceMin,

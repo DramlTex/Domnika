@@ -19,6 +19,7 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
   <link rel="stylesheet" type="text/css" href="css/reset.css">
   <link rel="stylesheet" type="text/css" href="css/banner.css">
   <link rel="stylesheet" type="text/css" href="css/filters.css">
@@ -31,6 +32,7 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
   <link rel="stylesheet" type="text/css" href="css/effects.css">
   <link rel="stylesheet" type="text/css" href="css/cart.css">
 </head>
+
 
 <body>
 
@@ -147,11 +149,13 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
       </select>
     </div>
 
+
     <div class="filter-group btns">
       <button class="btn primary" id="btnRefresh">Обновить</button>
       <button class="btn" id="export-button">Экспорт в Excel</button>
       <button class="btn" id="openCartButton">Корзина <span id="cartBadge"></span></button>
     </div>
+
 
   </div>
 </div>
@@ -183,6 +187,7 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
     </thead>
     <tbody>
     </tbody>
+
   </table>
   </div>
 </div>
@@ -195,6 +200,7 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
     <div id="cartItems"></div>
   </div>
 </div>
+
 
 <!-- ВКЛАДКИ (ТАБЫ) -->
 <div id="tabs" class="tabs-container">
@@ -229,6 +235,7 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
         <p><strong>Ивантеевка:</strong> <span id="productModalStock2"></span></p>
         <p><strong>Купавна:</strong> <span id="productModalStock3"></span></p>
         <p><strong>Можайск:</strong> <span id="productModalStock4"></span></p>
+
         <p><strong>Объём тарного места:</strong> <span id="productModalVolume"></span></p>
         <div class="cart-controls">
           <button id="productModalMinus">-</button>
@@ -250,5 +257,6 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
 <script src="js/export-excel.js"></script>
 <script src="js/cart.js"></script>
 <script src="js/main.js"></script>
+
 </body>
 </html>

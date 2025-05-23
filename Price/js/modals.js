@@ -52,11 +52,13 @@ function openProductModal(item) {
   }
   document.getElementById('productModalPlus').onclick = () => cartChange(item, 1);
   document.getElementById('productModalMinus').onclick = () => cartChange(item, -1);
+
   const qtyInput = document.getElementById('productModalQty');
   qtyInput.oninput = () => {
     cartSetQty(item, parseInt(qtyInput.value, 10) || 0);
   };
   qtyInput.max = parseFloat(item.stock) || '';
+
   updateProductModalQty(item.articul);
   document.getElementById('productModal').classList.add('open');
 }
