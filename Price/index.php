@@ -232,7 +232,9 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
         <p><strong>Объём тарного места:</strong> <span id="productModalVolume"></span></p>
         <div class="cart-controls">
           <button id="productModalMinus">-</button>
-          <span id="productModalQty">0</span>
+
+          <input type="number" id="productModalQty" value="0" min="0">
+
           <button id="productModalPlus">+</button>
         </div>
       </div>

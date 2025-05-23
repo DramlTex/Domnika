@@ -19,19 +19,31 @@ function cartGetQty(id) {
   return __cart[id]?.qty || 0;
 }
 
-function cartChange(item, delta) {
+
+function cartSetQty(item, qty) {
   const id = item.articul;
   if (!id) return;
-  if (!__cart[id]) {
-    __cart[id] = { item: item, qty: 0 };
-  }
-  __cart[id].qty += delta;
-  if (__cart[id].qty <= 0) {
+  if (qty <= 0) {
     delete __cart[id];
+  } else {
+    if (!__cart[id]) {
+      __cart[id] = { item: item, qty: 0 };
+    }
+    __cart[id].item = item;
+    __cart[id].qty = qty;
+
   }
   cartSave();
   updateCartBadge();
   updateProductModalQty(id);
+
+  renderCartItems();
+}
+
+function cartChange(item, delta) {
+  const qty = cartGetQty(item.articul) + delta;
+  cartSetQty(item, qty);
+
 }
 
 function updateCartBadge() {
@@ -42,22 +54,55 @@ function updateCartBadge() {
 }
 
 function updateProductModalQty(id) {
-  const span = document.getElementById('productModalQty');
-  if (span && id) {
-    span.textContent = cartGetQty(id);
+
+  const input = document.getElementById('productModalQty');
+  if (input && id) {
+    input.value = cartGetQty(id);
   }
+}
+
+function renderCartItems() {
+  const list = document.getElementById('cartItems');
+  if (!list) return;
+  list.innerHTML = '';
+  Object.values(__cart).forEach(c => {
+    const row = document.createElement('div');
+    row.className = 'cart-item';
+
+    const nameSpan = document.createElement('span');
+    nameSpan.textContent = c.item.name;
+
+    const controls = document.createElement('div');
+    controls.className = 'cart-controls';
+
+    const minus = document.createElement('button');
+    minus.textContent = '-';
+    minus.onclick = () => cartChange(c.item, -1);
+
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.min = 0;
+    input.value = c.qty;
+    input.onchange = () => cartSetQty(c.item, parseInt(input.value) || 0);
+
+    const plus = document.createElement('button');
+    plus.textContent = '+';
+    plus.onclick = () => cartChange(c.item, 1);
+
+    controls.appendChild(minus);
+    controls.appendChild(input);
+    controls.appendChild(plus);
+
+    row.appendChild(nameSpan);
+    row.appendChild(controls);
+    list.appendChild(row);
+  });
 }
 
 function openCartModal() {
   const modal = document.getElementById('cartModal');
-  const list = document.getElementById('cartItems');
-  list.innerHTML = '';
-  Object.values(__cart).forEach(c => {
-    const div = document.createElement('div');
-    div.className = 'cart-item';
-    div.textContent = `${c.item.name} (${c.qty})`;
-    list.appendChild(div);
-  });
+  renderCartItems();
+
   modal.style.display = 'block';
 }
 

@@ -41,11 +41,20 @@
   padding: 5px 0;
   border-bottom: 1px solid #ccc;
 }
+
+.cart-controls {
+  display: inline-flex;
+  align-items: center;
+}
+
 .cart-controls button {
   width: 26px;
   height: 26px;
 }
-.cart-controls span {
+
+.cart-controls input {
+  width: 40px;
+  text-align: center;
   margin: 0 8px;
-  font-weight: bold;
+
 }
