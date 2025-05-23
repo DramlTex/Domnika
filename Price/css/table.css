@@ -1,15 +1,20 @@
   /* =========================================================
      5) TABLE + LOADER
      ========================================================= */
-.table-wrapper {
-  margin: 20px 0px;
-  border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
+  .table-wrapper {
+    margin: 20px 0px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
 
 .table-scroll {
-  overflow: auto;          /* горизонтальный и вертикальный скролл */
   position: relative;
+}
+#priceList thead th{
+    position:sticky;  /* волшебство */
+    top:0;            /* прилипает к верхней границе .table-wrapper        */
+    background:#fff;  /* подложка, чтобы строки под шапкой не просвечивали */
+    z-index:3;        /* чуть выше остальных ячеек                         */
 }
   .table-wrapper.hidden, 
   #tabs.hidden {
@@ -42,27 +47,23 @@
   }
   
   /* TABLE */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-  border-radius: 6px;
-  background-color: #fff;
-}
-thead {
-  position: static;
-}
-thead th {
-  position: sticky;
-  top: 0;
-  z-index: 2;              /* чтобы шапка перекрывала строки */
-  background-color: #fff;
-  color: #000;
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
-  padding: 10px;
-  margin: 5px;
-  border-bottom: 2px solid #bbb;
-}
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 6px;
+    background-color: #fff;
+  }
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: #fff;
+    color: #000000;
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    margin: 5px;
+  }
   tbody tr {
     border-bottom: 1px solid #eee;
     transition: background-color 0.2s ease;
@@ -128,16 +129,18 @@ th.country-col {
 
 /* COUNTRY HEADER ROW */
 .country-row td {
-  background-color: #f2f2f2;
+     background-color: #e1e1e1;
   font-weight: bold;
   text-align: center;
   font-size: 18px;
+padding: 4px;
 }
 
 /* TYPE HEADER ROW */
 .type-row td {
-  background-color: #fafafa;
+background-color: #ededed;
   font-style: italic;
   text-align: center;
   font-size: 16px;
+padding: 4px;
 }
