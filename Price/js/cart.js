@@ -19,6 +19,7 @@ function cartGetQty(id) {
   return __cart[id]?.qty || 0;
 }
 
+
 function cartSetQty(item, qty) {
   const id = item.articul;
   if (!id) return;
@@ -30,16 +31,19 @@ function cartSetQty(item, qty) {
     }
     __cart[id].item = item;
     __cart[id].qty = qty;
+
   }
   cartSave();
   updateCartBadge();
   updateProductModalQty(id);
+
   renderCartItems();
 }
 
 function cartChange(item, delta) {
   const qty = cartGetQty(item.articul) + delta;
   cartSetQty(item, qty);
+
 }
 
 function updateCartBadge() {
@@ -50,6 +54,7 @@ function updateCartBadge() {
 }
 
 function updateProductModalQty(id) {
+
   const input = document.getElementById('productModalQty');
   if (input && id) {
     input.value = cartGetQty(id);
@@ -97,6 +102,7 @@ function renderCartItems() {
 function openCartModal() {
   const modal = document.getElementById('cartModal');
   renderCartItems();
+
   modal.style.display = 'block';
 }
 
