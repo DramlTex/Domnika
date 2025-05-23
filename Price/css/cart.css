@@ -50,7 +50,8 @@
 }
 
 .cart-controls input[type="number"] {
-  width: 26px;
+  height: 26px;
+  width: 50px;
   margin: 0 8px;
   text-align: center;
 }
