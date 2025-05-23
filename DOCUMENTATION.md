@@ -80,6 +80,7 @@ scripts/test.sh
 - 2025-05-22 18:22 docs/export_excel.md – описан процесс экспорта прайса в Excel.
 - 2025-05-27 12:40 Price/index.php, Price/css/table.css – расширена колонка названия, добавлены классы `.name-cell` и `.num-cell`.
 - 2025-05-22 21:40 Price/index.php, Price/css/table.css – добавлен контейнер `.table-scroll` и возвращено фиксирование шапки.
+- 2025-05-23 06:45 Price/css/table.css – закреплена шапка таблицы через `position: sticky`.
 
 ## Рекомендации по улучшению
 
