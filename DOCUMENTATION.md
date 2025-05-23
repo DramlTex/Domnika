@@ -81,6 +81,8 @@ scripts/test.sh
 - 2025-05-27 12:40 Price/index.php, Price/css/table.css – расширена колонка названия, добавлены классы `.name-cell` и `.num-cell`.
 - 2025-05-22 21:40 Price/index.php, Price/css/table.css – добавлен контейнер `.table-scroll` и возвращено фиксирование шапки.
 - 2025-05-23 06:45 Price/css/table.css – закреплена шапка таблицы через `position: sticky`.
+- 2025-05-23 06:50 docs/php/overview.md – добавлено описание PHP-скриптов.
+- 2025-05-23 07:05 docs/php/data.md – подробная документация по Price/data.php.
 
 ## Рекомендации по улучшению
 
