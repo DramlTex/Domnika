@@ -42,19 +42,27 @@
   border-bottom: 1px solid #ccc;
 }
 
-.cart-controls {
-  display: inline-flex;
-  align-items: center;
-}
-
 .cart-controls button {
   width: 26px;
   height: 26px;
 }
 
-.cart-controls input {
+.cart-controls input[type="number"] {
   width: 40px;
-  text-align: center;
   margin: 0 8px;
+  text-align: center;
+}
+
+/* Hide number input spinners */
+#productModalQty::-webkit-outer-spin-button,
+#productModalQty::-webkit-inner-spin-button,
+.cart-qty::-webkit-outer-spin-button,
+.cart-qty::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+#productModalQty,
+.cart-qty {
+  -moz-appearance: textfield;
 
 }

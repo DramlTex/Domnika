@@ -23,26 +23,23 @@ function cartGetQty(id) {
 function cartSetQty(item, qty) {
   const id = item.articul;
   if (!id) return;
+  const max = parseFloat(item.stock) || 0;
+  qty = Math.min(Math.max(0, qty), max);
   if (qty <= 0) {
     delete __cart[id];
   } else {
-    if (!__cart[id]) {
-      __cart[id] = { item: item, qty: 0 };
-    }
-    __cart[id].item = item;
-    __cart[id].qty = qty;
+    __cart[id] = { item: item, qty: qty };
 
   }
   cartSave();
   updateCartBadge();
   updateProductModalQty(id);
 
-  renderCartItems();
+  if (isCartOpen()) renderCartItems();
 }
 
 function cartChange(item, delta) {
-  const qty = cartGetQty(item.articul) + delta;
-  cartSetQty(item, qty);
+  cartSetQty(item, cartGetQty(item.articul) + delta);
 
 }
 
@@ -61,49 +58,56 @@ function updateProductModalQty(id) {
   }
 }
 
+
+function isCartOpen() {
+  const modal = document.getElementById('cartModal');
+  return modal && modal.style.display === 'block';
+}
+
 function renderCartItems() {
   const list = document.getElementById('cartItems');
-  if (!list) return;
   list.innerHTML = '';
   Object.values(__cart).forEach(c => {
-    const row = document.createElement('div');
-    row.className = 'cart-item';
+    const div = document.createElement('div');
+    div.className = 'cart-item';
+    div.innerHTML = `
+      <span class="cart-name">${c.item.name}</span>
+      <div class="cart-controls">
+        <button class="cart-minus" data-id="${c.item.articul}">-</button>
+        <input type="number" class="cart-qty" data-id="${c.item.articul}" value="${c.qty}" min="0">
+        <button class="cart-plus" data-id="${c.item.articul}">+</button>
+      </div>`;
+    list.appendChild(div);
+  });
+  list.querySelectorAll('.cart-minus').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      const c = __cart[id];
+      if (c) cartSetQty(c.item, c.qty - 1);
+    });
+  });
+  list.querySelectorAll('.cart-plus').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      const c = __cart[id];
+      if (c) cartSetQty(c.item, c.qty + 1);
+    });
+  });
+  list.querySelectorAll('.cart-qty').forEach(input => {
+    input.addEventListener('input', () => {
+      const id = input.dataset.id;
+      const c = __cart[id];
+      if (c) cartSetQty(c.item, parseInt(input.value, 10) || 0);
+    });
 
-    const nameSpan = document.createElement('span');
-    nameSpan.textContent = c.item.name;
-
-    const controls = document.createElement('div');
-    controls.className = 'cart-controls';
-
-    const minus = document.createElement('button');
-    minus.textContent = '-';
-    minus.onclick = () => cartChange(c.item, -1);
-
-    const input = document.createElement('input');
-    input.type = 'number';
-    input.min = 0;
-    input.value = c.qty;
-    input.onchange = () => cartSetQty(c.item, parseInt(input.value) || 0);
-
-    const plus = document.createElement('button');
-    plus.textContent = '+';
-    plus.onclick = () => cartChange(c.item, 1);
-
-    controls.appendChild(minus);
-    controls.appendChild(input);
-    controls.appendChild(plus);
-
-    row.appendChild(nameSpan);
-    row.appendChild(controls);
-    list.appendChild(row);
   });
 }
 
 function openCartModal() {
-  const modal = document.getElementById('cartModal');
-  renderCartItems();
 
-  modal.style.display = 'block';
+  renderCartItems();
+  document.getElementById('cartModal').style.display = 'block';
+
 }
 
 function closeCartModal() {
