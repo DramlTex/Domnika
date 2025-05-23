@@ -71,9 +71,9 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
         </a>
       </li>
       <li>
-        <a href="https://yandex.ru/maps/?text=142450%2C+МО%2C+г.+Старая+Купавна%2C+ул.+Дорожная+12%2C+стр.+2"
+        <a href="https://yandex.ru/maps/1/moscow-and-moscow-oblast/geo/industrialny_park_m7_kupavna/5054725126/?ll=38.210192%2C55.795590&z=16.54"
            target="_blank">
-           142450, МО, г. Старая Купавна, ул. Дорожная 12, стр. 2
+           Дорожная 40, Индустриальный парк Старая Купавна М7
         </a>
       </li>
       <li>
