@@ -195,7 +195,6 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
 <!-- КОРЗИНА -->
 <div id="cartModal" class="modal">
   <div class="modal-content">
-    <span class="close-modal" id="cartModalClose">&times;</span>
     <h2>Корзина</h2>
     <div id="cartItems"></div>
   </div>

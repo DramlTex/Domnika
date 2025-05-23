@@ -76,6 +76,7 @@ function renderCartItems() {
         <button class="cart-minus" data-id="${c.item.articul}">-</button>
         <input type="number" class="cart-qty" data-id="${c.item.articul}" value="${c.qty}" min="0">
         <button class="cart-plus" data-id="${c.item.articul}">+</button>
+        <button class="cart-remove" data-id="${c.item.articul}">Удалить</button>
       </div>`;
     list.appendChild(div);
   });
@@ -91,6 +92,13 @@ function renderCartItems() {
       const id = btn.dataset.id;
       const c = __cart[id];
       if (c) cartSetQty(c.item, c.qty + 1);
+    });
+  });
+  list.querySelectorAll('.cart-remove').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      const c = __cart[id];
+      if (c) cartSetQty(c.item, 0);
     });
   });
   list.querySelectorAll('.cart-qty').forEach(input => {
@@ -119,8 +127,6 @@ function setupCart() {
   updateCartBadge();
   const openBtn = document.getElementById('openCartButton');
   if (openBtn) openBtn.addEventListener('click', openCartModal);
-  const closeBtn = document.getElementById('cartModalClose');
-  if (closeBtn) closeBtn.addEventListener('click', closeCartModal);
   document.getElementById('cartModal').addEventListener('click', e => {
     if (e.target.id === 'cartModal') closeCartModal();
   });
