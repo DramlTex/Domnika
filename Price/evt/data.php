@@ -97,7 +97,7 @@ $storeIds = [
 $combinedItems = [];
 
 // 8. Функция обработки результатов
-function processItemsFromStore($items, $storeKey, &$combined) {
+function processItemsFromStore($items, $storeKey, &$combined, $login, $password, $base_url) {
     error_log("Обработка склада $storeKey, всего: ".count($items)." позиций");
 
     foreach ($items as $item) {
@@ -105,14 +105,23 @@ function processItemsFromStore($items, $storeKey, &$combined) {
         $itemId   = $item['id'] ?? '';
         $prodId   = $item['product']['id'] ?? '';
 
-        // Если это модификация (variant), объединяем по ID родительского товара
-        if ($type === 'variant' && $prodId) {
+        if ($type === 'variant') {
+            if (!$prodId) {
+                continue; // нет ссылки на родителя
+            }
             $groupKey = $prodId;
-            $source   = $item['product'];
+            $source   = $item['product'] ?? [];
+            if (!isset($combined[$groupKey]) && empty($source)) {
+                $url    = $base_url.'entity/product/'.$prodId.'?expand=country,attributes,images';
+                $source = moysklad_request($url, $login, $password);
+                if (!empty($source['error'])) {
+                    error_log("Не удалось получить товар $prodId: ".print_r($source, true));
+                    continue;
+                }
+            }
             error_log("Вариант. Группируем по товару ID=$prodId");
         } else {
-            // Обычный товар или нет product
-            $groupKey = $itemId;
+            $groupKey = $itemId; // обычный товар
             $source   = $item;
             error_log("Товар. Группируем по ID=$itemId");
         }
@@ -205,7 +214,7 @@ foreach ($storeIds as $key => $uuid) {
         'expand' => 'country,images,product,product.uom,product.attributes,product.images'
     ];
     $items = fetchAllAssortment($login, $password, $base_url, $params);
-    processItemsFromStore($items, $key, $combinedItems);
+    processItemsFromStore($items, $key, $combinedItems, $login, $password, $base_url);
 }
 
 // 10. Формируем итог
