@@ -50,6 +50,12 @@ function openProductModal(item) {
   } else {
     modalImg.src = '';
   }
+  document.getElementById('productModalPlus').onclick = () => cartChange(item, 1);
+  document.getElementById('productModalMinus').onclick = () => cartChange(item, -1);
+  document.getElementById('productModalQty').onchange = e => {
+    cartSetQty(item, parseInt(e.target.value) || 0);
+  };
+  updateProductModalQty(item.articul);
   document.getElementById('productModal').classList.add('open');
 }
 
