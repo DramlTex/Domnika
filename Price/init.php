@@ -1,5 +1,5 @@
 <?php
-require_once 'data.php';
+require_once 'function.php';
 $users = loadUsers();
 $users[] = [
     "login" => "admin",
