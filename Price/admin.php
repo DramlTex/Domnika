@@ -524,13 +524,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
         }
     </style>
 </head>
-<body>
+<body class="ms-login-field">
 <h2>Админ-панель</h2>
 <p>[<a href="logout.php">Выйти</a>]</p>
 
 <!-- Кнопки для обновления контрагентов/групп из МойСклад -->
 <form method="post" action="admin.php" style="display:inline-block;">
-    <button type="submit" name="updateCounterparties" value="1">
+    <button type="submit" name="updateCounterparties" value="1" class="btn-msk btn-success">
         Обновить контрагентов
     </button>
 </form>
@@ -551,16 +551,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
                         <option value="<?= htmlspecialchars($c) ?>" selected><?= htmlspecialchars($c) ?></option>
                     <?php endif; ?>
                 </select>
-                <button type="button" class="remove-country">Удалить</button>
+                <button type="button" class="remove-country btn-msk">Удалить</button>
             </div>
         <?php endforeach; ?>
         </div>
-        <button type="button" id="addCountry">Добавить страну</button>
-        <button type="submit" name="saveSortRules">Сохранить</button>
+        <button type="button" id="addCountry" class="btn-msk">Добавить страну</button>
+        <button type="submit" name="saveSortRules" class="btn-msk btn-success">Сохранить</button>
     </form>
 </div>
 <form method="post" action="admin.php" style="display:inline-block;">
-    <button type="submit" name="updateProductFolders" value="1">
+    <button type="submit" name="updateProductFolders" value="1" class="btn-msk btn-success">
         Обновить группы товаров
     </button>
 </form>
@@ -615,12 +615,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
                            value="<?= (int)($u['discount'] ?? 0) ?>"
                            min="0"
                            max="100"
+                           class="ms-form-control"
                            style="width:60px;">
                 </td>
 
                 <!-- Новый пароль -->
                 <td>
-                    <input type="text" name="new_password[<?= $index ?>]" placeholder="Новый пароль">
+                    <input type="text" name="new_password[<?= $index ?>]" class="ms-form-control" placeholder="Новый пароль">
                 </td>
 
                 <!-- Группы товаров (множественный выбор через чекбоксы) -->
@@ -659,7 +660,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
     </table>
 
     <br>
-    <button type="submit" name="saveChanges">Сохранить изменения</button>
+    <button type="submit" name="saveChanges" class="btn-msk btn-success">Сохранить изменения</button>
 </form>
 
 <hr>
@@ -670,12 +671,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
     <input type="hidden" name="addUser" value="1">
 
     <label>Логин:
-        <input type="text" name="new_login" required>
+        <input type="text" name="new_login" required class="ms-form-control">
     </label>
     <br><br>
 
     <label>Пароль:
-        <input type="text" name="new_password" required>
+        <input type="text" name="new_password" required class="ms-form-control">
     </label>
     <br><br>
 
@@ -692,7 +693,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
     <br><br>
 
     <label>Скидка (%):
-        <input type="number" name="new_discount" value="0" min="0" max="100">
+        <input type="number" name="new_discount" value="0" min="0" max="100" class="ms-form-control">
     </label>
     <br><br>
 
@@ -712,7 +713,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
     </div>
     <br>
 
-    <button type="submit">Создать пользователя</button>
+    <button type="submit" class="btn-msk btn-success">Создать пользователя</button>
 </form>
 
 <script>
@@ -731,7 +732,7 @@ function createCountryRow(value) {
     if (value && countries.indexOf(value) === -1) {
         select.append($('<option>').val(value).text(value).attr('selected', 'selected'));
     }
-    var btn = $('<button type="button" class="remove-country">Удалить</button>');
+    var btn = $('<button type="button" class="remove-country btn-msk">Удалить</button>');
     row.append(handle).append(select).append(btn);
     return row;
 }
