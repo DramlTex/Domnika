@@ -27,10 +27,13 @@
   "role": "user"|"admin",
   "discount": 0,
   "counterparty": {"href": "", "name": ""},
-  "productfolders": [{"href": "", "name": ""}, ...],
-  "rules_file": "row_sort_rules.json"
+  "productfolders": [{"href": "", "name": ""}, ...]
 }
 ```
+
+Порядок стран для сортировки товаров хранится в `row_sort_rules.json`. В админ-
+панели после кнопок обновления контрагентов и групп добавлен блок для редактирования
+этого файла.
 
 ## Дополнительная информация
 

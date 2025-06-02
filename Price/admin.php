@@ -198,6 +198,18 @@ function saveProductFoldersLocal($data) {
 $counterparties = loadCounterpartiesLocal();
 $productFolders = loadProductFoldersLocal();
 
+// ------------------ Row sort rules ------------------
+$rulesFilePath = __DIR__ . '/row_sort_rules.json';
+$sortRules = [];
+if (file_exists($rulesFilePath)) {
+    $json = file_get_contents($rulesFilePath);
+    $sortRules = json_decode($json, true);
+    if (!is_array($sortRules)) {
+        $sortRules = [];
+    }
+}
+$countryOrder = $sortRules['countryOrder'] ?? [];
+
 // ------------------ Обработка кнопки "Обновить контрагентов из МойСклад" ------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateCounterparties'])) {
     $newCounterparties = getCounterpartiesMS($login, $password, $msError);
@@ -214,6 +226,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateProductFolders'
     if (!empty($newFolders)) {
         saveProductFoldersLocal($newFolders);
     }
+    header('Location: admin.php');
+    exit;
+}
+
+// ------------------ Save sorting rules ------------------
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveSortRules'])) {
+    $countries = array_map('trim', $_POST['countryOrder'] ?? []);
+    $countries = array_values(array_filter($countries, fn($c) => $c !== ''));
+    $sortRules['countryOrder'] = $countries;
+    file_put_contents($rulesFilePath, json_encode($sortRules, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     header('Location: admin.php');
     exit;
 }
@@ -275,8 +297,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveChanges'])) {
           $u['password_hash'] = password_hash($newPassword, PASSWORD_DEFAULT);
       }
 
-      // 4) Файл правил
-      $u['rules_file'] = $_POST['rules_file'][$index] ?? 'row_sort_rules.json';
   }
 
   // Переписываем индексы и сохраняем
@@ -294,7 +314,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
   $newPassword = trim($_POST['new_password'] ?? '');
   $newHref     = $_POST['new_href'] ?? '';
   $newDiscount = isset($_POST['new_discount']) ? (int)$_POST['new_discount'] : 0;
-  $newRulesFile = trim($_POST['new_rules_file'] ?? 'row_sort_rules.json');
 
   // Группы товаров (href)
   $newFolders = $_POST['new_productfolder_hrefs'] ?? []; // массив href
@@ -347,8 +366,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
           'href' => $newHref,
           'name' => $foundCounterparty['name'] ?? ''
       ],
-      'productfolders' => $productFoldersData,
-      'rules_file' => $newRulesFile ?: 'row_sort_rules.json'
+      'productfolders' => $productFoldersData
   ];
 
   saveUsers($users);
@@ -384,6 +402,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
             border: 1px solid #ddd;
             padding: 5px;
         }
+        .sort-rules {
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
@@ -396,6 +417,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
         Обновить контрагентов
     </button>
 </form>
+
+<!-- Редактирование порядка стран -->
+<div class="sort-rules">
+    <form method="post" action="admin.php" id="countryForm">
+        <?php foreach ($countryOrder as $c): ?>
+            <input type="text" name="countryOrder[]" value="<?= htmlspecialchars($c) ?>"><br>
+        <?php endforeach; ?>
+        <div id="countryExtra"></div>
+        <button type="button" id="addCountry">Добавить страну</button>
+        <button type="submit" name="saveSortRules">Сохранить</button>
+    </form>
+</div>
 <form method="post" action="admin.php" style="display:inline-block;">
     <button type="submit" name="updateProductFolders" value="1">
         Обновить группы товаров
@@ -421,7 +454,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
             <th>Скидка %</th>
             <th>Новый пароль</th>
             <th>Группы товаров</th>
-            <th>Файл правил</th>
             <th>Удалить?</th>
         </tr>
         <?php foreach ($users as $index => $u): ?>
@@ -488,11 +520,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
                     </div>
                 </td>
 
-                <!-- Файл правил -->
-                <td>
-                    <input type="text" name="rules_file[<?= $index ?>]" value="<?= htmlspecialchars($u['rules_file'] ?? 'row_sort_rules.json') ?>">
-                </td>
-
                 <!-- Удалить -->
                 <td style="text-align:center;">
                     <input type="checkbox" name="delete[<?= $index ?>]" value="1">
@@ -555,12 +582,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
     </div>
     <br>
 
-    <label>Файл правил:
-        <input type="text" name="new_rules_file" value="row_sort_rules.json">
-    </label>
-    <br><br>
-
     <button type="submit">Создать пользователя</button>
 </form>
+
+<script>
+document.getElementById('addCountry').addEventListener('click', function () {
+    var cont = document.getElementById('countryExtra');
+    var inp = document.createElement('input');
+    inp.type = 'text';
+    inp.name = 'countryOrder[]';
+    cont.appendChild(inp);
+    cont.appendChild(document.createElement('br'));
+});
+</script>
 </body>
 </html>

@@ -113,6 +113,7 @@ scripts/test.sh
 - 2025-06-23 Price/js/rules-loader.js, docs/columns/README.md – правила сортировки вынесены в JSON.
 - 2025-06-24 Price/admin.php, Price/login.php, Price/index.php, Price/js/rules-loader.js – индивидуальный файл правил для пользователей.
 - 2025-06-25 Price/column_rules.json, Price/row_sort_rules.json, Price/js/rules-loader.js, Price/js/table.js – расширены настройки правил сортировки и колонок.
+- 2025-06-26 Price/admin.php, docs/columns/README.md – редактирование порядка стран перенесено в admin.php.
 
 
 ## Рекомендации по улучшению
