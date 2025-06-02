@@ -36,7 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'role'             => $u['role'],
                 'counterparty_href'=> $u['counterparty_href'] ?? '',
                 'discount'         => $u['discount'] ?? 0,
-                'productfolders'   => $u['productfolders'] ?? [] // <-- добавляем сюда
+                'productfolders'   => $u['productfolders'] ?? [], // <-- добавляем сюда
+                'rules_file'       => $u['rules_file'] ?? 'row_sort_rules.json'
             ];
             // Редирект в зависимости от роли
             if ($u['role'] === 'admin') {

@@ -71,6 +71,8 @@ JSON‑файлов `row_sort_rules.json` и `column_rules.json`. Скрипт `
 `COUNTRY_ORDER`, `TYPE_ORDER` и `COLUMN_RULES`. `fillTable` и `fillFilters`
 используют эти данные для сортировки и построения таблицы. Отсутствующие в
 правилах значения сортируются по алфавиту.
+Начиная с версии 2025‑06‑24 путь к файлу `row_sort_rules.json` можно задать
+для каждого пользователя через поле `rules_file` в `users.json`.
 
 ## История изменений
 

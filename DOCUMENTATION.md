@@ -111,6 +111,7 @@ scripts/test.sh
 - 2025-06-21 11:00 Price/js/filters.js, Price/js/tabs.js, Price/js/data-loader.js, docs/js_index.md – правка фильтрации по вкладкам.
 - 2025-06-22 docs/columns/README.md – добавлено описание процесса вывода столбцов.
 - 2025-06-23 Price/js/rules-loader.js, docs/columns/README.md – правила сортировки вынесены в JSON.
+- 2025-06-24 Price/admin.php, Price/login.php, Price/index.php, Price/js/rules-loader.js – индивидуальный файл правил для пользователей.
 
 
 ## Рекомендации по улучшению

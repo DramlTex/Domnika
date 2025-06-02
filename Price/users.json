@@ -4,7 +4,8 @@
         "password_hash": "$2y$10$SNF6LPDmYXSFQ0TnKN9RT.1VJbHKM4d0.FFHh3qPql4CyesQH2cN2",
         "role": "admin",
         "counterparty_href": "https:\/\/api.moysklad.ru\/api\/remap\/1.2\/entity\/counterparty\/b332da86-2958-11e9-9107-50480008abdb",
-        "discount": 0
+        "discount": 0,
+        "rules_file": "row_sort_rules.json"
     },
     {
         "login": "test2",
@@ -20,7 +21,8 @@
                 "href": "https:\/\/api.moysklad.ru\/api\/remap\/1.2\/entity\/productfolder\/80b4500a-ab15-11ef-0a80-0c1000369750",
                 "name": "ОПТ JFK"
             }
-        ]
+        ],
+        "rules_file": "row_sort_rules.json"
     },
     {
         "login": "domika",
@@ -31,6 +33,7 @@
             "href": "https:\/\/api.moysklad.ru\/api\/remap\/1.2\/entity\/counterparty\/0176bed6-2c25-11e8-9107-5048000555c7",
             "name": "ООО \"МЕДКОВ\""
         },
-        "productfolders": []
+        "productfolders": [],
+        "rules_file": "row_sort_rules.json"
     }
 ]
