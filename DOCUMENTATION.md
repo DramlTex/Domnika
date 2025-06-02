@@ -108,6 +108,7 @@ scripts/test.sh
 - 2025-06-20 12:00 Price/export.php, docs/export_excel.md – добавлено форматирование целых чисел и опциональная колонка "Мин. заказ".
 
 - 2025-06-21 10:30 Price/export.php – ширина столбца "Тип" вычисляется по самому длинному слову.
+- 2025-06-21 11:00 Price/js/filters.js, Price/js/tabs.js, Price/js/data-loader.js, docs/js_index.md – правка фильтрации по вкладкам.
 
 
 ## Рекомендации по улучшению

@@ -14,6 +14,8 @@ function loadData() {
         rows = filterByUserFolders(rows);
         window.__productsData = rows;
         const groupedData = groupProductsByCategory(rows);
+        window.__groupedData = groupedData;
+        window.__currentGroup = 'Остальное';
         createTabs(groupedData);
         fillTable(groupedData['Остальное'] || []);
         fillFilters(rows);
