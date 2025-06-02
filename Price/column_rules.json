@@ -1,14 +1,14 @@
 [
-  {"id": "num", "title": "№", "class": "num-col"},
-  {"id": "articul", "title": "Артикул"},
-  {"id": "photo", "title": "Фото"},
-  {"id": "name", "title": "Название", "class": "name-col"},
-  {"id": "uom", "title": "Стандарт"},
-  {"id": "tip", "title": "Тип", "class": "type-col"},
-  {"id": "supplier", "title": "Страна", "class": "country-col"},
-  {"id": "mass", "title": "Вес тарного места"},
-  {"id": "price", "title": "Цена"},
-  {"id": "stock", "title": "Наличие в кг"},
-  {"id": "volumeWeight", "title": "Объемный вес"}
+  {"id": "num", "title": "№", "class": "num-col", "enabled": true},
+  {"id": "articul", "title": "Артикул", "enabled": true},
+  {"id": "photo", "title": "Фото", "enabled": true},
+  {"id": "name", "title": "Название", "class": "name-col", "enabled": true},
+  {"id": "uom", "title": "Стандарт", "enabled": true},
+  {"id": "tip", "title": "Тип", "class": "type-col", "enabled": true},
+  {"id": "supplier", "title": "Страна", "class": "country-col", "enabled": true},
+  {"id": "mass", "title": "Вес тарного места", "enabled": true},
+  {"id": "price", "title": "Цена", "enabled": true},
+  {"id": "stock", "title": "Наличие в кг", "enabled": true},
+  {"id": "volumeWeight", "title": "Объемный вес", "enabled": true}
 ]
 

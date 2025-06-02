@@ -74,7 +74,20 @@ JSON‑файлов `row_sort_rules.json` и `column_rules.json`. Скрипт `
 Начиная с версии 2025‑06‑24 путь к файлу `row_sort_rules.json` можно задать
 для каждого пользователя через поле `rules_file` в `users.json`.
 
+## JSON-файлы правил
+
+`Price/column_rules.json` описывает набор отображаемых колонок. Каждая запись
+содержит поля `id`, `title`, `class` и `enabled`. Значение `class` соответствует
+CSS‑классам в `table.css` (например `name-col`, `type-col`, `country-col`). Если
+`enabled` установлено в `false`, колонка скрывается.
+
+`Price/row_sort_rules.json` задаёт порядок стран и типов. Поле `countryOrder`
+указывает приоритет стран, `typeOrder` — список типов в пользовательском
+порядке. Свойство `typeSort` определяет способ сортировки типов: `alphabetical`
+или `order`. При значении `alphabetical` списки типов сортируются по алфавиту.
+
 ## История изменений
 
 - 2025-06-22 docs/columns/README.md – первая версия описания процесса вывода столбцов.
 - 2025-06-23 docs/columns/README.md – правила сортировки и столбцов вынесены в JSON.
+- 2025-06-25 Price/column_rules.json, Price/row_sort_rules.json, docs/columns/README.md – описаны новые поля `enabled` и `typeSort`.
