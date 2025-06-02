@@ -2,7 +2,8 @@
  * Apply filters to current data set and update table.
  */
 function applyFilters() {
-  const allData = window.__productsData || [];
+  const grouped = window.__groupedData || {};
+  const allData = grouped[window.__currentGroup] || [];
   const valArticul = document.getElementById('filterArticul').value.trim().toLowerCase();
   const valName = document.getElementById('filterName').value.trim().toLowerCase();
   const valTip = document.getElementById('filterTip').value;

@@ -45,6 +45,7 @@ function createTabs(groupedData) {
     tabButton.addEventListener('click', () => {
       document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
       tabButton.classList.add('active');
+      window.__currentGroup = groupName;
       showTab(groupName, groupedData);
     });
     tabsContainer.appendChild(tabButton);
@@ -55,6 +56,7 @@ function createTabs(groupedData) {
     const firstTab = tabsContainer.querySelector('.tab-button');
     if (firstTab) {
       firstTab.classList.add('active');
+      window.__currentGroup = orderedGroups[0];
       showTab(orderedGroups[0], groupedData);
     }
   }
@@ -66,5 +68,6 @@ function createTabs(groupedData) {
  * @param {Object<string, Array<Object>>} groupedData
  */
 function showTab(groupName, groupedData) {
+  window.__currentGroup = groupName;
   fillTable(groupedData[groupName]);
 }
