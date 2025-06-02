@@ -291,11 +291,11 @@ function saveProductFoldersLocal($data) {
     file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 }
 
-// Загружаем локальный список контрагентов и групп товаров
-$counterparties = loadCounterpartiesLocal();
-$productFolders = loadProductFoldersLocal();
-$countriesList = getCountriesMS($login, $password, $msError);
-$typesList = getTypesMS($login, $password, $msError);
+// Загружаем список контрагентов и групп товаров напрямую из МойСклад
+$counterparties = getCounterpartiesMS($login, $password, $msError);
+$productFolders = getProductFoldersMS($login, $password, $msError);
+$countriesList  = getCountriesMS($login, $password, $msError);
+$typesList      = getTypesMS($login, $password, $msError);
 
 // ------------------ Row sort rules ------------------
 $rulesFilePath = __DIR__ . '/row_sort_rules.json';
@@ -321,25 +321,6 @@ if (file_exists($columnFilePath)) {
     }
 }
 
-// ------------------ Обработка кнопки "Обновить контрагентов из МойСклад" ------------------
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateCounterparties'])) {
-    $newCounterparties = getCounterpartiesMS($login, $password, $msError);
-    if (!empty($newCounterparties)) {
-        saveCounterpartiesLocal($newCounterparties);
-    }
-    header('Location: admin.php');
-    exit;
-}
-
-// ------------------ Обработка кнопки "Обновить группы товаров" ------------------
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateProductFolders'])) {
-    $newFolders = getProductFoldersMS($login, $password, $msError);
-    if (!empty($newFolders)) {
-        saveProductFoldersLocal($newFolders);
-    }
-    header('Location: admin.php');
-    exit;
-}
 
 // ------------------ Save sorting rules ------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveSortRules'])) {
@@ -626,15 +607,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
 </head>
 <body class="ms-login-field">
 <h2>Админ-панель</h2>
-<p>[<a href="logout.php">Выйти</a>]</p>
-
-<!-- Кнопки для обновления контрагентов/групп из МойСклад -->
-<form method="post" action="admin.php" style="display:inline-block;">
-    <button type="submit" name="updateCounterparties" value="1" class="btn-msk btn-success">
-        Обновить контрагентов
-    </button>
-</form>
-
 <!-- Редактирование порядка стран -->
 <div class="sort-rules">
     <form method="post" action="admin.php" id="countryForm">
@@ -709,13 +681,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
         <button type="submit" name="saveColumnRules" class="btn-msk btn-success">Сохранить</button>
     </form>
 </div>
-<form method="post" action="admin.php" style="display:inline-block;">
-    <button type="submit" name="updateProductFolders" value="1" class="btn-msk btn-success">
-        Обновить группы товаров
-    </button>
-</form>
-
-<!-- Ошибка от МойСклад, если есть -->
 <?php if ($msError): ?>
     <div class="error">
         <strong>Ошибка при обращении к МойСклад:</strong><br>
