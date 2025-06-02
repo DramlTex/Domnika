@@ -703,11 +703,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
                 <button type="button" class="toggle-column btn-msk">
                     <?= $col['enabled'] ? 'Выключить' : 'Включить' ?>
                 </button>
-                <button type="button" class="remove-column btn-msk">Удалить</button>
             </div>
         <?php endforeach; ?>
         </div>
-        <button type="button" id="addColumn" class="btn-msk">Добавить колонку</button>
         <button type="submit" name="saveColumnRules" class="btn-msk btn-success">Сохранить</button>
     </form>
 </div>
@@ -924,8 +922,7 @@ function createColumnRow(id, title, cls, enabled) {
     var classInput = $('<input type="hidden" name="col_class[]">').val(cls || '');
     var enabledInput = $('<input type="hidden" name="col_enabled[]" class="col-enabled">').val(enabled ? '1' : '0');
     var toggleBtn = $('<button type="button" class="toggle-column btn-msk"></button>').text(enabled ? 'Выключить' : 'Включить');
-    var removeBtn = $('<button type="button" class="remove-column btn-msk">Удалить</button>');
-    row.append(handle, select, titleInput, classInput, enabledInput, toggleBtn, removeBtn);
+    row.append(handle, select, titleInput, classInput, enabledInput, toggleBtn);
     return row;
 }
 
@@ -966,12 +963,6 @@ $(function() {
         handle: '.drag-handle'
     }).disableSelection();
 
-    $('#addColumn').on('click', function() {
-        var row = createColumnRow('', '', '', true);
-        $('#columnFields').append(row);
-        row.find('select').select2();
-        $('#columnFields').sortable('refresh');
-    });
 
     $(document).on('click', '.toggle-column', function() {
         var row = $(this).closest('.column-row');
@@ -988,11 +979,6 @@ $(function() {
         }
     });
 
-    $(document).on('click', '.remove-column', function() {
-        var row = $(this).closest('.column-row');
-        row.find('.col-enabled').val('0');
-        row.addClass('disabled').hide();
-    });
 });
 </script>
 </body>
