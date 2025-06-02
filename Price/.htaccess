@@ -1,0 +1,29 @@
+<IfModule mod_authz_core.c>
+  # Для Apache 2.4+
+  
+  # 1) Запретить вообще все .php-файлы
+  <FilesMatch "\.php$">
+      Require all denied
+  </FilesMatch>
+  
+  # 2) Разрешить только login.php, index.php и admin.php
+  <FilesMatch "^(login|logout|index|admin|data|image_proxy|export)\.php$">
+      Require all granted
+  </FilesMatch>
+</IfModule>
+
+<IfModule !mod_authz_core.c>
+  # Для Apache 2.2 (старый синтаксис)
+  
+  # 1) Запретить все .php-файлы
+  <Files *.php>
+    Order Deny,Allow
+    Deny from all
+  </Files>
+  
+  # 2) Разрешить только login.php, index.php и admin.php
+  <FilesMatch "^(login|index|admin)\.php$">
+    Order Allow,Deny
+    Allow from all
+  </FilesMatch>
+</IfModule>

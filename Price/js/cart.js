@@ -63,6 +63,7 @@ function cartSetQty(item, qty, store) {
   cartSave();
   updateCartBadge();
   updateProductModalQty(id);
+  updateCartTotal();
 
   if (isCartOpen()) renderCartItems();
 }
@@ -81,12 +82,34 @@ function updateCartBadge() {
   badge.textContent = total > 0 ? total : '';
 }
 
+function updateCartTotal() {
+  const totalEl = document.getElementById('cartTotal');
+  if (!totalEl) return;
+  const total = Object.values(__cart).reduce((sum, c) => {
+    const price = parseFloat(c.item.price) || 0;
+    const qty = Object.values(c.qty || {}).reduce((s, q) => s + q, 0);
+    return sum + price * qty;
+  }, 0);
+  totalEl.textContent = total.toFixed(2);
+}
+
 function updateProductModalQty(id) {
   if (!id) return;
   STORES.forEach((s, i) => {
     const input = document.getElementById('productModalQty' + (i + 1));
     if (input) input.value = cartGetQty(id, s);
   });
+}
+
+function adjustCartLayout() {
+  const modal = document.getElementById('cartModal');
+  if (!modal || modal.style.display !== 'block') return;
+  const footer = modal.querySelector('.cart-footer');
+  const items = document.getElementById('cartItems');
+  if (!footer || !items) return;
+  const top = items.getBoundingClientRect().top;
+  const max = window.innerHeight - footer.offsetHeight - top - 10;
+  items.style.maxHeight = max + 'px';
 }
 
 
@@ -150,12 +173,16 @@ function renderCartItems() {
     });
 
   });
+  updateCartTotal();
 }
 
 function openCartModal() {
 
   renderCartItems();
+  loadCartDetails();
+  updateCartTotal();
   document.getElementById('cartModal').style.display = 'block';
+  adjustCartLayout();
 
 }
 
@@ -163,12 +190,43 @@ function closeCartModal() {
   document.getElementById('cartModal').style.display = 'none';
 }
 
+function loadCartDetails() {
+  const comment = document.getElementById('cartComment');
+  const inn = document.getElementById('cartInn');
+  const date = document.getElementById('cartDate');
+  if (comment) comment.value = localStorage.getItem('cartComment') || '';
+  if (inn) inn.value = localStorage.getItem('cartInn') || '';
+  if (date) date.value = localStorage.getItem('cartDate') || '';
+}
+
+function saveCartDetails() {
+  const comment = document.getElementById('cartComment');
+  const inn = document.getElementById('cartInn');
+  const date = document.getElementById('cartDate');
+  if (comment) localStorage.setItem('cartComment', comment.value);
+  if (inn) localStorage.setItem('cartInn', inn.value);
+  if (date) localStorage.setItem('cartDate', date.value);
+}
+
+function submitCart() {
+  saveCartDetails();
+  alert('Заказ оформлен.');
+  __cart = {};
+  cartSave();
+  updateCartBadge();
+  renderCartItems();
+  closeCartModal();
+}
+
 function setupCart() {
   cartLoad();
   updateCartBadge();
   const openBtn = document.getElementById('openCartButton');
   if (openBtn) openBtn.addEventListener('click', openCartModal);
+  const submitBtn = document.getElementById('cartSubmit');
+  if (submitBtn) submitBtn.addEventListener('click', submitCart);
   document.getElementById('cartModal').addEventListener('click', e => {
     if (e.target.id === 'cartModal') closeCartModal();
   });
+  window.addEventListener('resize', adjustCartLayout);
 }
