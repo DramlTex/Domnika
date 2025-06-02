@@ -274,6 +274,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveChanges'])) {
       if (!empty($newPassword)) {
           $u['password_hash'] = password_hash($newPassword, PASSWORD_DEFAULT);
       }
+
+      // 4) Файл правил
+      $u['rules_file'] = $_POST['rules_file'][$index] ?? 'row_sort_rules.json';
   }
 
   // Переписываем индексы и сохраняем
@@ -291,6 +294,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
   $newPassword = trim($_POST['new_password'] ?? '');
   $newHref     = $_POST['new_href'] ?? '';
   $newDiscount = isset($_POST['new_discount']) ? (int)$_POST['new_discount'] : 0;
+  $newRulesFile = trim($_POST['new_rules_file'] ?? 'row_sort_rules.json');
 
   // Группы товаров (href)
   $newFolders = $_POST['new_productfolder_hrefs'] ?? []; // массив href
@@ -343,7 +347,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
           'href' => $newHref,
           'name' => $foundCounterparty['name'] ?? ''
       ],
-      'productfolders' => $productFoldersData
+      'productfolders' => $productFoldersData,
+      'rules_file' => $newRulesFile ?: 'row_sort_rules.json'
   ];
 
   saveUsers($users);
@@ -416,6 +421,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
             <th>Скидка %</th>
             <th>Новый пароль</th>
             <th>Группы товаров</th>
+            <th>Файл правил</th>
             <th>Удалить?</th>
         </tr>
         <?php foreach ($users as $index => $u): ?>
@@ -482,6 +488,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
                     </div>
                 </td>
 
+                <!-- Файл правил -->
+                <td>
+                    <input type="text" name="rules_file[<?= $index ?>]" value="<?= htmlspecialchars($u['rules_file'] ?? 'row_sort_rules.json') ?>">
+                </td>
+
                 <!-- Удалить -->
                 <td style="text-align:center;">
                     <input type="checkbox" name="delete[<?= $index ?>]" value="1">
@@ -543,6 +554,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
         <?php endforeach; ?>
     </div>
     <br>
+
+    <label>Файл правил:
+        <input type="text" name="new_rules_file" value="row_sort_rules.json">
+    </label>
+    <br><br>
 
     <button type="submit">Создать пользователя</button>
 </form>

@@ -27,7 +27,8 @@
   "role": "user"|"admin",
   "discount": 0,
   "counterparty": {"href": "", "name": ""},
-  "productfolders": [{"href": "", "name": ""}, ...]
+  "productfolders": [{"href": "", "name": ""}, ...],
+  "rules_file": "row_sort_rules.json"
 }
 ```
 
