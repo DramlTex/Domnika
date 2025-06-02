@@ -81,6 +81,11 @@ JSON‑файлов `row_sort_rules.json` и `column_rules.json`. Скрипт `
 CSS‑классам в `table.css` (например `name-col`, `type-col`, `country-col`). Если
 `enabled` установлено в `false`, колонка скрывается.
 
+Изменять порядок и заголовки столбцов можно в админ‑панели. Раздел
+"Редактирование колонок" считывает `column_rules.json`, позволяет переименовать
+столбец, включить или выключить его и перетаскивать записи для задания нового
+порядка.
+
 `Price/row_sort_rules.json` задаёт порядок стран и типов. Поле `countryOrder`
 указывает приоритет стран, `typeOrder` — список типов в пользовательском
 порядке. Свойство `typeSort` определяет способ сортировки типов: `alphabetical`
@@ -93,3 +98,4 @@ CSS‑классам в `table.css` (например `name-col`, `type-col`, `c
 - 2025-06-25 Price/column_rules.json, Price/row_sort_rules.json, docs/columns/README.md – описаны новые поля `enabled` и `typeSort`.
 - 2025-06-26 Price/admin.php, docs/columns/README.md – управление порядком стран вынесено в admin.php.
 - 2025-07-25 Price/admin.php, docs/columns/README.md – добавлено редактирование порядка типов чая.
+- 2025-08-02 Price/admin.php, docs/columns/README.md – добавлен раздел для изменения `column_rules.json`.
