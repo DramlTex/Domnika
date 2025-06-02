@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+// Управляет отображением колонки "Мин. заказ"
+$includeMinOrder = false;
+
 require __DIR__ . '/vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -153,11 +156,23 @@ foreach ($groupedData as $groupName => $items) {
     $spreadsheet->addSheet($sheet);
 
     // 1. Устанавливаем точные ширины столбцов (в единицах Excel)
-    $columnWidths = [
-        'A' => 5, 'B' => 12, 'C' => 40, 'D' => 12, 
-        'E' => 12, 'F' => 12, 'G' => 15, 'H' => 10,
-        'I' => 12, 'J' => 15, 'K' => 12, 'L' => 15
-    ];
+    if ($includeMinOrder) {
+        $columnWidths = [
+            'A' => 5, 'B' => 12, 'C' => 40, 'D' => 12,
+            'E' => 12, 'F' => 12, 'G' => 15, 'H' => 10,
+            'I' => 12, 'J' => 15, 'K' => 12, 'L' => 15
+        ];
+        $lastColumn = 'L';
+        $photoColumn = 'L';
+    } else {
+        $columnWidths = [
+            'A' => 5, 'B' => 12, 'C' => 40, 'D' => 12,
+            'E' => 12, 'F' => 12, 'G' => 15, 'H' => 10,
+            'I' => 12, 'J' => 15, 'K' => 15
+        ];
+        $lastColumn = 'K';
+        $photoColumn = 'K';
+    }
     
     foreach ($columnWidths as $col => $width) {
         $sheet->getColumnDimension($col)->setWidth($width);
@@ -225,12 +240,17 @@ foreach ($groupedData as $groupName => $items) {
     $sheet->setCellValue("H{$dataStartRow}", 'Цена');
     $sheet->setCellValue("I{$dataStartRow}", 'Наличие (кг)');
     $sheet->setCellValue("J{$dataStartRow}", 'Объём тарного места');
-    $sheet->setCellValue("K{$dataStartRow}", 'Мин. заказ');
-    $sheet->setCellValue("L{$dataStartRow}", 'Фото');
+    if ($includeMinOrder) {
+        $sheet->setCellValue("K{$dataStartRow}", 'Мин. заказ');
+        $sheet->setCellValue("L{$dataStartRow}", 'Фото');
+    } else {
+        $sheet->setCellValue("{$photoColumn}{$dataStartRow}", 'Фото');
+    }
     
     // Стили для заголовков
-    $sheet->getStyle("A{$dataStartRow}:L{$dataStartRow}")->applyFromArray($headerStyle);
-    applyBorderFill($sheet, "A{$dataStartRow}:L{$dataStartRow}");
+    $sheet->getStyle("A{$dataStartRow}:{$lastColumn}{$dataStartRow}")
+        ->applyFromArray($headerStyle);
+    applyBorderFill($sheet, "A{$dataStartRow}:{$lastColumn}{$dataStartRow}");
 
     // 4. Сортировка и заполнение данных с группировкой по стране и типу
     $items = sortItems($items, $COUNTRY_ORDER, $TYPE_ORDER);
@@ -246,20 +266,22 @@ foreach ($groupedData as $groupName => $items) {
 
         if ($currentCountry !== $country) {
             $rowNum++;
-            $sheet->mergeCells("A{$rowNum}:L{$rowNum}");
+            $sheet->mergeCells("A{$rowNum}:{$lastColumn}{$rowNum}");
             $sheet->setCellValue("A{$rowNum}", $country);
-            $sheet->getStyle("A{$rowNum}:L{$rowNum}")->applyFromArray($countryRowStyle);
-            applyBorderFill($sheet, "A{$rowNum}:L{$rowNum}");
+            $sheet->getStyle("A{$rowNum}:{$lastColumn}{$rowNum}")
+                ->applyFromArray($countryRowStyle);
+            applyBorderFill($sheet, "A{$rowNum}:{$lastColumn}{$rowNum}");
             $currentCountry = $country;
             $currentType = null;
         }
 
         if ($currentType !== $type) {
             $rowNum++;
-            $sheet->mergeCells("A{$rowNum}:L{$rowNum}");
+            $sheet->mergeCells("A{$rowNum}:{$lastColumn}{$rowNum}");
             $sheet->setCellValue("A{$rowNum}", $type);
-            $sheet->getStyle("A{$rowNum}:L{$rowNum}")->applyFromArray($typeRowStyle);
-            applyBorderFill($sheet, "A{$rowNum}:L{$rowNum}");
+            $sheet->getStyle("A{$rowNum}:{$lastColumn}{$rowNum}")
+                ->applyFromArray($typeRowStyle);
+            applyBorderFill($sheet, "A{$rowNum}:{$lastColumn}{$rowNum}");
             $currentType = $type;
         }
 
@@ -270,20 +292,22 @@ foreach ($groupedData as $groupName => $items) {
         $sheet->setCellValue("D{$rowNum}", $row['uom'] ?? '');
         $sheet->setCellValue("E{$rowNum}", $type);
         $sheet->setCellValue("F{$rowNum}", $country);
-        $sheet->setCellValue("G{$rowNum}", $row['mass'] ?? '');
-        $sheet->setCellValue("H{$rowNum}", $row['price'] ?? '');
-        $sheet->setCellValue("I{$rowNum}", $row['stock'] ?? '');
+        $sheet->setCellValue("G{$rowNum}", (int)($row['mass'] ?? 0));
+        $sheet->setCellValue("H{$rowNum}", (int)($row['price'] ?? 0));
+        $sheet->setCellValue("I{$rowNum}", (int)($row['stock'] ?? 0));
         $sheet->setCellValue("J{$rowNum}", $row['volumeWeight'] ?? '');
-        $sheet->setCellValue("K{$rowNum}", $row['min_order_qty'] ?? '');
+        if ($includeMinOrder) {
+            $sheet->setCellValue("K{$rowNum}", $row['min_order_qty'] ?? '');
+        }
 
         if (!empty($row['photoUrl'])) {
-            $sheet->setCellValue("L{$rowNum}", 'фото');
-            $hyperlink = $sheet->getCell("L{$rowNum}")->getHyperlink();
+            $sheet->setCellValue("{$photoColumn}{$rowNum}", 'фото');
+            $hyperlink = $sheet->getCell("{$photoColumn}{$rowNum}")->getHyperlink();
             $hyperlink->setUrl($row['photoUrl']);
             $hyperlink->setTooltip('Нажмите для просмотра фото');
-            $sheet->getStyle("L{$rowNum}")->applyFromArray($hyperlinkStyle);
+            $sheet->getStyle("{$photoColumn}{$rowNum}")->applyFromArray($hyperlinkStyle);
         } else {
-            $sheet->setCellValue("L{$rowNum}", '');
+            $sheet->setCellValue("{$photoColumn}{$rowNum}", '');
         }
 
         $counter++;
@@ -301,17 +325,13 @@ foreach ($groupedData as $groupName => $items) {
     }
     // Форматирование чисел
     $lastRow = $rowNum;
-    $sheet->getStyle("G".($dataStartRow+1).":G{$lastRow}")
+    $sheet->getStyle("G" . ($dataStartRow + 1) . ":I{$lastRow}")
           ->getNumberFormat()
-          ->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
-    
-    $sheet->getStyle("H".($dataStartRow+1).":H{$lastRow}")
-          ->getNumberFormat()
-          ->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
+          ->setFormatCode(NumberFormat::FORMAT_NUMBER);
 
 
     // Центрируем данные и разрешаем перенос слов
-    $sheet->getStyle("A{$dataStartRow}:L{$lastRow}")
+    $sheet->getStyle("A{$dataStartRow}:{$lastColumn}{$lastRow}")
           ->getAlignment()
           ->setHorizontal(Alignment::HORIZONTAL_CENTER)
           ->setVertical(Alignment::VERTICAL_CENTER)
@@ -323,13 +343,13 @@ foreach ($groupedData as $groupName => $items) {
           ->setHorizontal(Alignment::HORIZONTAL_LEFT);
 
     // Обводка для области с данными
-    applyBorderFill($sheet, "A{$dataStartRow}:L{$lastRow}");
+    applyBorderFill($sheet, "A{$dataStartRow}:{$lastColumn}{$lastRow}");
 
     // Включаем фильтр на строку заголовков
-    $sheet->setAutoFilter("A{$dataStartRow}:L{$lastRow}");
+    $sheet->setAutoFilter("A{$dataStartRow}:{$lastColumn}{$lastRow}");
 
     // Центрирование для столбца с фото
-    $sheet->getStyle("L".($dataStartRow+1).":L{$lastRow}")
+    $sheet->getStyle("{$photoColumn}".($dataStartRow+1).":{$photoColumn}{$lastRow}")
           ->getAlignment()
           ->setHorizontal(Alignment::HORIZONTAL_CENTER)
           ->setVertical(Alignment::VERTICAL_CENTER);
