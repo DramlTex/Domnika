@@ -206,6 +206,56 @@ function getCountriesMS($login, $password, &$msError) {
     return $allCountries;
 }
 
+// -- 4) Функция для загрузки типов чая из пользовательского справочника
+// Идентификатор справочника хранится в константе
+define('MS_TYPE_ENTITY_ID', '677eddfc-f284-11ef-0a80-0ee70028752e');
+
+function getTypesMS($login, $password, &$msError) {
+    $allTypes = [];
+    $url = 'https://api.moysklad.ru/api/remap/1.2/entity/customentity/' . MS_TYPE_ENTITY_ID . '?limit=1000';
+
+    while ($url) {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_ENCODING, '');
+        curl_setopt($ch, CURLOPT_USERPWD, $login . ':' . $password);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $err = curl_error($ch);
+        curl_close($ch);
+
+        if ($err) {
+            $msError = "Ошибка cURL: $err";
+            return $allTypes;
+        }
+        if ($httpCode >= 400) {
+            $msError = "Сервер вернул код ошибки: $httpCode<br>Ответ: " . htmlspecialchars($response);
+            return $allTypes;
+        }
+
+        $data = json_decode($response, true);
+        if (!isset($data['rows']) || !is_array($data['rows'])) {
+            $msError = "Некорректный формат ответа от МойСклад при загрузке типов.";
+            return $allTypes;
+        }
+
+        foreach ($data['rows'] as $row) {
+            if (!empty($row['name'])) {
+                $allTypes[] = $row['name'];
+            }
+        }
+
+        if (!empty($data['meta']['nextHref'])) {
+            $url = $data['meta']['nextHref'];
+        } else {
+            $url = null;
+        }
+    }
+
+    return $allTypes;
+}
+
 // ------------------ Загрузка пользователей ------------------
 $users = loadUsers();
 
@@ -245,6 +295,7 @@ function saveProductFoldersLocal($data) {
 $counterparties = loadCounterpartiesLocal();
 $productFolders = loadProductFoldersLocal();
 $countriesList = getCountriesMS($login, $password, $msError);
+$typesList = getTypesMS($login, $password, $msError);
 
 // ------------------ Row sort rules ------------------
 $rulesFilePath = __DIR__ . '/row_sort_rules.json';
@@ -257,6 +308,7 @@ if (file_exists($rulesFilePath)) {
     }
 }
 $countryOrder = $sortRules['countryOrder'] ?? [];
+$typeOrder = $sortRules['typeOrder'] ?? [];
 
 // ------------------ Обработка кнопки "Обновить контрагентов из МойСклад" ------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateCounterparties'])) {
@@ -283,6 +335,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveSortRules'])) {
     $countries = array_map('trim', $_POST['countryOrder'] ?? []);
     $countries = array_values(array_filter($countries, fn($c) => $c !== ''));
     $sortRules['countryOrder'] = $countries;
+
+    $types = array_map('trim', $_POST['typeOrder'] ?? []);
+    $types = array_values(array_filter($types, fn($t) => $t !== ''));
+    $sortRules['typeOrder'] = $types;
+
     file_put_contents($rulesFilePath, json_encode($sortRules, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     header('Location: admin.php');
     exit;
@@ -461,6 +518,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
         .country-row {
             margin-bottom: 5px;
         }
+        .type-row {
+            margin-bottom: 5px;
+        }
         .drag-handle {
             cursor: move;
             margin-right: 5px;
@@ -556,6 +616,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
         <?php endforeach; ?>
         </div>
         <button type="button" id="addCountry" class="btn-msk">Добавить страну</button>
+        <button type="submit" name="saveSortRules" class="btn-msk btn-success">Сохранить</button>
+    </form>
+</div>
+
+<!-- Редактирование порядка типов -->
+<div class="sort-rules">
+    <form method="post" action="admin.php" id="typeForm">
+        <div id="typeFields">
+        <?php foreach ($typeOrder as $t): ?>
+            <div class="type-row">
+                <span class="drag-handle">&#9776;</span>
+                <select name="typeOrder[]" class="type-select">
+                    <option value="">(Не выбран)</option>
+                    <?php foreach ($typesList as $name): ?>
+                        <option value="<?= htmlspecialchars($name) ?>" <?= $name === $t ? 'selected' : '' ?>><?= htmlspecialchars($name) ?></option>
+                    <?php endforeach; ?>
+                    <?php if (!in_array($t, $typesList, true)): ?>
+                        <option value="<?= htmlspecialchars($t) ?>" selected><?= htmlspecialchars($t) ?></option>
+                    <?php endif; ?>
+                </select>
+                <button type="button" class="remove-type btn-msk">Удалить</button>
+            </div>
+        <?php endforeach; ?>
+        </div>
+        <button type="button" id="addType" class="btn-msk">Добавить тип</button>
         <button type="submit" name="saveSortRules" class="btn-msk btn-success">Сохранить</button>
     </form>
 </div>
@@ -718,6 +803,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
 
 <script>
 var countries = <?= json_encode($countriesList, JSON_UNESCAPED_UNICODE) ?>;
+var types = <?= json_encode($typesList, JSON_UNESCAPED_UNICODE) ?>;
 
 function createCountryRow(value) {
     var row = $('<div class="country-row"></div>');
@@ -737,10 +823,32 @@ function createCountryRow(value) {
     return row;
 }
 
+function createTypeRow(value) {
+    var row = $('<div class="type-row"></div>');
+    var handle = $('<span class="drag-handle">&#9776;</span>');
+    var select = $('<select name="typeOrder[]" class="type-select"></select>');
+    select.append('<option value="">(Не выбран)</option>');
+    types.forEach(function(t) {
+        var opt = $('<option>').val(t).text(t);
+        if (t === value) opt.attr('selected', 'selected');
+        select.append(opt);
+    });
+    if (value && types.indexOf(value) === -1) {
+        select.append($('<option>').val(value).text(value).attr('selected', 'selected'));
+    }
+    var btn = $('<button type="button" class="remove-type btn-msk">Удалить</button>');
+    row.append(handle).append(select).append(btn);
+    return row;
+}
+
 $(function() {
     $('select').select2();
 
     $('#countryFields').sortable({
+        handle: '.drag-handle'
+    }).disableSelection();
+
+    $('#typeFields').sortable({
         handle: '.drag-handle'
     }).disableSelection();
 
@@ -751,8 +859,19 @@ $(function() {
         $('#countryFields').sortable('refresh');
     });
 
+    $('#addType').on('click', function() {
+        var newRow = createTypeRow('');
+        $('#typeFields').append(newRow);
+        newRow.find('select').select2();
+        $('#typeFields').sortable('refresh');
+    });
+
     $(document).on('click', '.remove-country', function() {
         $(this).closest('.country-row').remove();
+    });
+
+    $(document).on('click', '.remove-type', function() {
+        $(this).closest('.type-row').remove();
     });
 });
 </script>

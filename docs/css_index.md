@@ -80,5 +80,6 @@
 - 2025-06-10 11:00 Price/css/cart.css – добавлены стили панели `cart-footer`.
 
 - 2025-07-15 Price/admin.php – добавлены стили select2 и классы .btn-msk.
-- 2025-06-02 Price/admin.php – кнопки получили классы `.btn-msk`, поля ввода 
+- 2025-06-02 Price/admin.php – кнопки получили классы `.btn-msk`, поля ввода
   используют `.ms-form-control`.
+- 2025-07-25 Price/admin.php – добавлен стиль `.type-row` для списка типов.
