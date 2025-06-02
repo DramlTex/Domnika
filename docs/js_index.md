@@ -68,3 +68,5 @@
 
 
 
+
+- 2025-07-15 Price/admin.php – инициализация select2 для всех select.

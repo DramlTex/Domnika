@@ -459,6 +459,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
         .country-row {
             margin-bottom: 5px;
         }
+        /* ===== Select2 ===== */
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #444;
+            line-height: 28px;
+        }
+        .select2-container .select2-selection--single .select2-selection__rendered {
+            display: block;
+            padding-left: 8px;
+            padding-right: 20px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* ===== Buttons ===== */
+        .btn-msk.btn-success {
+            color: #fff;
+            background-color: #004fed;
+            border-color: #004fed;
+        }
+        .btn-msk.btn-success:hover {
+            color: #004fed;
+            background-color: #fff;
+            border-color: #004fed;
+        }
+        .btn-msk {
+            padding: 10px 25px;
+            text-decoration: none;
+            border: 2px solid #2855af;
+            border-radius: 8px;
+            transition: .2s ease background-color, .2s ease color;
+            cursor: pointer;
+            font-weight: 600;
+            background-color: transparent;
+            color: #2855af;
+        }
+
+        /* ===== Input fields ===== */
+        .ms-login-field .ms-form-control:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0 1000px #fff inset;
+        }
+        .ms-login-field .ms-form-control {
+            height: 44px;
+            padding: 0 14px;
+            border-radius: 6px;
+            border: 1px solid #d2d2d2;
+        }
+        @media (min-width: 768px) {
+            .ms-login-field .ms-form-control {
+                font-size: 14px;
+            }
+        }
+        @media (min-width: 992px) {
+            .ms-login-field .ms-form-control {
+                font-size: 16px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -672,7 +729,7 @@ function createCountryRow(value) {
 }
 
 $(function() {
-    $('.country-select').select2();
+    $('select').select2();
 
     $('#addCountry').on('click', function() {
         var newRow = createCountryRow('');
