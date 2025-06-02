@@ -71,8 +71,8 @@ JSON‑файлов `row_sort_rules.json` и `column_rules.json`. Скрипт `
 `COUNTRY_ORDER`, `TYPE_ORDER` и `COLUMN_RULES`. `fillTable` и `fillFilters`
 используют эти данные для сортировки и построения таблицы. Отсутствующие в
 правилах значения сортируются по алфавиту.
-Порядок стран редактируется глобально через раздел в `admin.php`. Правила хран
-ятся в файле `row_sort_rules.json`.
+Порядок стран и список типов редактируются через разделы в `admin.php`.
+Правила хранятся в файле `row_sort_rules.json`.
 
 ## JSON-файлы правил
 
@@ -92,3 +92,4 @@ CSS‑классам в `table.css` (например `name-col`, `type-col`, `c
 - 2025-06-23 docs/columns/README.md – правила сортировки и столбцов вынесены в JSON.
 - 2025-06-25 Price/column_rules.json, Price/row_sort_rules.json, docs/columns/README.md – описаны новые поля `enabled` и `typeSort`.
 - 2025-06-26 Price/admin.php, docs/columns/README.md – управление порядком стран вынесено в admin.php.
+- 2025-07-25 Price/admin.php, docs/columns/README.md – добавлено редактирование порядка типов чая.
