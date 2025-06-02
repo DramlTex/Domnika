@@ -6,6 +6,7 @@
  */
 let COUNTRY_ORDER = [];
 let TYPE_ORDER = [];
+let TYPE_SORT = 'alphabetical';
 
 /**
  * Описание колонок (порядок и заголовки) также поступает из
@@ -32,6 +33,7 @@ function sortByCountry(data) {
     acc[t] = i;
     return acc;
   }, {});
+  const sortAlpha = TYPE_SORT === 'alphabetical' || TYPE_ORDER.length === 0;
   return data.slice().sort((a, b) => {
     const aCountry = normalizeCountry(a.supplier);
     const bCountry = normalizeCountry(b.supplier);
@@ -43,7 +45,7 @@ function sortByCountry(data) {
     const bType = b.tip || '';
     const ati = typeMap.hasOwnProperty(aType) ? typeMap[aType] : TYPE_ORDER.length;
     const bti = typeMap.hasOwnProperty(bType) ? typeMap[bType] : TYPE_ORDER.length;
-    if (ati !== bti) return ati - bti;
+    if (!sortAlpha && (ati !== bti)) return ati - bti;
 
     if (aType !== bType) return aType.localeCompare(bType);
 
@@ -78,10 +80,11 @@ function orderTypesList(list) {
     acc[t] = i;
     return acc;
   }, {});
+  const sortAlpha = TYPE_SORT === 'alphabetical' || TYPE_ORDER.length === 0;
   return list.slice().sort((a, b) => {
     const ai = map.hasOwnProperty(a) ? map[a] : TYPE_ORDER.length;
     const bi = map.hasOwnProperty(b) ? map[b] : TYPE_ORDER.length;
-    if (ai !== bi) return ai - bi;
+    if (!sortAlpha && (ai !== bi)) return ai - bi;
     return a.localeCompare(b);
   });
 }
