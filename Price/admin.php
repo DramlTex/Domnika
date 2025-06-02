@@ -310,6 +310,17 @@ if (file_exists($rulesFilePath)) {
 $countryOrder = $sortRules['countryOrder'] ?? [];
 $typeOrder = $sortRules['typeOrder'] ?? [];
 
+// ------------------ Column rules ------------------
+$columnFilePath = __DIR__ . '/column_rules.json';
+$columnRules = [];
+if (file_exists($columnFilePath)) {
+    $json = file_get_contents($columnFilePath);
+    $columnRules = json_decode($json, true);
+    if (!is_array($columnRules)) {
+        $columnRules = [];
+    }
+}
+
 // ------------------ Обработка кнопки "Обновить контрагентов из МойСклад" ------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateCounterparties'])) {
     $newCounterparties = getCounterpartiesMS($login, $password, $msError);
@@ -341,6 +352,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveSortRules'])) {
     $sortRules['typeOrder'] = $types;
 
     file_put_contents($rulesFilePath, json_encode($sortRules, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    header('Location: admin.php');
+    exit;
+}
+
+// ------------------ Save column rules ------------------
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveColumnRules'])) {
+    $ids     = $_POST['col_id'] ?? [];
+    $titles  = $_POST['col_title'] ?? [];
+    $classes = $_POST['col_class'] ?? [];
+    $enabled = $_POST['col_enabled'] ?? [];
+    $newCols = [];
+    foreach ($ids as $i => $id) {
+        $id = trim($id);
+        $title = trim($titles[$i] ?? '');
+        $class = trim($classes[$i] ?? '');
+        $en    = isset($enabled[$i]) && $enabled[$i] === '1';
+        $row = ['id' => $id, 'title' => $title, 'enabled' => $en];
+        if ($class !== '') {
+            $row['class'] = $class;
+        }
+        $newCols[] = $row;
+    }
+    file_put_contents($columnFilePath, json_encode($newCols, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     header('Location: admin.php');
     exit;
 }
@@ -521,6 +555,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
         .type-row {
             margin-bottom: 5px;
         }
+        .column-row {
+            margin-bottom: 5px;
+        }
+        .column-row.disabled {
+            opacity: 0.5;
+        }
         .drag-handle {
             cursor: move;
             margin-right: 5px;
@@ -642,6 +682,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
         </div>
         <button type="button" id="addType" class="btn-msk">Добавить тип</button>
         <button type="submit" name="saveSortRules" class="btn-msk btn-success">Сохранить</button>
+    </form>
+</div>
+
+<!-- Редактирование колонок -->
+<div class="sort-rules">
+    <form method="post" action="admin.php" id="columnForm">
+        <div id="columnFields">
+        <?php foreach ($columnRules as $col): ?>
+            <div class="column-row<?php if (empty($col['enabled'])) echo ' disabled'; ?>">
+                <span class="drag-handle">&#9776;</span>
+                <select name="col_id[]" class="column-select">
+                    <?php foreach ($columnRules as $opt): ?>
+                        <option value="<?= htmlspecialchars($opt['id']) ?>" <?= $opt['id'] === $col['id'] ? 'selected' : '' ?>><?= htmlspecialchars($opt['title']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <input type="text" name="col_title[]" value="<?= htmlspecialchars($col['title']) ?>" class="ms-form-control" style="width:150px;" />
+                <input type="hidden" name="col_class[]" value="<?= htmlspecialchars($col['class'] ?? '') ?>">
+                <input type="hidden" name="col_enabled[]" class="col-enabled" value="<?= $col['enabled'] ? '1' : '0' ?>">
+                <button type="button" class="toggle-column btn-msk">
+                    <?= $col['enabled'] ? 'Выключить' : 'Включить' ?>
+                </button>
+                <button type="button" class="remove-column btn-msk">Удалить</button>
+            </div>
+        <?php endforeach; ?>
+        </div>
+        <button type="button" id="addColumn" class="btn-msk">Добавить колонку</button>
+        <button type="submit" name="saveColumnRules" class="btn-msk btn-success">Сохранить</button>
     </form>
 </div>
 <form method="post" action="admin.php" style="display:inline-block;">
@@ -841,6 +908,27 @@ function createTypeRow(value) {
     return row;
 }
 
+var columnOptions = <?php echo json_encode(array_column($columnRules, 'title', 'id'), JSON_UNESCAPED_UNICODE); ?>;
+
+function createColumnRow(id, title, cls, enabled) {
+    var row = $('<div class="column-row"></div>');
+    if (!enabled) row.addClass('disabled');
+    var handle = $('<span class="drag-handle">&#9776;</span>');
+    var select = $('<select name="col_id[]" class="column-select"></select>');
+    $.each(columnOptions, function(key, val) {
+        var opt = $('<option>').val(key).text(val);
+        if (key === id) opt.attr('selected', 'selected');
+        select.append(opt);
+    });
+    var titleInput = $('<input type="text" name="col_title[]" class="ms-form-control" style="width:150px;">').val(title || '');
+    var classInput = $('<input type="hidden" name="col_class[]">').val(cls || '');
+    var enabledInput = $('<input type="hidden" name="col_enabled[]" class="col-enabled">').val(enabled ? '1' : '0');
+    var toggleBtn = $('<button type="button" class="toggle-column btn-msk"></button>').text(enabled ? 'Выключить' : 'Включить');
+    var removeBtn = $('<button type="button" class="remove-column btn-msk">Удалить</button>');
+    row.append(handle, select, titleInput, classInput, enabledInput, toggleBtn, removeBtn);
+    return row;
+}
+
 $(function() {
     $('select').select2();
 
@@ -872,6 +960,38 @@ $(function() {
 
     $(document).on('click', '.remove-type', function() {
         $(this).closest('.type-row').remove();
+    });
+
+    $('#columnFields').sortable({
+        handle: '.drag-handle'
+    }).disableSelection();
+
+    $('#addColumn').on('click', function() {
+        var row = createColumnRow('', '', '', true);
+        $('#columnFields').append(row);
+        row.find('select').select2();
+        $('#columnFields').sortable('refresh');
+    });
+
+    $(document).on('click', '.toggle-column', function() {
+        var row = $(this).closest('.column-row');
+        var input = row.find('.col-enabled');
+        var val = input.val() === '1';
+        if (val) {
+            input.val('0');
+            $(this).text('Включить');
+            row.addClass('disabled');
+        } else {
+            input.val('1');
+            $(this).text('Выключить');
+            row.removeClass('disabled');
+        }
+    });
+
+    $(document).on('click', '.remove-column', function() {
+        var row = $(this).closest('.column-row');
+        row.find('.col-enabled').val('0');
+        row.addClass('disabled').hide();
     });
 });
 </script>
