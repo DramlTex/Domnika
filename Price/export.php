@@ -134,6 +134,11 @@ function sortItems(array $items, array $countryOrder, array $typeOrder): array
             return strcmp($aType, $bType);
         }
 
+        $nameCmp = strcmp($a['name'] ?? '', $b['name'] ?? '');
+        if ($nameCmp !== 0) {
+            return $nameCmp;
+        }
+
         return strcmp($a['articul'] ?? '', $b['articul'] ?? '');
     });
 
