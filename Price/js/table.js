@@ -56,7 +56,7 @@ function sortByCountry(data) {
 
     if (aType !== bType) return aType.localeCompare(bType);
 
-    return a.articul.localeCompare(b.articul);
+    return a.name.localeCompare(b.name);
   });
 }
 
