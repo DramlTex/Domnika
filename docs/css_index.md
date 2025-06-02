@@ -78,3 +78,5 @@
 - 2025-06-01 12:00 Price/css/cart.css – кнопка корзины переключена на inline-block для корректного переноса количества.
 - 2025-05-23 12:45 Price/css/cart.css, Price/css/product-panel.css – стили для отображения складов в корзине и карточке товара.
 - 2025-06-10 11:00 Price/css/cart.css – добавлены стили панели `cart-footer`.
+
+- 2025-07-15 Price/admin.php – добавлены стили select2 и классы .btn-msk.
