@@ -1,0 +1,14 @@
+[
+  {"id": "num", "title": "№", "class": "num-col"},
+  {"id": "articul", "title": "Артикул"},
+  {"id": "photo", "title": "Фото"},
+  {"id": "name", "title": "Название", "class": "name-col"},
+  {"id": "uom", "title": "Стандарт"},
+  {"id": "tip", "title": "Тип", "class": "type-col"},
+  {"id": "supplier", "title": "Страна", "class": "country-col"},
+  {"id": "mass", "title": "Вес тарного места"},
+  {"id": "price", "title": "Цена"},
+  {"id": "stock", "title": "Наличие в кг"},
+  {"id": "volumeWeight", "title": "Объемный вес"}
+]
+

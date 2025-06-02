@@ -1,27 +1,18 @@
 /**
- * Order of countries in the table. Add new countries at the end
- * of the array to control their position.
+ * Порядок стран и типов загружается из JSON-файла `row_sort_rules.json`.
+ * Эти переменные заполняются в `rules-loader.js` и используются
+ * для сортировки и фильтрации таблицы.
  * @type {string[]}
  */
-const COUNTRY_ORDER = [
-  'ИНДИЯ',
-  'ЦЕЙЛОН',
-  'ИРАН',
-  'ВЬЕТНАМ',
-  'КИТАЙ',
-  'КЕНИЯ',
-  'ЕГИПЕТ',
-  'НИГЕРИЯ',
-  'ЮЖНАЯ АФРИКА'
-];
+let COUNTRY_ORDER = [];
+let TYPE_ORDER = [];
 
 /**
- * Optional order of types within each country. Keep empty to sort
- * alphabetically. Add new types at the end of the array to override the
- * alphabetical order.
- * @type {string[]}
+ * Описание колонок (порядок и заголовки) также поступает из
+ * JSON-файла `column_rules.json` через `rules-loader.js`.
+ * @type {Array<Object>}
  */
-const TYPE_ORDER = [];
+let COLUMN_RULES = [];
 
 /**
  * Sort array of products according to `COUNTRY_ORDER` and article.
@@ -114,6 +105,19 @@ function orderTypesList(list) {
 // }
 
 /**
+ * Render table header according to COLUMN_RULES.
+ */
+function renderTableHeader() {
+  if (!COLUMN_RULES.length) return;
+  const headRow = document.querySelector('#priceList thead tr');
+  if (!headRow) return;
+  headRow.innerHTML = COLUMN_RULES.map(col => {
+    const cls = col.class ? ` class="${col.class}"` : '';
+    return `<th${cls}>${col.title}</th>`;
+  }).join('');
+}
+
+/**
  * Render product table in chunks for performance.
  * @param {Array<Object>} data
  */
@@ -129,6 +133,8 @@ function fillTable(data) {
   let rowNumber = 1;
   let currentCountry = null;
   let currentType = null;
+
+  const colSpan = COLUMN_RULES.length || 11;
 
   function processChunk() {
     const end = Math.min(index + chunkSize, sorted.length);
@@ -156,7 +162,7 @@ function fillTable(data) {
       if (currentCountry !== item.supplier) {
         const header = document.createElement('tr');
         header.className = 'country-row';
-        header.innerHTML = `<td colspan="11">${item.supplier}</td>`;
+        header.innerHTML = `<td colspan="${colSpan}">${item.supplier}</td>`;
         tbody.appendChild(header);
         currentCountry = item.supplier;
         currentType = null;
@@ -165,7 +171,7 @@ function fillTable(data) {
       if (currentType !== (item.tip || '')) {
         const typeHeader = document.createElement('tr');
         typeHeader.className = 'type-row';
-        typeHeader.innerHTML = `<td colspan="11">${item.tip || ''}</td>`;
+        typeHeader.innerHTML = `<td colspan="${colSpan}">${item.tip || ''}</td>`;
         tbody.appendChild(typeHeader);
         currentType = item.tip || '';
       }
@@ -181,18 +187,36 @@ function fillTable(data) {
           </div>`;
       }
 
-      tr.innerHTML = `
-        <td class="num-cell">${rowNumber}</td>
-        <td>${item.articul}</td>
-        <td class="photo-cell">${photoCell}</td>
-        <td class="name-cell">${item.name}</td>
-        <td>${item.uom}</td>
-        <td class="type-cell">${item.tip}</td>
-        <td class="country-cell">${item.supplier}</td>
-        <td>${formatNumber(item.mass)}</td>
-        <td>${formatNumber(item.price)}</td>
-        <td>${formatStock(stockVal)}</td>
-        <td>${formatNumber(item.volumeWeight)}</td>`;
+      const cellsHtml = COLUMN_RULES.map(col => {
+        switch (col.id) {
+          case 'num':
+            return `<td class="num-cell">${rowNumber}</td>`;
+          case 'articul':
+            return `<td>${item.articul}</td>`;
+          case 'photo':
+            return `<td class="photo-cell">${photoCell}</td>`;
+          case 'name':
+            return `<td class="name-cell">${item.name}</td>`;
+          case 'uom':
+            return `<td>${item.uom}</td>`;
+          case 'tip':
+            return `<td class="type-cell">${item.tip}</td>`;
+          case 'supplier':
+            return `<td class="country-cell">${item.supplier}</td>`;
+          case 'mass':
+            return `<td>${formatNumber(item.mass)}</td>`;
+          case 'price':
+            return `<td>${formatNumber(item.price)}</td>`;
+          case 'stock':
+            return `<td>${formatStock(stockVal)}</td>`;
+          case 'volumeWeight':
+            return `<td>${formatNumber(item.volumeWeight)}</td>`;
+          default:
+            return `<td>${item[col.id] || ''}</td>`;
+        }
+      }).join('');
+
+      tr.innerHTML = cellsHtml;
       tr.addEventListener('click', e => {
         if (e.target.closest('.image-container')) return;
         openProductModal(item);
