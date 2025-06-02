@@ -61,6 +61,7 @@
 
 - 2025-06-02 13:35 Price/js/table.js, Price/export.php – окончательная сортировка
   внутри типа выполняется по названию товара.
+- 2025-06-23 Price/js/rules-loader.js, Price/js/table.js, Price/js/main.js – правила сортировки и столбцов загружаются из JSON.
 
 
 

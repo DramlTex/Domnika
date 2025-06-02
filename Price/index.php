@@ -284,6 +284,7 @@ $userFolders = $_SESSION['user']['productfolders'] ?? [];
 <script src="js/table.js"></script>
 <script src="js/filters.js"></script>
 <script src="js/modals.js"></script>
+<script src="js/rules-loader.js"></script>
 <script src="js/export-excel.js"></script>
 <script src="js/cart.js"></script>
 <script src="js/main.js"></script>

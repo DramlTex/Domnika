@@ -110,6 +110,7 @@ scripts/test.sh
 - 2025-06-21 10:30 Price/export.php – ширина столбца "Тип" вычисляется по самому длинному слову.
 - 2025-06-21 11:00 Price/js/filters.js, Price/js/tabs.js, Price/js/data-loader.js, docs/js_index.md – правка фильтрации по вкладкам.
 - 2025-06-22 docs/columns/README.md – добавлено описание процесса вывода столбцов.
+- 2025-06-23 Price/js/rules-loader.js, docs/columns/README.md – правила сортировки вынесены в JSON.
 
 
 ## Рекомендации по улучшению
