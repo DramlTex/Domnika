@@ -64,6 +64,7 @@
 - 2025-06-23 Price/js/rules-loader.js, Price/js/table.js, Price/js/main.js – правила сортировки и столбцов загружаются из JSON.
 - 2025-06-25 Price/js/rules-loader.js, Price/js/table.js – поддержка `enabled` и `typeSort` в правилах.
 - 2025-06-26 Price/admin.php – скрипт для добавления полей стран в разделе правил.
+- 2025-06-30 Price/admin.php – поля стран переведены на select2, список стран подгружается из «МойСклад».
 
 
 
