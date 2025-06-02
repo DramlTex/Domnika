@@ -433,6 +433,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
     <style>
         table, th, td {
             border:1px solid #ccc;
@@ -458,6 +460,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
         }
         .country-row {
             margin-bottom: 5px;
+        }
+        .drag-handle {
+            cursor: move;
+            margin-right: 5px;
         }
         /* ===== Select2 ===== */
         .select2-container--default .select2-selection--single .select2-selection__rendered {
@@ -535,6 +541,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
         <div id="countryFields">
         <?php foreach ($countryOrder as $c): ?>
             <div class="country-row">
+                <span class="drag-handle">&#9776;</span>
                 <select name="countryOrder[]" class="country-select">
                     <option value="">(Не выбрана)</option>
                     <?php foreach ($countriesList as $name): ?>
@@ -713,6 +720,7 @@ var countries = <?= json_encode($countriesList, JSON_UNESCAPED_UNICODE) ?>;
 
 function createCountryRow(value) {
     var row = $('<div class="country-row"></div>');
+    var handle = $('<span class="drag-handle">&#9776;</span>');
     var select = $('<select name="countryOrder[]" class="country-select"></select>');
     select.append('<option value="">(Не выбрана)</option>');
     countries.forEach(function(c) {
@@ -724,17 +732,22 @@ function createCountryRow(value) {
         select.append($('<option>').val(value).text(value).attr('selected', 'selected'));
     }
     var btn = $('<button type="button" class="remove-country">Удалить</button>');
-    row.append(select).append(btn);
+    row.append(handle).append(select).append(btn);
     return row;
 }
 
 $(function() {
     $('select').select2();
 
+    $('#countryFields').sortable({
+        handle: '.drag-handle'
+    }).disableSelection();
+
     $('#addCountry').on('click', function() {
         var newRow = createCountryRow('');
         $('#countryFields').append(newRow);
         newRow.find('select').select2();
+        $('#countryFields').sortable('refresh');
     });
 
     $(document).on('click', '.remove-country', function() {

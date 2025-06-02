@@ -115,6 +115,7 @@ scripts/test.sh
 - 2025-06-25 Price/column_rules.json, Price/row_sort_rules.json, Price/js/rules-loader.js, Price/js/table.js – расширены настройки правил сортировки и колонок.
 - 2025-06-26 Price/admin.php, docs/columns/README.md – редактирование порядка стран перенесено в admin.php.
 - 2025-06-30 Price/admin.php – форма порядка стран использует select2 и загружает список стран из «МойСклад».
+- 2025-07-20 Price/admin.php – страны можно сортировать перетаскиванием через jQuery UI.
 
 
 ## Рекомендации по улучшению
