@@ -142,6 +142,16 @@ function fillTable(data) {
         const number = parseFloat(num);
         return isNaN(number) ? num : number.toFixed(2).replace(/\.?0+$/, '');
       };
+      const formatStock = num => {
+        if (num === null || num === undefined) return '';
+        const number = parseFloat(num);
+        if (isNaN(number)) return num;
+        return Math.floor(number).toString();
+      };
+
+      if (Math.floor(parseFloat(stockVal)) <= 0) {
+        continue;
+      }
 
       if (currentCountry !== item.supplier) {
         const header = document.createElement('tr');
@@ -181,7 +191,7 @@ function fillTable(data) {
         <td class="country-cell">${item.supplier}</td>
         <td>${formatNumber(item.mass)}</td>
         <td>${formatNumber(item.price)}</td>
-        <td>${formatNumber(stockVal)}</td>
+        <td>${formatStock(stockVal)}</td>
         <td>${formatNumber(item.volumeWeight)}</td>`;
       tr.addEventListener('click', e => {
         if (e.target.closest('.image-container')) return;
