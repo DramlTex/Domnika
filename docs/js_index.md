@@ -70,3 +70,4 @@
 
 
 - 2025-07-15 Price/admin.php – инициализация select2 для всех select.
+- 2025-07-20 Price/admin.php – список стран стал перетаскиваемым через jQuery UI.
