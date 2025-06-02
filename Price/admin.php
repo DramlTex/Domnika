@@ -159,6 +159,53 @@ function getProductFoldersMS($login, $password, &$msError) {
     return $allFolders;
 }
 
+// -- 3) Функция для загрузки стран
+function getCountriesMS($login, $password, &$msError) {
+    $allCountries = [];
+    $url = 'https://api.moysklad.ru/api/remap/1.2/entity/country?limit=1000';
+
+    while ($url) {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_ENCODING, '');
+        curl_setopt($ch, CURLOPT_USERPWD, $login . ':' . $password);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $err = curl_error($ch);
+        curl_close($ch);
+
+        if ($err) {
+            $msError = "Ошибка cURL: $err";
+            return $allCountries;
+        }
+        if ($httpCode >= 400) {
+            $msError = "Сервер вернул код ошибки: $httpCode<br>Ответ: " . htmlspecialchars($response);
+            return $allCountries;
+        }
+
+        $data = json_decode($response, true);
+        if (!isset($data['rows']) || !is_array($data['rows'])) {
+            $msError = "Некорректный формат ответа от МойСклад при загрузке стран.";
+            return $allCountries;
+        }
+
+        foreach ($data['rows'] as $row) {
+            if (!empty($row['name'])) {
+                $allCountries[] = $row['name'];
+            }
+        }
+
+        if (!empty($data['meta']['nextHref'])) {
+            $url = $data['meta']['nextHref'];
+        } else {
+            $url = null;
+        }
+    }
+
+    return $allCountries;
+}
+
 // ------------------ Загрузка пользователей ------------------
 $users = loadUsers();
 
@@ -197,6 +244,7 @@ function saveProductFoldersLocal($data) {
 // Загружаем локальный список контрагентов и групп товаров
 $counterparties = loadCounterpartiesLocal();
 $productFolders = loadProductFoldersLocal();
+$countriesList = getCountriesMS($login, $password, $msError);
 
 // ------------------ Row sort rules ------------------
 $rulesFilePath = __DIR__ . '/row_sort_rules.json';
@@ -382,6 +430,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
     <link rel="stylesheet" type="text/css" href="styles.css">
     <meta charset="UTF-8">
     <title>Админ-панель</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <style>
         table, th, td {
             border:1px solid #ccc;
@@ -405,6 +456,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
         .sort-rules {
             margin: 20px 0;
         }
+        .country-row {
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
@@ -421,10 +475,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
 <!-- Редактирование порядка стран -->
 <div class="sort-rules">
     <form method="post" action="admin.php" id="countryForm">
+        <div id="countryFields">
         <?php foreach ($countryOrder as $c): ?>
-            <input type="text" name="countryOrder[]" value="<?= htmlspecialchars($c) ?>"><br>
+            <div class="country-row">
+                <select name="countryOrder[]" class="country-select">
+                    <option value="">(Не выбрана)</option>
+                    <?php foreach ($countriesList as $name): ?>
+                        <option value="<?= htmlspecialchars($name) ?>" <?= $name === $c ? 'selected' : '' ?>><?= htmlspecialchars($name) ?></option>
+                    <?php endforeach; ?>
+                    <?php if (!in_array($c, $countriesList, true)): ?>
+                        <option value="<?= htmlspecialchars($c) ?>" selected><?= htmlspecialchars($c) ?></option>
+                    <?php endif; ?>
+                </select>
+                <button type="button" class="remove-country">Удалить</button>
+            </div>
         <?php endforeach; ?>
-        <div id="countryExtra"></div>
+        </div>
         <button type="button" id="addCountry">Добавить страну</button>
         <button type="submit" name="saveSortRules">Сохранить</button>
     </form>
@@ -586,13 +652,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
 </form>
 
 <script>
-document.getElementById('addCountry').addEventListener('click', function () {
-    var cont = document.getElementById('countryExtra');
-    var inp = document.createElement('input');
-    inp.type = 'text';
-    inp.name = 'countryOrder[]';
-    cont.appendChild(inp);
-    cont.appendChild(document.createElement('br'));
+var countries = <?= json_encode($countriesList, JSON_UNESCAPED_UNICODE) ?>;
+
+function createCountryRow(value) {
+    var row = $('<div class="country-row"></div>');
+    var select = $('<select name="countryOrder[]" class="country-select"></select>');
+    select.append('<option value="">(Не выбрана)</option>');
+    countries.forEach(function(c) {
+        var opt = $('<option>').val(c).text(c);
+        if (c === value) opt.attr('selected', 'selected');
+        select.append(opt);
+    });
+    if (value && countries.indexOf(value) === -1) {
+        select.append($('<option>').val(value).text(value).attr('selected', 'selected'));
+    }
+    var btn = $('<button type="button" class="remove-country">Удалить</button>');
+    row.append(select).append(btn);
+    return row;
+}
+
+$(function() {
+    $('.country-select').select2();
+
+    $('#addCountry').on('click', function() {
+        var newRow = createCountryRow('');
+        $('#countryFields').append(newRow);
+        newRow.find('select').select2();
+    });
+
+    $(document).on('click', '.remove-country', function() {
+        $(this).closest('.country-row').remove();
+    });
 });
 </script>
 </body>
