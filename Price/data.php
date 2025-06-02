@@ -348,12 +348,16 @@ foreach ($storeIds as $key => $uuid) {
  */
 $rows = [];
 foreach ($combinedItems as $uniqueId => $d) {
-    $totalStock = $d['stock_store1'] 
+    $totalStock = $d['stock_store1']
                 + $d['stock_store2']
                 + $d['stock_store3']
                 + $d['stock_store4'];
 
-    // (При необходимости можно фильтровать по цене или нулевому остатку)
+    // Отбрасываем дробную часть и исключаем товары с нулевым остатком
+    $totalStockInt = (int) floor($totalStock);
+    if ($totalStockInt <= 0) {
+        continue;
+    }
 
     $rows[] = [
         'description'  => $d['description'],
@@ -364,7 +368,7 @@ foreach ($combinedItems as $uniqueId => $d) {
         'supplier'     => $d['supplier'],
         'mass'         => $d['mass'],
         'price'        => $d['price'],
-        'stock'        => $totalStock,
+        'stock'        => $totalStockInt,
         'stock_store1' => $d['stock_store1'],
         'stock_store2' => $d['stock_store2'],
         'stock_store3' => $d['stock_store3'],
