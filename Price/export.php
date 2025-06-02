@@ -35,6 +35,20 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 }
 if (!is_array($data)) die(json_encode(['error' => 'Данные должны быть массивом.']));
 
+// Вычисляем максимальную длину слова в колонке "Тип" для корректной ширины столбца
+$maxTypeWordLength = 0;
+foreach ($data as $item) {
+    $tip = $item['tip'] ?? '';
+    $words = preg_split('/\s+/', trim($tip));
+    foreach ($words as $word) {
+        $len = mb_strlen($word);
+        if ($len > $maxTypeWordLength) {
+            $maxTypeWordLength = $len;
+        }
+    }
+}
+$typeColumnWidth = max($maxTypeWordLength + 2, 8); // запас на отступы
+
 // Группировка данных
 $groupedData = [];
 foreach ($data as $item) {
@@ -159,7 +173,7 @@ foreach ($groupedData as $groupName => $items) {
     if ($includeMinOrder) {
         $columnWidths = [
             'A' => 5, 'B' => 12, 'C' => 40, 'D' => 12,
-            'E' => 12, 'F' => 12, 'G' => 15, 'H' => 10,
+            'E' => $typeColumnWidth, 'F' => 12, 'G' => 15, 'H' => 10,
             'I' => 12, 'J' => 15, 'K' => 12, 'L' => 15
         ];
         $lastColumn = 'L';
@@ -167,7 +181,7 @@ foreach ($groupedData as $groupName => $items) {
     } else {
         $columnWidths = [
             'A' => 5, 'B' => 12, 'C' => 40, 'D' => 12,
-            'E' => 12, 'F' => 12, 'G' => 15, 'H' => 10,
+            'E' => $typeColumnWidth, 'F' => 12, 'G' => 15, 'H' => 10,
             'I' => 12, 'J' => 15, 'K' => 15
         ];
         $lastColumn = 'K';
