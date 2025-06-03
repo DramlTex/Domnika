@@ -84,3 +84,4 @@
   используют `.ms-form-control`.
 - 2025-07-25 Price/admin.php – добавлен стиль `.type-row` для списка типов.
 - 2025-08-02 Price/admin.php – добавлен стиль `.column-row` и отметка `.column-row.disabled`.
+- 2025-06-03 Price/styles.css, Price/admin.php – добавлен класс `.logout-link` для кнопки выхода.
