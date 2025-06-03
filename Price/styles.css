@@ -46,3 +46,19 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
+/* Logout link styling */
+.logout-link {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: #d9534f;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+.logout-link:hover {
+    background-color: #c9302c;
+}

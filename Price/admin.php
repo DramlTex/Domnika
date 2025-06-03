@@ -494,6 +494,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
   exit;
 }
 
+$username = $_SESSION['user']['login'];
+
 
 ?>
 <!DOCTYPE html>
@@ -603,10 +605,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
                 font-size: 16px;
             }
         }
+
+        /* ===== Logout link ===== */
+        .logout-link {
+            display: inline-block;
+            margin-left: 10px;
+            padding: 5px 10px;
+            background-color: #d9534f;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        .logout-link:hover {
+            background-color: #c9302c;
+        }
+
+        .user-info {
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body class="ms-login-field">
 <h2>Админ-панель</h2>
+<p class="user-info">
+    Вы вошли как: <strong><?= htmlspecialchars($username) ?></strong>
+    <a href="logout.php" class="logout-link">Выйти</a>
+</p>
 <!-- Редактирование порядка стран -->
 <div class="sort-rules">
     <form method="post" action="admin.php" id="countryForm">
