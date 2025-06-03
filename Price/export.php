@@ -258,7 +258,7 @@ foreach ($groupedData as $groupName => $items) {
     $sheet->setCellValue("G{$dataStartRow}", 'Вес тарного места');
     $sheet->setCellValue("H{$dataStartRow}", 'Цена');
     $sheet->setCellValue("I{$dataStartRow}", 'Наличие (кг)');
-    $sheet->setCellValue("J{$dataStartRow}", 'Объём тарного места');
+    $sheet->setCellValue("J{$dataStartRow}", 'Объемный вес');
     if ($includeMinOrder) {
         $sheet->setCellValue("K{$dataStartRow}", 'Мин. заказ');
         $sheet->setCellValue("L{$dataStartRow}", 'Фото');
