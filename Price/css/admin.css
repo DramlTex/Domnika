@@ -1,0 +1,104 @@
+/* Styles for admin panel */
+
+.error {
+    padding: 10px;
+    margin: 10px 0;
+    background: #ffcfcf;
+    color: #900;
+    font-weight: bold;
+}
+
+.checkbox-list {
+    width: 300px;
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 5px;
+}
+
+.sort-rules {
+    margin: 20px 0;
+}
+
+.country-row,
+.type-row,
+.column-row {
+    margin-bottom: 5px;
+}
+
+.column-row.disabled {
+    opacity: 0.5;
+}
+
+.drag-handle {
+    cursor: move;
+    margin-right: 5px;
+}
+
+/* Select2 adjustments */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #444;
+    line-height: 28px;
+}
+
+.select2-container .select2-selection--single .select2-selection__rendered {
+    display: block;
+    padding-left: 8px;
+    padding-right: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Buttons */
+.btn-msk {
+    padding: 10px 25px;
+    text-decoration: none;
+    border: 2px solid #2855af;
+    border-radius: 8px;
+    transition: .2s ease background-color, .2s ease color;
+    cursor: pointer;
+    font-weight: 600;
+    background-color: transparent;
+    color: #2855af;
+}
+
+.btn-msk.btn-success {
+    color: #fff;
+    background-color: #004fed;
+    border-color: #004fed;
+}
+
+.btn-msk.btn-success:hover {
+    color: #004fed;
+    background-color: #fff;
+    border-color: #004fed;
+}
+
+/* Input fields */
+.ms-login-field .ms-form-control:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px #fff inset;
+}
+
+.ms-login-field .ms-form-control {
+    height: 44px;
+    padding: 0 14px;
+    border-radius: 6px;
+    border: 1px solid #d2d2d2;
+}
+
+@media (min-width: 768px) {
+    .ms-login-field .ms-form-control {
+        font-size: 14px;
+    }
+}
+
+@media (min-width: 992px) {
+    .ms-login-field .ms-form-control {
+        font-size: 16px;
+    }
+}
+
+.user-info {
+    margin: 10px 20px;
+}
