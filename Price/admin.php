@@ -291,11 +291,30 @@ function saveProductFoldersLocal($data) {
     file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 }
 
-// Загружаем список контрагентов и групп товаров напрямую из МойСклад
-$counterparties = getCounterpartiesMS($login, $password, $msError);
-$productFolders = getProductFoldersMS($login, $password, $msError);
-$countriesList  = getCountriesMS($login, $password, $msError);
-$typesList      = getTypesMS($login, $password, $msError);
+// Загружаем списки из МойСклад только при первом открытии страницы
+// или после явного обновления. После POST-запроса используем
+// сохранённые в сессии данные, чтобы не обращаться к API повторно.
+$skipReload = !empty($_SESSION['skipMsReload']);
+unset($_SESSION['skipMsReload']);
+
+if ($skipReload && isset($_SESSION['msData'])) {
+    $counterparties = $_SESSION['msData']['counterparties'];
+    $productFolders = $_SESSION['msData']['productFolders'];
+    $countriesList  = $_SESSION['msData']['countries'];
+    $typesList      = $_SESSION['msData']['types'];
+} else {
+    $counterparties = getCounterpartiesMS($login, $password, $msError);
+    $productFolders = getProductFoldersMS($login, $password, $msError);
+    $countriesList  = getCountriesMS($login, $password, $msError);
+    $typesList      = getTypesMS($login, $password, $msError);
+
+    $_SESSION['msData'] = [
+        'counterparties' => $counterparties,
+        'productFolders' => $productFolders,
+        'countries'      => $countriesList,
+        'types'          => $typesList,
+    ];
+}
 
 // ------------------ Row sort rules ------------------
 $rulesFilePath = __DIR__ . '/row_sort_rules.json';
@@ -359,6 +378,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveRules'])) {
         json_encode($newCols, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
     );
 
+    $_SESSION['skipMsReload'] = true;
     header('Location: admin.php');
     exit;
 }
@@ -426,6 +446,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveChanges'])) {
   $users = array_values($users);
   saveUsers($users);
 
+  $_SESSION['skipMsReload'] = true;
   header('Location: admin.php');
   exit;
 }
@@ -442,6 +463,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
   $newFolders = $_POST['new_productfolder_hrefs'] ?? []; // массив href
 
   if ($newLogin === '' || $newPassword === '') {
+      $_SESSION['skipMsReload'] = true;
       header('Location: admin.php');
       exit;
   }
@@ -449,6 +471,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
   // Проверка логина на уникальность
   foreach ($users as $u) {
       if ($u['login'] === $newLogin) {
+          $_SESSION['skipMsReload'] = true;
           header('Location: admin.php');
           exit;
       }
@@ -493,6 +516,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
   ];
 
   saveUsers($users);
+  $_SESSION['skipMsReload'] = true;
   header('Location: admin.php');
   exit;
 }
