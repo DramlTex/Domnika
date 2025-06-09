@@ -505,6 +505,7 @@ $username = $_SESSION['user']['login'];
 <html lang="ru">
 <head>
     <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" type="text/css" href="css/admin.css">
     <meta charset="UTF-8">
     <title>Админ-панель</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -512,123 +513,7 @@ $username = $_SESSION['user']['login'];
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-    <style>
-        table, th, td {
-            border:1px solid #ccc;
-            border-collapse: collapse;
-            padding:8px;
-        }
-        th {
-            background:#eee;
-        }
-        .error {
-            padding:10px; margin:10px 0; background:#ffcfcf; color:#900; font-weight:bold;
-        }
-        /* Чтобы чекбоксы аккуратнее смотрелись в колонке */
-        .checkbox-list {
-            width: 300px;
-            max-height: 150px;  /* или любое другое ограничение высоты */
-            overflow-y: auto;   /* прокрутка, если списков слишком много */
-            border: 1px solid #ddd;
-            padding: 5px;
-        }
-        .sort-rules {
-            margin: 20px 0;
-        }
-        .country-row {
-            margin-bottom: 5px;
-        }
-        .type-row {
-            margin-bottom: 5px;
-        }
-        .column-row {
-            margin-bottom: 5px;
-        }
-        .column-row.disabled {
-            opacity: 0.5;
-        }
-        .drag-handle {
-            cursor: move;
-            margin-right: 5px;
-        }
-        /* ===== Select2 ===== */
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            color: #444;
-            line-height: 28px;
-        }
-        .select2-container .select2-selection--single .select2-selection__rendered {
-            display: block;
-            padding-left: 8px;
-            padding-right: 20px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        /* ===== Buttons ===== */
-        .btn-msk.btn-success {
-            color: #fff;
-            background-color: #004fed;
-            border-color: #004fed;
-        }
-        .btn-msk.btn-success:hover {
-            color: #004fed;
-            background-color: #fff;
-            border-color: #004fed;
-        }
-        .btn-msk {
-            padding: 10px 25px;
-            text-decoration: none;
-            border: 2px solid #2855af;
-            border-radius: 8px;
-            transition: .2s ease background-color, .2s ease color;
-            cursor: pointer;
-            font-weight: 600;
-            background-color: transparent;
-            color: #2855af;
-        }
-
-        /* ===== Input fields ===== */
-        .ms-login-field .ms-form-control:-webkit-autofill {
-            -webkit-box-shadow: 0 0 0 1000px #fff inset;
-        }
-        .ms-login-field .ms-form-control {
-            height: 44px;
-            padding: 0 14px;
-            border-radius: 6px;
-            border: 1px solid #d2d2d2;
-        }
-        @media (min-width: 768px) {
-            .ms-login-field .ms-form-control {
-                font-size: 14px;
-            }
-        }
-        @media (min-width: 992px) {
-            .ms-login-field .ms-form-control {
-                font-size: 16px;
-            }
-        }
-
-        /* ===== Logout link ===== */
-        .logout-link {
-            display: inline-block;
-            margin-left: 10px;
-            padding: 5px 10px;
-            background-color: #d9534f;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 4px;
-            font-weight: 500;
-            transition: background-color 0.3s;
-        }
-        .logout-link:hover {
-            background-color: #c9302c;
-        }
-
-        .user-info {
-            margin: 10px 0;
-        }
-    </style>
+    
 </head>
 <body class="ms-login-field">
 <h2>Админ-панель</h2>
@@ -637,8 +522,10 @@ $username = $_SESSION['user']['login'];
     <a href="logout.php" class="logout-link">Выйти</a>
 </p>
 <!-- Правила сортировки и столбцов -->
+<h3>Настройка правил</h3>
 <form method="post" action="admin.php" id="rulesForm">
 <div class="sort-rules">
+    <h4>Порядок стран</h4>
         <div id="countryFields">
         <?php foreach ($countryOrder as $c): ?>
             <div class="country-row">
@@ -661,7 +548,7 @@ $username = $_SESSION['user']['login'];
 
 <!-- Редактирование порядка типов -->
 <div class="sort-rules">
-
+    <h4>Порядок типов</h4>
         <div id="typeFields">
         <?php foreach ($typeOrder as $t): ?>
             <div class="type-row">
@@ -684,6 +571,7 @@ $username = $_SESSION['user']['login'];
 
 <!-- Редактирование колонок -->
 <div class="sort-rules">
+    <h4>Колонки таблицы</h4>
 
         <div id="columnFields">
         <?php foreach ($columnRules as $col): ?>
@@ -717,6 +605,7 @@ $username = $_SESSION['user']['login'];
 <hr>
 
 <!-- Таблица пользователей (исключая админа) -->
+<h3>Пользователи</h3>
 <form method="post" action="admin.php">
     <table>
         <tr>
