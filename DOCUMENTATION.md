@@ -121,6 +121,7 @@ scripts/test.sh
 - 2025-07-30 Price/admin.php – удалены кнопки "Добавить" и "Удалить" в форме columnForm.
 - 2025-06-02 19:15 Price/admin.php, docs/admin/php.md – контрагенты и группы товаров загружаются при загрузке страницы, кнопки обновления удалены.
 - 2025-06-03 07:09 Price/admin.php, Price/styles.css, docs/admin/php.md, docs/admin/css.md – добавлена ссылка выхода из учётной записи.
+- 2025-08-15 Price/admin.php, docs/admin/php.md – объединены формы правил и единая кнопка сохранения.
 
 
 ## Рекомендации по улучшению

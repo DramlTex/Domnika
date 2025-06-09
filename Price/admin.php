@@ -322,8 +322,9 @@ if (file_exists($columnFilePath)) {
 }
 
 
-// ------------------ Save sorting rules ------------------
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveSortRules'])) {
+// ------------------ Save sorting and column rules ------------------
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveRules'])) {
+    // Row sorting rules
     $countries = array_map('trim', $_POST['countryOrder'] ?? []);
     $countries = array_values(array_filter($countries, fn($c) => $c !== ''));
     $sortRules['countryOrder'] = $countries;
@@ -331,31 +332,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveSortRules'])) {
     $types = array_map('trim', $_POST['typeOrder'] ?? []);
     $types = array_values(array_filter($types, fn($t) => $t !== ''));
     $sortRules['typeOrder'] = $types;
+    file_put_contents(
+        $rulesFilePath,
+        json_encode($sortRules, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+    );
 
-    file_put_contents($rulesFilePath, json_encode($sortRules, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-    header('Location: admin.php');
-    exit;
-}
-
-// ------------------ Save column rules ------------------
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveColumnRules'])) {
+    // Column rules
     $ids     = $_POST['col_id'] ?? [];
     $titles  = $_POST['col_title'] ?? [];
     $classes = $_POST['col_class'] ?? [];
     $enabled = $_POST['col_enabled'] ?? [];
     $newCols = [];
     foreach ($ids as $i => $id) {
-        $id = trim($id);
+        $id    = trim($id);
         $title = trim($titles[$i] ?? '');
         $class = trim($classes[$i] ?? '');
         $en    = isset($enabled[$i]) && $enabled[$i] === '1';
-        $row = ['id' => $id, 'title' => $title, 'enabled' => $en];
+        $row   = ['id' => $id, 'title' => $title, 'enabled' => $en];
         if ($class !== '') {
             $row['class'] = $class;
         }
         $newCols[] = $row;
     }
-    file_put_contents($columnFilePath, json_encode($newCols, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    file_put_contents(
+        $columnFilePath,
+        json_encode($newCols, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+    );
+
     header('Location: admin.php');
     exit;
 }
@@ -633,9 +636,9 @@ $username = $_SESSION['user']['login'];
     Вы вошли как: <strong><?= htmlspecialchars($username) ?></strong>
     <a href="logout.php" class="logout-link">Выйти</a>
 </p>
-<!-- Редактирование порядка стран -->
+<!-- Правила сортировки и столбцов -->
+<form method="post" action="admin.php" id="rulesForm">
 <div class="sort-rules">
-    <form method="post" action="admin.php" id="countryForm">
         <div id="countryFields">
         <?php foreach ($countryOrder as $c): ?>
             <div class="country-row">
@@ -654,13 +657,11 @@ $username = $_SESSION['user']['login'];
         <?php endforeach; ?>
         </div>
         <button type="button" id="addCountry" class="btn-msk">Добавить страну</button>
-        <button type="submit" name="saveSortRules" class="btn-msk btn-success">Сохранить</button>
-    </form>
 </div>
 
 <!-- Редактирование порядка типов -->
 <div class="sort-rules">
-    <form method="post" action="admin.php" id="typeForm">
+
         <div id="typeFields">
         <?php foreach ($typeOrder as $t): ?>
             <div class="type-row">
@@ -678,14 +679,12 @@ $username = $_SESSION['user']['login'];
             </div>
         <?php endforeach; ?>
         </div>
-        <button type="button" id="addType" class="btn-msk">Добавить тип</button>
-        <button type="submit" name="saveSortRules" class="btn-msk btn-success">Сохранить</button>
-    </form>
+    <button type="button" id="addType" class="btn-msk">Добавить тип</button>
 </div>
 
 <!-- Редактирование колонок -->
 <div class="sort-rules">
-    <form method="post" action="admin.php" id="columnForm">
+
         <div id="columnFields">
         <?php foreach ($columnRules as $col): ?>
             <div class="column-row<?php if (empty($col['enabled'])) echo ' disabled'; ?>">
@@ -704,8 +703,9 @@ $username = $_SESSION['user']['login'];
             </div>
         <?php endforeach; ?>
         </div>
-        <button type="submit" name="saveColumnRules" class="btn-msk btn-success">Сохранить</button>
-    </form>
+
+<button type="submit" name="saveRules" class="btn-msk btn-success">Сохранить</button>
+</form>
 </div>
 <?php if ($msError): ?>
     <div class="error">
