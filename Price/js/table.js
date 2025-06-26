@@ -19,7 +19,11 @@ let COLUMN_RULES = [];
  * Groups that should be displayed even when stock is zero.
  * @type {string[]}
  */
-const ALWAYS_SHOW_GROUPS = ['Ароматизированный чай', 'Приправы'];
+const ALWAYS_SHOW_GROUPS = [
+  'Ароматизированный чай',
+  'Травы и добавки',
+  'Приправы'
+];
 
 /**
  * Sort array of products according to `COUNTRY_ORDER` and article.
