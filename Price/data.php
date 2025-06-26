@@ -276,7 +276,7 @@ function createCombinedEntry($source, $checkAttrs) {
  *    - Если "variant" (модификация), добавляем остаток к родительскому товару (если он подходит).
  *    - Если обычный товар, создаём или обновляем запись в итоговом массиве $combined.
  */
-function processItemsFromStore($items, $storeKey, &$combined, $login, $password, $base_url) {
+function processItemsFromStore($items, $storeKey, &$combined, $login, $password, $base_url, array &$checkedParents) {
     error_log("[store:$storeKey] обработка " . count($items) . " позиций");
     foreach ($items as $item) {
         $type   = $item['meta']['type'] ?? '';
@@ -295,7 +295,7 @@ function processItemsFromStore($items, $storeKey, &$combined, $login, $password,
             $groupKey = $prodId;
 
             // Если родитель ещё не загружен и не в $combined, догружаем и проверяем
-            if (!isset($combined[$groupKey])) {
+            if (!isset($combined[$groupKey]) && !array_key_exists($groupKey, $checkedParents)) {
                 $url = $base_url.'entity/product/'.$prodId.'?expand=country,attributes,images';
                 error_log("    загружаем родителя $prodId");
                 $parentData = moysklad_request($url, $login, $password);
@@ -307,11 +307,16 @@ function processItemsFromStore($items, $storeKey, &$combined, $login, $password,
                 $check = checkProductAttributes($parentData);
                 if (!$check['include']) {
                     error_log("    родитель $prodId не подходит" );
+                    $checkedParents[$groupKey] = false; // запоминаем, что не подходит
                     continue; // родитель не подходит
                 }
                 // Создаём запись для родителя
                 $combined[$groupKey] = createCombinedEntry($parentData, $check);
+                $checkedParents[$groupKey] = true; // родитель подходит и добавлен
                 error_log("    родитель $prodId добавлен в список");
+            } elseif (array_key_exists($groupKey, $checkedParents) && $checkedParents[$groupKey] === false) {
+                // Родитель уже проверен и не подходит
+                continue;
             }
 
             // Добавляем остаток модификации к родительской записи
@@ -347,6 +352,8 @@ function processItemsFromStore($items, $storeKey, &$combined, $login, $password,
 /**
  * 9. Обходим все указанные склады и складываем остатки в $combinedItems
  */
+// Массив для кеширования проверенных родительских товаров
+$checkedParents = [];
 foreach ($storeIds as $key => $uuid) {
     error_log("=== Склад $key ($uuid) ===");
     $params = [
@@ -354,7 +361,7 @@ foreach ($storeIds as $key => $uuid) {
         'expand' => 'country,images,product'
     ];
     $items = fetchAllAssortment($login, $password, $base_url, $params);
-    processItemsFromStore($items, $key, $combinedItems, $login, $password, $base_url);
+    processItemsFromStore($items, $key, $combinedItems, $login, $password, $base_url, $checkedParents);
     error_log("=== Завершена обработка склада $key ===");
 }
 
