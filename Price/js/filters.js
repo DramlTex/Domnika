@@ -30,7 +30,7 @@ function applyFilters() {
 
     if (storeVal) {
       const storeStock = item['stock_' + storeVal] || 0;
-      if (storeStock <= 0) return false;
+      if (storeStock <= 0 && !ALWAYS_SHOW_GROUPS.includes(item.group)) return false;
     }
     return true;
   });
