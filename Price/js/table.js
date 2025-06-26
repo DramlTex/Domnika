@@ -16,6 +16,12 @@ let TYPE_SORT = 'alphabetical';
 let COLUMN_RULES = [];
 
 /**
+ * Groups that should be displayed even when stock is zero.
+ * @type {string[]}
+ */
+const ALWAYS_SHOW_GROUPS = ['Ароматизированный чай', 'Приправы'];
+
+/**
  * Sort array of products according to `COUNTRY_ORDER` and article.
  * @param {Array<Object>} data
  * @returns {Array<Object>} sorted copy of data
@@ -145,7 +151,10 @@ function fillTable(data) {
       const item = sorted[i];
       const storeVal = document.getElementById('filterStore').value;
       let stockVal = item.stock;
-      if (storeVal) stockVal = item['stock_' + storeVal] || 0;
+      if (storeVal) {
+        const val = item['stock_' + storeVal];
+        stockVal = val === undefined ? 0 : val;
+      }
       const formatNumber = num => {
         if (num === null || num === undefined) return '';
         const number = parseFloat(num);
@@ -158,7 +167,7 @@ function fillTable(data) {
         return Math.floor(number).toString();
       };
 
-      if (Math.floor(parseFloat(stockVal)) <= 0) {
+      if (!ALWAYS_SHOW_GROUPS.includes(item.group) && Math.floor(parseFloat(stockVal)) <= 0) {
         continue;
       }
 
