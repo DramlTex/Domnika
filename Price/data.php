@@ -29,7 +29,8 @@ $base_url = 'https://api.moysklad.ru/api/remap/1.2/';
 /**
  * 4. Функция для выполнения запросов к API МойСклад
  */
-function moysklad_request($url, $login, $password) {
+function moysklad_request($url, $login, $password)
+{
     error_log("Отправляем запрос: $url");
 
     $ch = curl_init($url);
@@ -276,6 +277,7 @@ function createCombinedEntry($source, $checkAttrs) {
  *    - Если обычный товар, создаём или обновляем запись в итоговом массиве $combined.
  */
 function processItemsFromStore($items, $storeKey, &$combined, $login, $password, $base_url) {
+    error_log("[store:$storeKey] обработка " . count($items) . " позиций");
     foreach ($items as $item) {
         $type   = $item['meta']['type'] ?? '';
         $itemId = $item['id'] ?? '';
@@ -283,9 +285,11 @@ function processItemsFromStore($items, $storeKey, &$combined, $login, $password,
 
         // Если это модификация (variant)
         if ($type === 'variant') {
+            error_log("  variant $itemId остаток $stock");
             // Узнаём ID родителя
             $prodId = $item['product']['id'] ?? '';
             if (!$prodId) {
+                error_log("    нет parent id, пропуск");
                 continue; // не можем найти родителя — пропускаем
             }
             $groupKey = $prodId;
@@ -293,40 +297,49 @@ function processItemsFromStore($items, $storeKey, &$combined, $login, $password,
             // Если родитель ещё не загружен и не в $combined, догружаем и проверяем
             if (!isset($combined[$groupKey])) {
                 $url = $base_url.'entity/product/'.$prodId.'?expand=country,attributes,images';
+                error_log("    загружаем родителя $prodId");
                 $parentData = moysklad_request($url, $login, $password);
                 if (!empty($parentData['error'])) {
+                    error_log("    ошибка получения родителя $prodId" );
                     continue;
                 }
                 // Проверяем "Группа для счетов = Прайс"
                 $check = checkProductAttributes($parentData);
                 if (!$check['include']) {
+                    error_log("    родитель $prodId не подходит" );
                     continue; // родитель не подходит
                 }
                 // Создаём запись для родителя
                 $combined[$groupKey] = createCombinedEntry($parentData, $check);
+                error_log("    родитель $prodId добавлен в список");
             }
 
             // Добавляем остаток модификации к родительской записи
             if (isset($combined[$groupKey])) {
                 $fieldName = 'stock_'.$storeKey;
                 $combined[$groupKey][$fieldName] += $stock;
+                error_log("    +$stock к родителю $prodId склад $storeKey");
             }
         }
         // Если обычный товар
         else {
             $groupKey = $itemId;
+            error_log("  product $itemId остаток $stock");
             // Если ещё нет в итоговом массиве — проверяем, подходит ли
             if (!isset($combined[$groupKey])) {
                 $check = checkProductAttributes($item);
                 if (!$check['include']) {
-                    continue; 
+                    error_log("    товар $itemId не подходит");
+                    continue;
                 }
                 // Создаём запись (сам товар)
                 $combined[$groupKey] = createCombinedEntry($item, $check);
+                error_log("    товар $itemId добавлен в список");
             }
             // Добавляем остаток в запись
             $fieldName = 'stock_'.$storeKey;
             $combined[$groupKey][$fieldName] += $stock;
+            error_log("    +$stock к товару $itemId склад $storeKey");
         }
     }
 }
@@ -335,12 +348,14 @@ function processItemsFromStore($items, $storeKey, &$combined, $login, $password,
  * 9. Обходим все указанные склады и складываем остатки в $combinedItems
  */
 foreach ($storeIds as $key => $uuid) {
+    error_log("=== Склад $key ($uuid) ===");
     $params = [
         'filter' => 'stockStore='.$base_url.'entity/store/'.$uuid.';quantityMode=all;stockMode=all;',
         'expand' => 'country,images,product'
     ];
     $items = fetchAllAssortment($login, $password, $base_url, $params);
     processItemsFromStore($items, $key, $combinedItems, $login, $password, $base_url);
+    error_log("=== Завершена обработка склада $key ===");
 }
 
 /**
