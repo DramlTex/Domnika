@@ -31,6 +31,14 @@ $base_url = 'https://api.moysklad.ru/api/remap/1.2/';
  */
 function moysklad_request($url, $login, $password)
 {
+    static $cache = [];
+
+    // Reuse response if the same URL was already requested during this run
+    if (array_key_exists($url, $cache)) {
+        error_log("Используем кеш для $url");
+        return $cache[$url];
+    }
+
     error_log("Отправляем запрос: $url");
 
     $ch = curl_init($url);
@@ -61,7 +69,8 @@ function moysklad_request($url, $login, $password)
         error_log("Ошибка JSON-декодирования: $msg");
         return ['error'=>'JSON','message'=>$msg,'raw'=>$response];
     }
-
+    // Save successful result to cache
+    $cache[$url] = $json;
     return $json;
 }
 
