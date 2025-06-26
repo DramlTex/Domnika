@@ -336,7 +336,7 @@ function processItemsFromStore($items, $storeKey, &$combined, $login, $password,
  */
 foreach ($storeIds as $key => $uuid) {
     $params = [
-        'filter' => 'stockStore='.$base_url.'entity/store/'.$uuid.';quantityMode=positiveOnly;stockMode=all;',
+        'filter' => 'stockStore='.$base_url.'entity/store/'.$uuid.';quantityMode=all;stockMode=all;',
         'expand' => 'country,images,product'
     ];
     $items = fetchAllAssortment($login, $password, $base_url, $params);
@@ -353,10 +353,25 @@ foreach ($combinedItems as $uniqueId => $d) {
                 + $d['stock_store3']
                 + $d['stock_store4'];
 
-    // Отбрасываем дробную часть и исключаем товары с нулевым остатком
+    // Отбрасываем дробную часть и исключаем товары с нулевым остатком,
+    // кроме групп, которые всегда должны отображаться
     $totalStockInt = (int) floor($totalStock);
-    if ($totalStockInt <= 0) {
+    $alwaysShow = ['Ароматизированный чай', 'Приправы'];
+    if ($totalStockInt <= 0 && !in_array($d['group'], $alwaysShow, true)) {
         continue;
+    }
+
+    $stockValue = $totalStockInt > 0 ? $totalStockInt : '';
+    $store1 = (int) floor($d['stock_store1']);
+    $store2 = (int) floor($d['stock_store2']);
+    $store3 = (int) floor($d['stock_store3']);
+    $store4 = (int) floor($d['stock_store4']);
+
+    if ($totalStockInt <= 0) {
+        $store1 = $store1 > 0 ? $store1 : '';
+        $store2 = $store2 > 0 ? $store2 : '';
+        $store3 = $store3 > 0 ? $store3 : '';
+        $store4 = $store4 > 0 ? $store4 : '';
     }
 
     $rows[] = [
@@ -368,11 +383,11 @@ foreach ($combinedItems as $uniqueId => $d) {
         'supplier'     => $d['supplier'],
         'mass'         => $d['mass'],
         'price'        => $d['price'],
-        'stock'        => $totalStockInt,
-        'stock_store1' => $d['stock_store1'],
-        'stock_store2' => $d['stock_store2'],
-        'stock_store3' => $d['stock_store3'],
-        'stock_store4' => $d['stock_store4'],
+        'stock'        => $stockValue,
+        'stock_store1' => $store1,
+        'stock_store2' => $store2,
+        'stock_store3' => $store3,
+        'stock_store4' => $store4,
         'volumeWeight' => $d['volumeWeight'],
         'photoMini'    => $d['photoMini'],
         'photoFull'    => $d['photoFull'],
