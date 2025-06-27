@@ -451,9 +451,16 @@ error_log('Всего получено строк отчёта: ' . count($repor
 log_debug('total report rows: ' . count($reportRows));
 
 foreach ($reportRows as $row) {
-    $assort = $row['assortment'] ?? [];
-    $id     = $assort['id'] ?? '';
-    $type   = $assort['meta']['type'] ?? '';
+    // В новом формате отчёта данные товара находятся в корне строки,
+    // но для совместимости поддерживаем и старое расположение в поле 'assortment'
+    $item = is_array($row['assortment'] ?? null) ? $row['assortment'] : $row;
+
+    $id   = $item['id'] ?? '';
+    if (!$id && !empty($item['meta']['href'])) {
+        // Получаем ID из ссылки, если отдельного поля нет
+        $id = basename(parse_url($item['meta']['href'], PHP_URL_PATH));
+    }
+    $type = $item['meta']['type'] ?? '';
     if (!$id) {
         continue;
     }
@@ -463,7 +470,7 @@ foreach ($reportRows as $row) {
     $data = $productMap[$id] ?? null;
 
     if ($type === 'variant') {
-        $parentId = $assort['product']['id'] ?? '';
+        $parentId = $item['product']['id'] ?? '';
         $groupKey = $parentId ?: $id;
         if (!$data && isset($productMap[$parentId])) {
             $data = $productMap[$parentId];

@@ -141,6 +141,7 @@ scripts/test.sh
 - 2025-11-03 Price/data.php, docs/php/data.md – введена константа DEBUG_LOG для детального логирования.
 - 2025-06-27 11:16 Price/data.php – расширен список ALWAYS_SHOW_GROUPS.
 - 2025-06-27 11:20 Price/data.php – подробное логирование причин исключения товаров.
+- 2025-06-27 12:24 Price/data.php – разбор строк отчёта без поля `assortment`.
 
 
 ## Рекомендации по улучшению
