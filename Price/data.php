@@ -11,6 +11,22 @@ ini_set('error_log', DIR.'/php-error.log');
 error_log("=== Запуск скрипта data.php ===");
 
 /**
+ * Включить подробное логирование. При значении true
+ * будут сохраняться дополнительные сообщения.
+ */
+const DEBUG_LOG = true;
+
+/**
+ * Запись подробных сообщений в лог при включённом DEBUG_LOG.
+ */
+function log_debug(string $message): void
+{
+    if (DEBUG_LOG) {
+        error_log($message);
+    }
+}
+
+/**
  * 2. Заголовки
  */
 header('Access-Control-Allow-Origin: *');
@@ -167,6 +183,7 @@ function checkProductAttributes($source)
 
     if (empty($source['attributes']) || !is_array($source['attributes'])) {
         $result['reason'] = 'нет атрибутов';
+        log_debug('check attrs: ' . $result['reason']);
         return $result;
     }
 
@@ -202,9 +219,11 @@ function checkProductAttributes($source)
                     }
                 } else {
                     $result['reason'] = 'Группа для счетов: ' . $attrValue['name'];
+                    log_debug('check attrs: ' . $result['reason']);
                 }
             } else {
                 $result['reason'] = 'Группа для счетов не задана';
+                log_debug('check attrs: ' . $result['reason']);
             }
             break; // после "Группа для счетов" можно выйти из цикла
         }
@@ -213,6 +232,9 @@ function checkProductAttributes($source)
     if (!$result['include'] && !$result['reason']) {
         $result['reason'] = 'не найден атрибут Группа для счетов';
     }
+
+    log_debug('check attrs result: include=' . ($result['include'] ? '1' : '0') .
+        ' group=' . $result['group'] . ' reason=' . $result['reason']);
 
     return $result;
 }
@@ -394,6 +416,7 @@ function processItemsFromStore($items, $storeKey, &$combined, $login, $password,
 function fetchStockReport($login, $password, $base_url, $params = []) {
     $params['limit'] = 1000;
     $url = $base_url . 'report/stock/bystore?' . http_build_query($params);
+    log_debug('stock report params: ' . http_build_query($params));
 
     $result = [];
     while ($url) {
@@ -404,10 +427,13 @@ function fetchStockReport($login, $password, $base_url, $params = []) {
         }
         $pageRows = count($resp['rows'] ?? []);
         error_log("Получено $pageRows строк отчёта");
+        log_debug('page rows: ' . $pageRows);
         $result = array_merge($result, $resp['rows'] ?? []);
         if (!empty($resp['meta']['nextHref'])) {
+            log_debug('next page');
             $url = $resp['meta']['nextHref'];
         } else {
+            log_debug('no next page');
             $url = null;
         }
     }
@@ -422,6 +448,7 @@ $reportRows = fetchStockReport($login, $password, $base_url, [
     'quantityMode' => 'all'
 ]);
 error_log('Всего получено строк отчёта: ' . count($reportRows));
+log_debug('total report rows: ' . count($reportRows));
 
 foreach ($reportRows as $row) {
     $assort = $row['assortment'] ?? [];
@@ -430,6 +457,7 @@ foreach ($reportRows as $row) {
     if (!$id) {
         continue;
     }
+    log_debug("process row $id type $type");
 
     $groupKey = $id;
     $data = $productMap[$id] ?? null;
@@ -440,10 +468,12 @@ foreach ($reportRows as $row) {
         if (!$data && isset($productMap[$parentId])) {
             $data = $productMap[$parentId];
         }
+        log_debug("variant $id parent $parentId");
     }
 
     if (!$data) {
         error_log("Пропуск $id: нет данных в локальной базе");
+        log_debug("skip $id no local data");
         continue;
     }
 
@@ -451,11 +481,13 @@ foreach ($reportRows as $row) {
     if (!$check['include']) {
         $msg = $check['reason'] ? ' (' . $check['reason'] . ')' : '';
         error_log("Пропуск $id: не относится к прайсу$msg");
+        log_debug("skip $id not for price" . $msg);
         continue;
     }
 
     if (!isset($combinedItems[$groupKey])) {
         $combinedItems[$groupKey] = createCombinedEntry($data, $check);
+        log_debug("added entry $groupKey");
     }
 
     foreach ($row['stockByStore'] ?? [] as $sb) {
@@ -465,6 +497,7 @@ foreach ($reportRows as $row) {
         if ($key !== false) {
             $f = 'stock_' . $key;
             $combinedItems[$groupKey][$f] += $sb['stock'] ?? 0;
+            log_debug("stock added for $groupKey store $key: " . ($sb['stock'] ?? 0));
         }
     }
 }
@@ -526,6 +559,7 @@ foreach ($combinedItems as $uniqueId => $d) {
 }
 
 error_log('Подготовлено строк для вывода: ' . count($rows));
+log_debug('rows prepared: ' . count($rows));
 
 /**
  * 11. Выводим результат в JSON
