@@ -31,7 +31,7 @@ $rulesFile = $_SESSION['user']['rules_file'] ?? 'row_sort_rules.json';
   <link rel="stylesheet" type="text/css" href="css/thumbnails.css">
   <link rel="stylesheet" type="text/css" href="css/tabs.css">
   <link rel="stylesheet" type="text/css" href="css/effects.css">
-  <link rel="stylesheet" type="text/css" href="css/cart.css">
+<!-- <link rel="stylesheet" type="text/css" href="css/cart.css"> -->
 </head>
 
 
@@ -154,7 +154,7 @@ $rulesFile = $_SESSION['user']['rules_file'] ?? 'row_sort_rules.json';
     <div class="filter-group btns">
       <button class="btn primary" id="btnRefresh">Обновить</button>
       <button class="btn" id="export-button">Экспорт в Excel</button>
-      <button class="btn" id="openCartButton">Корзина<br><span id="cartBadge"></span></button>
+<!-- <button class="btn" id="openCartButton">Корзина<br><span id="cartBadge"></span></button> -->
     </div>
 
 
@@ -193,6 +193,7 @@ $rulesFile = $_SESSION['user']['rules_file'] ?? 'row_sort_rules.json';
   </div>
 </div>
 
+<!--
 <!-- КОРЗИНА -->
 <div id="cartModal" class="modal">
   <div class="modal-content">
@@ -207,6 +208,7 @@ $rulesFile = $_SESSION['user']['rules_file'] ?? 'row_sort_rules.json';
     </div>
   </div>
 </div>
+-->
 
 
 <!-- ВКЛАДКИ (ТАБЫ) -->
@@ -238,6 +240,7 @@ $rulesFile = $_SESSION['user']['rules_file'] ?? 'row_sort_rules.json';
         <p><strong>Вес тарного места:</strong> <span id="productModalMass"></span></p>
         <p><strong>Цена:</strong> <span id="productModalPrice"></span></p>
         <p><strong>Общий остаток:</strong> <span id="productModalStock"></span></p>
+<!--
 
         <div class="store-row">
           <p><strong>Алтуфьево:</strong> <span id="productModalStock1"></span></p>
@@ -271,6 +274,7 @@ $rulesFile = $_SESSION['user']['rules_file'] ?? 'row_sort_rules.json';
             <button id="productModalPlus4">+</button>
           </div>
         </div>
+-->
 
         <p><strong>Объём тарного места:</strong> <span id="productModalVolume"></span></p>
       </div>
@@ -288,7 +292,7 @@ $rulesFile = $_SESSION['user']['rules_file'] ?? 'row_sort_rules.json';
 <script src="js/modals.js"></script>
 <script src="js/rules-loader.js"></script>
 <script src="js/export-excel.js"></script>
-<script src="js/cart.js"></script>
+<!-- <script src="js/cart.js"></script> -->
 <script src="js/main.js"></script>
 
 </body>
