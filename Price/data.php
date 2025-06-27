@@ -154,16 +154,19 @@ error_log('Из локальной базы загружено товаров: '
  * Нужно, чтобы "Группа для счетов" была "Прайс". Если это так, товар включаем в итог.
  * Дополнительно вытаскиваем нужные поля (группа, минимальное кол-во, фото и т.д.).
  */
-function checkProductAttributes($source) {
+function checkProductAttributes($source)
+{
     $result = [
         'include'    => false,     // Флаг, включать ли товар в итог
         'group'      => 'Остальное',
         'minOrderQty'=> '',
         'photoLink'  => '',
         'standard'   => '',
+        'reason'     => '',        // Почему товар исключается
     ];
 
     if (empty($source['attributes']) || !is_array($source['attributes'])) {
+        $result['reason'] = 'нет атрибутов';
         return $result;
     }
 
@@ -187,18 +190,28 @@ function checkProductAttributes($source) {
         }
         // Проверяем "Группа для счетов"
         elseif ($attrName === 'Группа для счетов') {
-            if (!empty($attrValue['name']) && $attrValue['name'] === 'Прайс') {
-                $result['include'] = true;
-                // Дополнительно ищем, какой атрибут "Группа"
-                foreach ($source['attributes'] as $groupAttr) {
-                    if ($groupAttr['name'] === 'Группа' && !empty($groupAttr['value']['name'])) {
-                        $result['group'] = $groupAttr['value']['name'];
-                        break;
+            if (!empty($attrValue['name'])) {
+                if ($attrValue['name'] === 'Прайс') {
+                    $result['include'] = true;
+                    // Дополнительно ищем, какой атрибут "Группа"
+                    foreach ($source['attributes'] as $groupAttr) {
+                        if ($groupAttr['name'] === 'Группа' && !empty($groupAttr['value']['name'])) {
+                            $result['group'] = $groupAttr['value']['name'];
+                            break;
+                        }
                     }
+                } else {
+                    $result['reason'] = 'Группа для счетов: ' . $attrValue['name'];
                 }
+            } else {
+                $result['reason'] = 'Группа для счетов не задана';
             }
             break; // после "Группа для счетов" можно выйти из цикла
         }
+    }
+
+    if (!$result['include'] && !$result['reason']) {
+        $result['reason'] = 'не найден атрибут Группа для счетов';
     }
 
     return $result;
@@ -329,7 +342,8 @@ function processItemsFromStore($items, $storeKey, &$combined, $login, $password,
                 // Проверяем "Группа для счетов = Прайс"
                 $check = checkProductAttributes($parentData);
                 if (!$check['include']) {
-                    error_log("    родитель $prodId не подходит" );
+                    $msg = $check['reason'] ? ' (' . $check['reason'] . ')' : '';
+                    error_log("    родитель $prodId не подходит$msg" );
                     $checkedParents[$groupKey] = false; // запоминаем, что не подходит
                     continue; // родитель не подходит
                 }
@@ -357,7 +371,8 @@ function processItemsFromStore($items, $storeKey, &$combined, $login, $password,
             if (!isset($combined[$groupKey])) {
                 $check = checkProductAttributes($item);
                 if (!$check['include']) {
-                    error_log("    товар $itemId не подходит");
+                    $msg = $check['reason'] ? ' (' . $check['reason'] . ')' : '';
+                    error_log("    товар $itemId не подходит$msg");
                     continue;
                 }
                 // Создаём запись (сам товар)
@@ -434,7 +449,8 @@ foreach ($reportRows as $row) {
 
     $check = checkProductAttributes($data);
     if (!$check['include']) {
-        error_log("Пропуск $id: не относится к прайсу");
+        $msg = $check['reason'] ? ' (' . $check['reason'] . ')' : '';
+        error_log("Пропуск $id: не относится к прайсу$msg");
         continue;
     }
 
