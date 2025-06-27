@@ -62,9 +62,11 @@ function moysklad_request($url, $login, $password) {
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_USERPWD => "$login:$password",
         CURLOPT_ENCODING => 'gzip',
-        CURLOPT_HTTPHEADER => ['Accept: application/json'],
+        CURLOPT_HTTPHEADER => ['Accept: application/json;charset=utf-8'],
         CURLOPT_TIMEOUT => 15,
-        CURLOPT_FAILONERROR => true,
+        // Allow capturing response bodies even when server returns an error
+        // to log the error message from MySklad.
+        CURLOPT_FAILONERROR => false,
         CURLOPT_SSL_VERIFYPEER => true,
         CURLOPT_SSL_VERIFYHOST => 2
     ]);
