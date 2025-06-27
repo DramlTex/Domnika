@@ -31,7 +31,6 @@ $rulesFile = $_SESSION['user']['rules_file'] ?? 'row_sort_rules.json';
   <link rel="stylesheet" type="text/css" href="css/thumbnails.css">
   <link rel="stylesheet" type="text/css" href="css/tabs.css">
   <link rel="stylesheet" type="text/css" href="css/effects.css">
-  <link rel="stylesheet" type="text/css" href="css/cart.css">
 </head>
 
 
@@ -154,7 +153,6 @@ $rulesFile = $_SESSION['user']['rules_file'] ?? 'row_sort_rules.json';
     <div class="filter-group btns">
       <button class="btn primary" id="btnRefresh">Обновить</button>
       <button class="btn" id="export-button">Экспорт в Excel</button>
-      <button class="btn" id="openCartButton">Корзина<br><span id="cartBadge"></span></button>
     </div>
 
 
@@ -193,20 +191,6 @@ $rulesFile = $_SESSION['user']['rules_file'] ?? 'row_sort_rules.json';
   </div>
 </div>
 
-<!-- КОРЗИНА -->
-<div id="cartModal" class="modal">
-  <div class="modal-content">
-    <h2>Корзина</h2>
-    <div id="cartItems"></div>
-    <div class="cart-footer">
-      <textarea id="cartComment" placeholder="Комментарий"></textarea>
-      <input type="text" id="cartInn" placeholder="ИНН">
-      <input type="date" id="cartDate">
-      <span class="cart-total">Итого: <span id="cartTotal">0</span></span>
-      <button id="cartSubmit" class="btn primary">Оформить заказ</button>
-    </div>
-  </div>
-</div>
 
 
 <!-- ВКЛАДКИ (ТАБЫ) -->
@@ -241,35 +225,15 @@ $rulesFile = $_SESSION['user']['rules_file'] ?? 'row_sort_rules.json';
 
         <div class="store-row">
           <p><strong>Алтуфьево:</strong> <span id="productModalStock1"></span></p>
-          <div class="cart-controls">
-            <button id="productModalMinus1">-</button>
-            <input type="number" id="productModalQty1" value="0" min="0">
-            <button id="productModalPlus1">+</button>
-          </div>
         </div>
         <div class="store-row">
           <p><strong>Ивантеевка:</strong> <span id="productModalStock2"></span></p>
-          <div class="cart-controls">
-            <button id="productModalMinus2">-</button>
-            <input type="number" id="productModalQty2" value="0" min="0">
-            <button id="productModalPlus2">+</button>
-          </div>
         </div>
         <div class="store-row">
           <p><strong>Купавна:</strong> <span id="productModalStock3"></span></p>
-          <div class="cart-controls">
-            <button id="productModalMinus3">-</button>
-            <input type="number" id="productModalQty3" value="0" min="0">
-            <button id="productModalPlus3">+</button>
-          </div>
         </div>
         <div class="store-row">
           <p><strong>Можайск:</strong> <span id="productModalStock4"></span></p>
-          <div class="cart-controls">
-            <button id="productModalMinus4">-</button>
-            <input type="number" id="productModalQty4" value="0" min="0">
-            <button id="productModalPlus4">+</button>
-          </div>
         </div>
 
         <p><strong>Объём тарного места:</strong> <span id="productModalVolume"></span></p>
@@ -288,7 +252,6 @@ $rulesFile = $_SESSION['user']['rules_file'] ?? 'row_sort_rules.json';
 <script src="js/modals.js"></script>
 <script src="js/rules-loader.js"></script>
 <script src="js/export-excel.js"></script>
-<script src="js/cart.js"></script>
 <script src="js/main.js"></script>
 
 </body>
