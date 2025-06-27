@@ -135,6 +135,19 @@ $storeIds = [
  */
 $combinedItems = [];
 
+// Загружаем локальную базу товаров, собираемую вебхуками
+$dbFile = dirname(DIR) . '/output/webhook_products.json';
+$productDb = [];
+if (file_exists($dbFile)) {
+    $productDb = json_decode(file_get_contents($dbFile), true) ?: [];
+}
+$productMap = [];
+foreach ($productDb as $p) {
+    if (!empty($p['id'])) {
+        $productMap[$p['id']] = $p;
+    }
+}
+
 /**
  * Проверка атрибутов товара (или родителя модификации):
  * Нужно, чтобы "Группа для счетов" была "Прайс". Если это так, товар включаем в итог.
@@ -359,19 +372,79 @@ function processItemsFromStore($items, $storeKey, &$combined, $login, $password,
 }
 
 /**
- * 9. Обходим все указанные склады и складываем остатки в $combinedItems
+ * Функция обхода отчёта stock/bystore.
+ * Возвращает массив всех строк отчёта с учётом постраничности.
  */
-// Массив для кеширования проверенных родительских товаров
-$checkedParents = [];
-foreach ($storeIds as $key => $uuid) {
-    error_log("=== Склад $key ($uuid) ===");
-    $params = [
-        'filter' => 'stockStore='.$base_url.'entity/store/'.$uuid.';quantityMode=all;stockMode=all;',
-        'expand' => 'country,images,product'
-    ];
-    $items = fetchAllAssortment($login, $password, $base_url, $params);
-    processItemsFromStore($items, $key, $combinedItems, $login, $password, $base_url, $checkedParents);
-    error_log("=== Завершена обработка склада $key ===");
+function fetchStockReport($login, $password, $base_url, $params = []) {
+    $params['limit'] = 1000;
+    $url = $base_url . 'report/stock/bystore?' . http_build_query($params);
+
+    $result = [];
+    while ($url) {
+        $resp = moysklad_request($url, $login, $password);
+        if (!empty($resp['error'])) {
+            error_log('Ошибка при получении отчёта: ' . print_r($resp, true));
+            break;
+        }
+        $result = array_merge($result, $resp['rows'] ?? []);
+        if (!empty($resp['meta']['nextHref'])) {
+            $url = $resp['meta']['nextHref'];
+        } else {
+            $url = null;
+        }
+    }
+    return $result;
+}
+
+/**
+ * 9. Загружаем отчёт остатков и объединяем его с локальной базой
+ */
+$reportRows = fetchStockReport($login, $password, $base_url, [
+    'stockMode' => 'all',
+    'quantityMode' => 'all'
+]);
+
+foreach ($reportRows as $row) {
+    $assort = $row['assortment'] ?? [];
+    $id     = $assort['id'] ?? '';
+    $type   = $assort['meta']['type'] ?? '';
+    if (!$id) {
+        continue;
+    }
+
+    $groupKey = $id;
+    $data = $productMap[$id] ?? null;
+
+    if ($type === 'variant') {
+        $parentId = $assort['product']['id'] ?? '';
+        $groupKey = $parentId ?: $id;
+        if (!$data && isset($productMap[$parentId])) {
+            $data = $productMap[$parentId];
+        }
+    }
+
+    if (!$data) {
+        continue;
+    }
+
+    $check = checkProductAttributes($data);
+    if (!$check['include']) {
+        continue;
+    }
+
+    if (!isset($combinedItems[$groupKey])) {
+        $combinedItems[$groupKey] = createCombinedEntry($data, $check);
+    }
+
+    foreach ($row['stockByStore'] ?? [] as $sb) {
+        $sHref = $sb['meta']['href'] ?? '';
+        $sId   = basename(parse_url($sHref, PHP_URL_PATH));
+        $key   = array_search($sId, $storeIds, true);
+        if ($key !== false) {
+            $f = 'stock_' . $key;
+            $combinedItems[$groupKey][$f] += $sb['stock'] ?? 0;
+        }
+    }
 }
 
 /**
