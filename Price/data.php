@@ -147,6 +147,7 @@ foreach ($productDb as $p) {
         $productMap[$p['id']] = $p;
     }
 }
+error_log('Из локальной базы загружено товаров: ' . count($productMap));
 
 /**
  * Проверка атрибутов товара (или родителя модификации):
@@ -386,6 +387,8 @@ function fetchStockReport($login, $password, $base_url, $params = []) {
             error_log('Ошибка при получении отчёта: ' . print_r($resp, true));
             break;
         }
+        $pageRows = count($resp['rows'] ?? []);
+        error_log("Получено $pageRows строк отчёта");
         $result = array_merge($result, $resp['rows'] ?? []);
         if (!empty($resp['meta']['nextHref'])) {
             $url = $resp['meta']['nextHref'];
@@ -403,6 +406,7 @@ $reportRows = fetchStockReport($login, $password, $base_url, [
     'stockMode' => 'all',
     'quantityMode' => 'all'
 ]);
+error_log('Всего получено строк отчёта: ' . count($reportRows));
 
 foreach ($reportRows as $row) {
     $assort = $row['assortment'] ?? [];
@@ -424,11 +428,13 @@ foreach ($reportRows as $row) {
     }
 
     if (!$data) {
+        error_log("Пропуск $id: нет данных в локальной базе");
         continue;
     }
 
     $check = checkProductAttributes($data);
     if (!$check['include']) {
+        error_log("Пропуск $id: не относится к прайсу");
         continue;
     }
 
@@ -502,6 +508,8 @@ foreach ($combinedItems as $uniqueId => $d) {
         'photoUrl'     => $d['photoUrl'],
     ];
 }
+
+error_log('Подготовлено строк для вывода: ' . count($rows));
 
 /**
  * 11. Выводим результат в JSON
