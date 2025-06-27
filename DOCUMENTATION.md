@@ -138,6 +138,7 @@ scripts/test.sh
 - 2025-06-27 10:20 webhook.php – исправлен заголовок Accept в запросах.
 - 2025-11-01 output/init_db.php, docs/php/init_db.md – скрипт начальной загрузки базы товаров и модификаций.
 - 2025-11-02 Price/data.php, docs/php/data.md – расширено логирование работы скрипта.
+- 2025-06-27 11:16 Price/data.php – расширен список ALWAYS_SHOW_GROUPS.
 
 
 ## Рекомендации по улучшению
