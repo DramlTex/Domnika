@@ -86,5 +86,3 @@
 - 2025-08-02 Price/admin.php – добавлен стиль `.column-row` и отметка `.column-row.disabled`.
 - 2025-06-03 Price/styles.css, Price/admin.php – добавлен класс `.logout-link` для кнопки выхода.
 - 2025-08-20 Price/css/admin.css, Price/admin.php – стили вынесены в отдельный файл и разделы панели получили заголовки.
-- 2025-06-27 12:50 Price/index.php – удалены стили корзины.
-

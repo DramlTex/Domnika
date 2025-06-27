@@ -50,22 +50,22 @@ function openProductModal(item) {
   } else {
     modalImg.src = '';
   }
-//   for (let i = 1; i <= 4; i++) {
-//     const plus = document.getElementById('productModalPlus' + i);
-//     const minus = document.getElementById('productModalMinus' + i);
-//     const input = document.getElementById('productModalQty' + i);
-//     const store = 'store' + i;
-//     if (plus) plus.onclick = () => cartChange(item, 1, store);
-//     if (minus) minus.onclick = () => cartChange(item, -1, store);
-//     if (input) {
-//       input.oninput = () => {
-//         cartSetQty(item, parseInt(input.value, 10) || 0, store);
-//       };
-//       input.max = parseFloat(item['stock_' + store]) || '';
-//     }
-//   }
+  for (let i = 1; i <= 4; i++) {
+    const plus = document.getElementById('productModalPlus' + i);
+    const minus = document.getElementById('productModalMinus' + i);
+    const input = document.getElementById('productModalQty' + i);
+    const store = 'store' + i;
+    if (plus) plus.onclick = () => cartChange(item, 1, store);
+    if (minus) minus.onclick = () => cartChange(item, -1, store);
+    if (input) {
+      input.oninput = () => {
+        cartSetQty(item, parseInt(input.value, 10) || 0, store);
+      };
+      input.max = parseFloat(item['stock_' + store]) || '';
+    }
+  }
 
-//   updateProductModalQty(item.articul);
+  updateProductModalQty(item.articul);
   document.getElementById('productModal').classList.add('open');
 }
 
