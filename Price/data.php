@@ -568,6 +568,8 @@ foreach ($combinedItems as $uniqueId => $d) {
     $totalStockInt = (int) floor($totalStock);
     $alwaysShow = ['Ароматизированный чай', 'Травы и добавки', 'Приправы'];
     if ($totalStockInt <= 0 && !in_array($d['group'], $alwaysShow, true)) {
+        log_event('SKIP', "Пропуск $uniqueId: нулевой остаток, группа \"{$d['group']}\"");
+        log_debug("skip $uniqueId zero stock group {$d['group']}");
         continue;
     }
 
