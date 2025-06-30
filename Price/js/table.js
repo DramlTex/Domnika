@@ -16,6 +16,12 @@ let TYPE_SORT = 'alphabetical';
 let COLUMN_RULES = [];
 
 /**
+ * Currently attached row click handler.
+ * @type {?Function}
+ */
+let ROW_CLICK_HANDLER = null;
+
+/**
  * Groups that should be displayed even when stock is zero.
  * @type {string[]}
  */
@@ -146,7 +152,13 @@ function fillTable(data) {
     const item = sorted[idx];
     if (item) openProductModal(item);
   };
-  tbody.onclick = handleRowClick;
+
+  if (ROW_CLICK_HANDLER) {
+    tbody.removeEventListener('click', ROW_CLICK_HANDLER);
+  }
+  ROW_CLICK_HANDLER = handleRowClick;
+  tbody.addEventListener('click', ROW_CLICK_HANDLER);
+
   const btn = document.getElementById('btnRefresh');
   if (btn) btn.classList.add('hover-effect');
 
