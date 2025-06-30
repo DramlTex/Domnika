@@ -84,4 +84,5 @@
 
 - 2025-11-06 Price/js/table.js – обработчик клика подключается через `addEventListener` с удалением старого слушателя.
 - 2025-11-06 Price/js/modals.js – `openProductModal` не падает при отсутствии элементов, модальное окно открывается даже с неполными данными.
+- 2025-11-07 Price/data.php, Price/js/table.js – удалена группа «Травы и добавки» из ALWAYS_SHOW_GROUPS.
 

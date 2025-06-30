@@ -27,7 +27,6 @@ let ROW_CLICK_HANDLER = null;
  */
 const ALWAYS_SHOW_GROUPS = [
   'Ароматизированный чай',
-  'Травы и добавки',
   'Приправы'
 ];
 
