@@ -146,6 +146,7 @@ scripts/test.sh
 - 2025-06-27 16:17 Price/index.php, Price/js/modals.js – клиентская корзина снова включена.
 - 2025-06-27 13:29 Price/index.php, Price/js/cart.js, Price/css/cart.css, docs/cart.md – удалена клиентская корзина.
 - 2025-06-27 14:23 Price/js/main.js – удалён вызов `setupCart`, вызывавший ошибку.
+- 2025-06-30 08:12 Price/data.php, docs/php/data.md – использование отчёта stock/bystore/current.
 
 ## Рекомендации по улучшению
 

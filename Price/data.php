@@ -415,7 +415,7 @@ function processItemsFromStore($items, $storeKey, &$combined, $login, $password,
  */
 function fetchStockReport($login, $password, $base_url, $params = []) {
     $params['limit'] = 1000;
-    $url = $base_url . 'report/stock/bystore?' . http_build_query($params);
+    $url = $base_url . 'report/stock/bystore/current?' . http_build_query($params);
     log_debug('stock report params: ' . http_build_query($params));
 
     $result = [];
@@ -444,33 +444,25 @@ function fetchStockReport($login, $password, $base_url, $params = []) {
  * 9. Загружаем отчёт остатков и объединяем его с локальной базой
  */
 $reportRows = fetchStockReport($login, $password, $base_url, [
-    'stockMode' => 'all',
-    'quantityMode' => 'all'
+    'include' => 'zeroLines'
 ]);
 error_log('Всего получено строк отчёта: ' . count($reportRows));
 log_debug('total report rows: ' . count($reportRows));
 
 foreach ($reportRows as $row) {
-    // В новом формате отчёта данные товара находятся в корне строки,
-    // но для совместимости поддерживаем и старое расположение в поле 'assortment'
-    $item = is_array($row['assortment'] ?? null) ? $row['assortment'] : $row;
-
-    $id   = $item['id'] ?? '';
-    if (!$id && !empty($item['meta']['href'])) {
-        // Получаем ID из ссылки, если отдельного поля нет
-        $id = basename(parse_url($item['meta']['href'], PHP_URL_PATH));
-    }
-    $type = $item['meta']['type'] ?? '';
-    if (!$id) {
+    $id      = $row['assortmentId'] ?? '';
+    $storeId = $row['storeId'] ?? '';
+    $stock   = $row['stock'] ?? 0;
+    if (!$id || !$storeId) {
         continue;
     }
-    log_debug("process row $id type $type");
 
-    $groupKey = $id;
     $data = $productMap[$id] ?? null;
+    $type = $data['meta']['type'] ?? '';
+    $groupKey = $id;
 
     if ($type === 'variant') {
-        $parentId = $item['product']['id'] ?? '';
+        $parentId = $data['product']['id'] ?? '';
         $groupKey = $parentId ?: $id;
         if (!$data && isset($productMap[$parentId])) {
             $data = $productMap[$parentId];
@@ -497,15 +489,11 @@ foreach ($reportRows as $row) {
         log_debug("added entry $groupKey");
     }
 
-    foreach ($row['stockByStore'] ?? [] as $sb) {
-        $sHref = $sb['meta']['href'] ?? '';
-        $sId   = basename(parse_url($sHref, PHP_URL_PATH));
-        $key   = array_search($sId, $storeIds, true);
-        if ($key !== false) {
-            $f = 'stock_' . $key;
-            $combinedItems[$groupKey][$f] += $sb['stock'] ?? 0;
-            log_debug("stock added for $groupKey store $key: " . ($sb['stock'] ?? 0));
-        }
+    $key = array_search($storeId, $storeIds, true);
+    if ($key !== false) {
+        $f = 'stock_' . $key;
+        $combinedItems[$groupKey][$f] += $stock;
+        log_debug("stock added for $groupKey store $key: " . $stock);
     }
 }
 
