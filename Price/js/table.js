@@ -152,11 +152,13 @@ function fillTable(data) {
     const item = sorted[idx];
     if (item) openProductModal(item);
   };
+
   if (ROW_CLICK_HANDLER) {
     tbody.removeEventListener('click', ROW_CLICK_HANDLER);
   }
   ROW_CLICK_HANDLER = handleRowClick;
   tbody.addEventListener('click', ROW_CLICK_HANDLER);
+
   const btn = document.getElementById('btnRefresh');
   if (btn) btn.classList.add('hover-effect');
 
