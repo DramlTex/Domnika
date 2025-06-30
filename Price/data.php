@@ -159,6 +159,8 @@ $storeIds = [
  * 7. Подготовим массив для итоговых данных
  */
 $combinedItems = [];
+$createdVariants = 0; // сколько записей создано из модификаций
+$createdProducts = 0; // сколько записей создано из товаров
 
 // Загружаем локальную базу товаров, собираемую вебхуками
 $dbFile = dirname(DIR) . '/output/webhook_products.json';
@@ -251,7 +253,7 @@ function checkProductAttributes($source)
 /**
  * Создаёт запись в $combinedItems на основе данных товара/родителя
  */
-function createCombinedEntry($source, $checkAttrs) {
+function createCombinedEntry($source, $checkAttrs, string $sourceType = 'product') {
     $description  = $source['description']     ?? '';
     $articul      = $source['article']        ?? '';
     $name         = $source['name']           ?? '';
@@ -335,6 +337,7 @@ function createCombinedEntry($source, $checkAttrs) {
         'pathName'     => $pathName,
         'href'         => $href,
         'min_order_qty'=> $minOrderQty,
+        'source_type'  => $sourceType,
     ];
 }
 
@@ -379,7 +382,8 @@ function processItemsFromStore($items, $storeKey, &$combined, $login, $password,
                     continue; // родитель не подходит
                 }
                 // Создаём запись для родителя
-                $combined[$groupKey] = createCombinedEntry($parentData, $check);
+                $combined[$groupKey] = createCombinedEntry($parentData, $check, 'variant');
+                $createdVariants++;
                 $checkedParents[$groupKey] = true; // родитель подходит и добавлен
                 log_event('INFO', "    родитель $prodId добавлен в список");
             } elseif (array_key_exists($groupKey, $checkedParents) && $checkedParents[$groupKey] === false) {
@@ -407,7 +411,10 @@ function processItemsFromStore($items, $storeKey, &$combined, $login, $password,
                     continue;
                 }
                 // Создаём запись (сам товар)
-                $combined[$groupKey] = createCombinedEntry($item, $check);
+
+                $combined[$groupKey] = createCombinedEntry($item, $check, 'product');
+                $createdProducts++;
+
                 log_event('INFO', "    товар $itemId добавлен в список");
             }
             // Добавляем остаток в запись
@@ -417,6 +424,8 @@ function processItemsFromStore($items, $storeKey, &$combined, $login, $password,
         }
     }
 }
+
+log_event('INFO', 'Создано уникальных записей: товаров ' . $createdProducts . ', модификаций ' . $createdVariants);
 
 /**
  * Функция обхода отчёта stock/bystore.
@@ -500,8 +509,17 @@ foreach ($reportRows as $row) {
     }
 
     if (!isset($combinedItems[$groupKey])) {
-        $combinedItems[$groupKey] = createCombinedEntry($data, $check);
+        $combinedItems[$groupKey] = createCombinedEntry(
+            $data,
+            $check,
+            $type === 'variant' ? 'variant' : 'product'
+        );
         log_debug("added entry $groupKey");
+        if ($type === 'variant') {
+            $createdVariants++;
+        } else {
+            $createdProducts++;
+        }
     }
 
     $key = array_search($storeId, $storeIds, true);
@@ -516,6 +534,8 @@ foreach ($reportRows as $row) {
  * 10. Формируем финальный массив для вывода
  */
 $rows = [];
+$groupCounts = [];
+$finalTypeCounts = ['product' => 0, 'variant' => 0];
 foreach ($combinedItems as $uniqueId => $d) {
     $totalStock = $d['stock_store1']
                 + $d['stock_store2']
@@ -566,9 +586,23 @@ foreach ($combinedItems as $uniqueId => $d) {
         'min_order_qty'=> $d['min_order_qty'],
         'photoUrl'     => $d['photoUrl'],
     ];
+
+    $groupCounts[$d['group']] = ($groupCounts[$d['group']] ?? 0) + 1;
+    $stype = $d['source_type'] ?? 'product';
+    if ($stype === 'variant') {
+        $finalTypeCounts['variant']++;
+    } else {
+        $finalTypeCounts['product']++;
+    }
 }
 
 log_event('INFO', 'Подготовлено строк для вывода: ' . count($rows));
+
+log_event('INFO', '  товаров: ' . $finalTypeCounts['product'] . ', модификаций: ' . $finalTypeCounts['variant']);
+foreach ($groupCounts as $g => $c) {
+    log_event('INFO', "  группа \"$g\": $c");
+}
+
 log_debug('rows prepared: ' . count($rows));
 
 /**
