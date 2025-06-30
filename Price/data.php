@@ -8,7 +8,16 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 ini_set('error_log', DIR.'/php-error.log');
-error_log("=== Запуск скрипта data.php ===");
+
+/**
+ * Печатает сообщение в журнал с указанным типом.
+ */
+function log_event(string $type, string $message): void
+{
+    error_log("[$type] $message");
+}
+
+log_event('INFO', 'Запуск скрипта data.php');
 
 /**
  * Включить подробное логирование. При значении true
@@ -22,7 +31,7 @@ const DEBUG_LOG = true;
 function log_debug(string $message): void
 {
     if (DEBUG_LOG) {
-        error_log($message);
+        log_event('DEBUG', $message);
     }
 }
 
@@ -51,11 +60,11 @@ function moysklad_request($url, $login, $password)
 
     // Reuse response if the same URL was already requested during this run
     if (array_key_exists($url, $cache)) {
-        error_log("Используем кеш для $url");
+        log_event('INFO', "Используем кеш для $url");
         return $cache[$url];
     }
 
-    error_log("Отправляем запрос: $url");
+    log_event('INFO', "Отправляем запрос: $url");
 
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -70,19 +79,19 @@ function moysklad_request($url, $login, $password)
     curl_close($ch);
 
     if ($errNo) {
-        error_log("Ошибка cURL: $errMsg");
+        log_event('ERROR', "Ошибка cURL: $errMsg");
         return ['error'=>'cURL','message'=>$errMsg];
     }
 
     if ($code != 200) {
-        error_log("HTTP ошибка: код $code, ответ: $response");
+        log_event('ERROR', "HTTP ошибка: код $code, ответ: $response");
         return ['error'=>'HTTP','code'=>$code,'raw'=>$response];
     }
 
     $json = json_decode($response, true);
     if (json_last_error() !== JSON_ERROR_NONE) {
         $msg = json_last_error_msg();
-        error_log("Ошибка JSON-декодирования: $msg");
+        log_event('ERROR', "Ошибка JSON-декодирования: $msg");
         return ['error'=>'JSON','message'=>$msg,'raw'=>$response];
     }
     // Save successful result to cache
@@ -95,7 +104,7 @@ function moysklad_request($url, $login, $password)
  *    Возвращает массив всех позиций (товаров, модификаций) по заданным параметрам $params.
  */
 function fetchAllAssortment($login, $password, $base_url, $params=[]) {
-    error_log("Начало fetchAllAssortment");
+    log_event('INFO', 'Начало fetchAllAssortment');
 
     // Лимит 100 позиций на страницу
     $params['limit'] = 100;
@@ -113,7 +122,7 @@ function fetchAllAssortment($login, $password, $base_url, $params=[]) {
     while ($url) {
         $resp = moysklad_request($url, $login, $password);
         if (!empty($resp['error'])) {
-            error_log("Ошибка при получении данных: ".print_r($resp, true));
+            log_event('ERROR', 'Ошибка при получении данных: ' . print_r($resp, true));
             break;
         }
 
@@ -132,7 +141,7 @@ function fetchAllAssortment($login, $password, $base_url, $params=[]) {
         }
     }
 
-    error_log("Итого получено: ".count($result)." элементов");
+    log_event('INFO', 'Итого получено: ' . count($result) . ' элементов');
     return $result;
 }
 
@@ -150,6 +159,8 @@ $storeIds = [
  * 7. Подготовим массив для итоговых данных
  */
 $combinedItems = [];
+$createdVariants = 0; // сколько записей создано из модификаций
+$createdProducts = 0; // сколько записей создано из товаров
 
 // Загружаем локальную базу товаров, собираемую вебхуками
 $dbFile = dirname(DIR) . '/output/webhook_products.json';
@@ -163,7 +174,7 @@ foreach ($productDb as $p) {
         $productMap[$p['id']] = $p;
     }
 }
-error_log('Из локальной базы загружено товаров: ' . count($productMap));
+log_event('INFO', 'Из локальной базы загружено товаров: ' . count($productMap));
 
 /**
  * Проверка атрибутов товара (или родителя модификации):
@@ -242,7 +253,7 @@ function checkProductAttributes($source)
 /**
  * Создаёт запись в $combinedItems на основе данных товара/родителя
  */
-function createCombinedEntry($source, $checkAttrs) {
+function createCombinedEntry($source, $checkAttrs, string $sourceType = 'product') {
     $description  = $source['description']     ?? '';
     $articul      = $source['article']        ?? '';
     $name         = $source['name']           ?? '';
@@ -326,6 +337,7 @@ function createCombinedEntry($source, $checkAttrs) {
         'pathName'     => $pathName,
         'href'         => $href,
         'min_order_qty'=> $minOrderQty,
+        'source_type'  => $sourceType,
     ];
 }
 
@@ -335,7 +347,7 @@ function createCombinedEntry($source, $checkAttrs) {
  *    - Если обычный товар, создаём или обновляем запись в итоговом массиве $combined.
  */
 function processItemsFromStore($items, $storeKey, &$combined, $login, $password, $base_url, array &$checkedParents) {
-    error_log("[store:$storeKey] обработка " . count($items) . " позиций");
+    log_event('INFO', "[store:$storeKey] обработка " . count($items) . ' позиций');
     foreach ($items as $item) {
         $type   = $item['meta']['type'] ?? '';
         $itemId = $item['id'] ?? '';
@@ -343,11 +355,11 @@ function processItemsFromStore($items, $storeKey, &$combined, $login, $password,
 
         // Если это модификация (variant)
         if ($type === 'variant') {
-            error_log("  variant $itemId остаток $stock");
+            log_event('INFO', "variant $itemId остаток $stock");
             // Узнаём ID родителя
             $prodId = $item['product']['id'] ?? '';
             if (!$prodId) {
-                error_log("    нет parent id, пропуск");
+                log_event('SKIP', "variant $itemId: нет parent id");
                 continue; // не можем найти родителя — пропускаем
             }
             $groupKey = $prodId;
@@ -355,24 +367,25 @@ function processItemsFromStore($items, $storeKey, &$combined, $login, $password,
             // Если родитель ещё не загружен и не в $combined, догружаем и проверяем
             if (!isset($combined[$groupKey]) && !array_key_exists($groupKey, $checkedParents)) {
                 $url = $base_url.'entity/product/'.$prodId.'?expand=country,attributes,images';
-                error_log("    загружаем родителя $prodId");
+                log_event('INFO', "    загружаем родителя $prodId");
                 $parentData = moysklad_request($url, $login, $password);
                 if (!empty($parentData['error'])) {
-                    error_log("    ошибка получения родителя $prodId" );
+                    log_event('ERROR', "    ошибка получения родителя $prodId");
                     continue;
                 }
                 // Проверяем "Группа для счетов = Прайс"
                 $check = checkProductAttributes($parentData);
                 if (!$check['include']) {
                     $msg = $check['reason'] ? ' (' . $check['reason'] . ')' : '';
-                    error_log("    родитель $prodId не подходит$msg" );
+                    log_event('SKIP', "родитель $prodId не подходит$msg");
                     $checkedParents[$groupKey] = false; // запоминаем, что не подходит
                     continue; // родитель не подходит
                 }
                 // Создаём запись для родителя
-                $combined[$groupKey] = createCombinedEntry($parentData, $check);
+                $combined[$groupKey] = createCombinedEntry($parentData, $check, 'variant');
+                $createdVariants++;
                 $checkedParents[$groupKey] = true; // родитель подходит и добавлен
-                error_log("    родитель $prodId добавлен в список");
+                log_event('INFO', "    родитель $prodId добавлен в список");
             } elseif (array_key_exists($groupKey, $checkedParents) && $checkedParents[$groupKey] === false) {
                 // Родитель уже проверен и не подходит
                 continue;
@@ -382,32 +395,35 @@ function processItemsFromStore($items, $storeKey, &$combined, $login, $password,
             if (isset($combined[$groupKey])) {
                 $fieldName = 'stock_'.$storeKey;
                 $combined[$groupKey][$fieldName] += $stock;
-                error_log("    +$stock к родителю $prodId склад $storeKey");
+                log_event('INFO', "    +$stock к родителю $prodId склад $storeKey");
             }
         }
         // Если обычный товар
         else {
             $groupKey = $itemId;
-            error_log("  product $itemId остаток $stock");
+            log_event('INFO', "product $itemId остаток $stock");
             // Если ещё нет в итоговом массиве — проверяем, подходит ли
             if (!isset($combined[$groupKey])) {
                 $check = checkProductAttributes($item);
                 if (!$check['include']) {
                     $msg = $check['reason'] ? ' (' . $check['reason'] . ')' : '';
-                    error_log("    товар $itemId не подходит$msg");
+                    log_event('SKIP', "товар $itemId не подходит$msg");
                     continue;
                 }
                 // Создаём запись (сам товар)
-                $combined[$groupKey] = createCombinedEntry($item, $check);
-                error_log("    товар $itemId добавлен в список");
+                $combined[$groupKey] = createCombinedEntry($item, $check, 'product');
+                $createdProducts++;
+                log_event('INFO', "    товар $itemId добавлен в список");
             }
             // Добавляем остаток в запись
             $fieldName = 'stock_'.$storeKey;
             $combined[$groupKey][$fieldName] += $stock;
-            error_log("    +$stock к товару $itemId склад $storeKey");
+            log_event('INFO', "    +$stock к товару $itemId склад $storeKey");
         }
     }
 }
+
+log_event('INFO', 'Создано уникальных записей: товаров ' . $createdProducts . ', модификаций ' . $createdVariants);
 
 /**
  * Функция обхода отчёта stock/bystore.
@@ -422,7 +438,7 @@ function fetchStockReport($login, $password, $base_url, $params = []) {
     while ($url) {
         $resp = moysklad_request($url, $login, $password);
         if (!empty($resp['error'])) {
-            error_log('Ошибка при получении отчёта: ' . print_r($resp, true));
+            log_event('ERROR', 'Ошибка при получении отчёта: ' . print_r($resp, true));
             break;
         }
         $rows = [];
@@ -432,7 +448,7 @@ function fetchStockReport($login, $password, $base_url, $params = []) {
             $rows = $resp;
         }
         $pageRows = count($rows);
-        error_log("Получено $pageRows строк отчёта");
+        log_event('INFO', "Получено $pageRows строк отчёта");
         log_debug('page rows: ' . $pageRows);
         $result = array_merge($result, $rows);
         if (!empty($resp['meta']['nextHref'])) {
@@ -452,7 +468,7 @@ function fetchStockReport($login, $password, $base_url, $params = []) {
 $reportRows = fetchStockReport($login, $password, $base_url, [
     'include' => 'zeroLines'
 ]);
-error_log('Всего получено строк отчёта: ' . count($reportRows));
+log_event('INFO', 'Всего получено строк отчёта: ' . count($reportRows));
 log_debug('total report rows: ' . count($reportRows));
 
 foreach ($reportRows as $row) {
@@ -477,7 +493,7 @@ foreach ($reportRows as $row) {
     }
 
     if (!$data) {
-        error_log("Пропуск $id: нет данных в локальной базе");
+        log_event('SKIP', "Пропуск $id: нет данных в локальной базе");
         log_debug("skip $id no local data");
         continue;
     }
@@ -485,14 +501,23 @@ foreach ($reportRows as $row) {
     $check = checkProductAttributes($data);
     if (!$check['include']) {
         $msg = $check['reason'] ? ' (' . $check['reason'] . ')' : '';
-        error_log("Пропуск $id: не относится к прайсу$msg");
+        log_event('SKIP', "Пропуск $id: не относится к прайсу$msg");
         log_debug("skip $id not for price" . $msg);
         continue;
     }
 
     if (!isset($combinedItems[$groupKey])) {
-        $combinedItems[$groupKey] = createCombinedEntry($data, $check);
+        $combinedItems[$groupKey] = createCombinedEntry(
+            $data,
+            $check,
+            $type === 'variant' ? 'variant' : 'product'
+        );
         log_debug("added entry $groupKey");
+        if ($type === 'variant') {
+            $createdVariants++;
+        } else {
+            $createdProducts++;
+        }
     }
 
     $key = array_search($storeId, $storeIds, true);
@@ -507,6 +532,8 @@ foreach ($reportRows as $row) {
  * 10. Формируем финальный массив для вывода
  */
 $rows = [];
+$groupCounts = [];
+$finalTypeCounts = ['product' => 0, 'variant' => 0];
 foreach ($combinedItems as $uniqueId => $d) {
     $totalStock = $d['stock_store1']
                 + $d['stock_store2']
@@ -557,13 +584,25 @@ foreach ($combinedItems as $uniqueId => $d) {
         'min_order_qty'=> $d['min_order_qty'],
         'photoUrl'     => $d['photoUrl'],
     ];
+
+    $groupCounts[$d['group']] = ($groupCounts[$d['group']] ?? 0) + 1;
+    $stype = $d['source_type'] ?? 'product';
+    if ($stype === 'variant') {
+        $finalTypeCounts['variant']++;
+    } else {
+        $finalTypeCounts['product']++;
+    }
 }
 
-error_log('Подготовлено строк для вывода: ' . count($rows));
+log_event('INFO', 'Подготовлено строк для вывода: ' . count($rows));
+log_event('INFO', '  товаров: ' . $finalTypeCounts['product'] . ', модификаций: ' . $finalTypeCounts['variant']);
+foreach ($groupCounts as $g => $c) {
+    log_event('INFO', "  группа \"$g\": $c");
+}
 log_debug('rows prepared: ' . count($rows));
 
 /**
  * 11. Выводим результат в JSON
  */
 echo json_encode(['rows'=>$rows], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-error_log("=== Завершение скрипта data.php ===");
+log_event('INFO', 'Завершение скрипта data.php');
