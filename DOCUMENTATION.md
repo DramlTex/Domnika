@@ -156,6 +156,7 @@ scripts/test.sh
 - 2025-11-08 Price/data.php, docs/php/data.md – единый формат сообщений логирования.
 
 - 2025-11-09 Price/data.php, docs/php/data.md – сводные данные по группам в логе.
+- 2025-11-10 12:15 Price/data.php, Price/js/table.js – возвращена группа «Травы и добавки» в ALWAYS_SHOW_GROUPS.
 
 
 ## Рекомендации по улучшению
