@@ -158,6 +158,8 @@ scripts/test.sh
 - 2025-11-09 Price/data.php, docs/php/data.md – сводные данные по группам в логе.
 - 2025-11-10 12:15 Price/data.php, Price/js/table.js – возвращена группа «Травы и добавки» в ALWAYS_SHOW_GROUPS.
 
+- 2025-11-10 12:30 Price/data.php, docs/php/data.md – пересоздание лог-файла при превышении 10 МБ.
+
 
 ## Рекомендации по улучшению
 

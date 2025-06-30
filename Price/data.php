@@ -3,11 +3,18 @@ define('DIR', __DIR__);
 
 /**
  * 1. Логирование и настройки ошибок
+ *    Если файл лога превышает 10 МБ, создаём его заново.
  */
+$logFile = DIR . '/php-error.log';
+if (file_exists($logFile) && filesize($logFile) > 10 * 1024 * 1024) {
+    unlink($logFile);
+    touch($logFile);
+}
+
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
-ini_set('error_log', DIR.'/php-error.log');
+ini_set('error_log', $logFile);
 
 /**
  * Печатает сообщение в журнал с указанным типом.
