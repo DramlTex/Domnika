@@ -154,6 +154,7 @@ scripts/test.sh
 - 2025-11-06 Price/js/modals.js – проверка наличия элементов перед заполнением панели товара.
 - 2025-11-07 Price/data.php, Price/js/table.js – удалена группа «Травы и добавки» из ALWAYS_SHOW_GROUPS.
 - 2025-11-08 Price/data.php, docs/php/data.md – единый формат сообщений логирования.
+
 - 2025-11-09 Price/data.php, docs/php/data.md – сводные данные по группам в логе.
 
 

@@ -411,8 +411,10 @@ function processItemsFromStore($items, $storeKey, &$combined, $login, $password,
                     continue;
                 }
                 // Создаём запись (сам товар)
+
                 $combined[$groupKey] = createCombinedEntry($item, $check, 'product');
                 $createdProducts++;
+
                 log_event('INFO', "    товар $itemId добавлен в список");
             }
             // Добавляем остаток в запись
@@ -595,10 +597,12 @@ foreach ($combinedItems as $uniqueId => $d) {
 }
 
 log_event('INFO', 'Подготовлено строк для вывода: ' . count($rows));
+
 log_event('INFO', '  товаров: ' . $finalTypeCounts['product'] . ', модификаций: ' . $finalTypeCounts['variant']);
 foreach ($groupCounts as $g => $c) {
     log_event('INFO', "  группа \"$g\": $c");
 }
+
 log_debug('rows prepared: ' . count($rows));
 
 /**
