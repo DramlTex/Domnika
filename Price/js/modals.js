@@ -31,27 +31,34 @@ function formatStock(num) {
  * @param {Object} item
  */
 function openProductModal(item) {
-  document.getElementById('productModalName').textContent = item.name || '—';
-  document.getElementById('productModalArticul').textContent = item.articul || '—';
-  document.getElementById('productModalDescription').textContent = item.description || '—';
-  document.getElementById('productModalTip').textContent = item.tip || '—';
-  document.getElementById('productModalSupplier').textContent = item.supplier || '—';
-  document.getElementById('productModalMass').textContent = item.mass || '—';
-  document.getElementById('productModalPrice').textContent = item.price || '0';
-  document.getElementById('productModalStock').textContent = formatStock(item.stock);
-  document.getElementById('productModalStock1').textContent = formatStock(item.stock_store1);
-  document.getElementById('productModalStock2').textContent = formatStock(item.stock_store2);
-  document.getElementById('productModalStock3').textContent = formatStock(item.stock_store3);
-  document.getElementById('productModalStock4').textContent = formatStock(item.stock_store4);
-  document.getElementById('productModalVolume').textContent = item.volumeWeight || '—';
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+  setText('productModalName', item.name || '—');
+  setText('productModalArticul', item.articul || '—');
+  setText('productModalDescription', item.description || '—');
+  setText('productModalTip', item.tip || '—');
+  setText('productModalSupplier', item.supplier || '—');
+  setText('productModalMass', item.mass || '—');
+  setText('productModalPrice', item.price || '0');
+  setText('productModalStock', formatStock(item.stock));
+  setText('productModalStock1', formatStock(item.stock_store1));
+  setText('productModalStock2', formatStock(item.stock_store2));
+  setText('productModalStock3', formatStock(item.stock_store3));
+  setText('productModalStock4', formatStock(item.stock_store4));
+  setText('productModalVolume', item.volumeWeight || '—');
   const modalImg = document.getElementById('productModalImg');
-  if (item.photoFull) {
-    modalImg.src = 'image_proxy.php?url=' + encodeURIComponent(item.photoFull);
-  } else {
-    modalImg.src = '';
+  if (modalImg) {
+    if (item.photoFull) {
+      modalImg.src = 'image_proxy.php?url=' + encodeURIComponent(item.photoFull);
+    } else {
+      modalImg.src = '';
+    }
   }
   // cart controls removed
-  document.getElementById('productModal').classList.add('open');
+  const modal = document.getElementById('productModal');
+  if (modal) modal.classList.add('open');
 }
 
 /** Close product modal. */
