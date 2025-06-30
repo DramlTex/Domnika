@@ -16,6 +16,12 @@ let TYPE_SORT = 'alphabetical';
 let COLUMN_RULES = [];
 
 /**
+ * Currently attached row click handler.
+ * @type {?Function}
+ */
+let ROW_CLICK_HANDLER = null;
+
+/**
  * Groups that should be displayed even when stock is zero.
  * @type {string[]}
  */
@@ -138,6 +144,19 @@ function fillTable(data) {
   const sorted = sortByCountry(data);
   const tbody = document.querySelector('#priceList tbody');
   tbody.innerHTML = '';
+  const handleRowClick = e => {
+    if (e.target.closest('.image-container')) return;
+    const row = e.target.closest('tr[data-index]');
+    if (!row) return;
+    const idx = parseInt(row.dataset.index, 10);
+    const item = sorted[idx];
+    if (item) openProductModal(item);
+  };
+  if (ROW_CLICK_HANDLER) {
+    tbody.removeEventListener('click', ROW_CLICK_HANDLER);
+  }
+  ROW_CLICK_HANDLER = handleRowClick;
+  tbody.addEventListener('click', ROW_CLICK_HANDLER);
   const btn = document.getElementById('btnRefresh');
   if (btn) btn.classList.add('hover-effect');
 
@@ -233,10 +252,7 @@ function fillTable(data) {
       }).join('');
 
       tr.innerHTML = cellsHtml;
-      tr.addEventListener('click', e => {
-        if (e.target.closest('.image-container')) return;
-        openProductModal(item);
-      });
+      tr.dataset.index = i;
       tbody.appendChild(tr);
       rowNumber++;
     }
