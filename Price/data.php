@@ -425,10 +425,16 @@ function fetchStockReport($login, $password, $base_url, $params = []) {
             error_log('Ошибка при получении отчёта: ' . print_r($resp, true));
             break;
         }
-        $pageRows = count($resp['rows'] ?? []);
+        $rows = [];
+        if (isset($resp['rows']) && is_array($resp['rows'])) {
+            $rows = $resp['rows'];
+        } elseif (is_array($resp)) { // некоторые версии API возвращают массив без поля rows
+            $rows = $resp;
+        }
+        $pageRows = count($rows);
         error_log("Получено $pageRows строк отчёта");
         log_debug('page rows: ' . $pageRows);
-        $result = array_merge($result, $resp['rows'] ?? []);
+        $result = array_merge($result, $rows);
         if (!empty($resp['meta']['nextHref'])) {
             log_debug('next page');
             $url = $resp['meta']['nextHref'];
