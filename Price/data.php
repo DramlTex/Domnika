@@ -491,33 +491,47 @@ foreach ($reportRows as $row) {
     $data = $productMap[$id] ?? null;
     $type = $data['meta']['type'] ?? '';
     $groupKey = $id;
+    $sourceForEntry = $data;
 
     if ($type === 'variant') {
         $parentId = $data['product']['id'] ?? '';
         $groupKey = $parentId ?: $id;
-        if (!$data && isset($productMap[$parentId])) {
-            $data = $productMap[$parentId];
+        $parentData = $productMap[$parentId] ?? null;
+
+        $check = $data ? checkProductAttributes($data) : ['include' => false];
+        if (!$check['include'] && $parentData) {
+            $parentCheck = checkProductAttributes($parentData);
+            if ($parentCheck['include']) {
+                $check = $parentCheck;
+                $sourceForEntry = $parentData;
+            }
         }
+
+        if (!$check['include']) {
+            $msg = $check['reason'] ? ' (' . $check['reason'] . ')' : '';
+            log_event('SKIP', "Пропуск $id: не относится к прайсу$msg");
+            log_debug("skip $id not for price" . $msg);
+            continue;
+        }
+
         log_debug("variant $id parent $parentId");
+    } else {
+        if (!$data) {
+            log_event('SKIP', "Пропуск $id: нет данных в локальной базе");
+            log_debug("skip $id no local data");
+            continue;
+        }
+        $check = checkProductAttributes($data);
+        if (!$check['include']) {
+            $msg = $check['reason'] ? ' (' . $check['reason'] . ')' : '';
+            log_event('SKIP', "Пропуск $id: не относится к прайсу$msg");
+            log_debug("skip $id not for price" . $msg);
+            continue;
+        }
     }
-
-    if (!$data) {
-        log_event('SKIP', "Пропуск $id: нет данных в локальной базе");
-        log_debug("skip $id no local data");
-        continue;
-    }
-
-    $check = checkProductAttributes($data);
-    if (!$check['include']) {
-        $msg = $check['reason'] ? ' (' . $check['reason'] . ')' : '';
-        log_event('SKIP', "Пропуск $id: не относится к прайсу$msg");
-        log_debug("skip $id not for price" . $msg);
-        continue;
-    }
-
     if (!isset($combinedItems[$groupKey])) {
         $combinedItems[$groupKey] = createCombinedEntry(
-            $data,
+            $sourceForEntry,
             $check,
             $type === 'variant' ? 'variant' : 'product'
         );
@@ -554,6 +568,8 @@ foreach ($combinedItems as $uniqueId => $d) {
     $totalStockInt = (int) floor($totalStock);
     $alwaysShow = ['Ароматизированный чай', 'Травы и добавки', 'Приправы'];
     if ($totalStockInt <= 0 && !in_array($d['group'], $alwaysShow, true)) {
+        log_event('SKIP', "Пропуск $uniqueId: нулевой остаток, группа \"{$d['group']}\"");
+        log_debug("skip $uniqueId zero stock group {$d['group']}");
         continue;
     }
 
