@@ -516,7 +516,7 @@ foreach ($combinedItems as $uniqueId => $d) {
     // Отбрасываем дробную часть и исключаем товары с нулевым остатком,
     // кроме групп, которые всегда должны отображаться
     $totalStockInt = (int) floor($totalStock);
-    $alwaysShow = ['Ароматизированный чай', 'Травы и добавки', 'Приправы'];
+    $alwaysShow = ['Ароматизированный чай', 'Приправы'];
     if ($totalStockInt <= 0 && !in_array($d['group'], $alwaysShow, true)) {
         continue;
     }
