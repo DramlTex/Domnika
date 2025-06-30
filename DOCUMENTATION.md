@@ -149,7 +149,9 @@ scripts/test.sh
 - 2025-06-30 08:12 Price/data.php, docs/php/data.md – использование отчёта stock/bystore/current.
 - 2025-11-05 Price/data.php, docs/php/data.md – поддержка формата отчёта без поля `rows`.
 - 2025-11-05 Price/js/table.js – обработка кликов по строкам через делегирование, панель товара открывается корректно.
+
 - 2025-11-06 Price/js/table.js – обработчик кликов подключается через `addEventListener` с очисткой предыдущего.
+
 
 ## Рекомендации по улучшению
 
