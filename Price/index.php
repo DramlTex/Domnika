@@ -39,7 +39,7 @@ $rulesFile = $_SESSION['user']['rules_file'] ?? 'row_sort_rules.json';
 <!-- БАННЕР / ШАПКА -->
 <div class="banner">
   <img class="logo white-svg"
-       src="http://85.193.91.150/Domnika/price/811140.svg"
+       src="811140.svg"
        alt="JFK Trading Group">
   <div class="left-text">
     <h1>ООО «Джей Эф Кей»</h1>

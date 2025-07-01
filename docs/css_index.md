@@ -86,3 +86,5 @@
 - 2025-06-03 Price/styles.css, Price/admin.php – добавлен класс `.logout-link` для кнопки выхода.
 - 2025-08-20 Price/css/admin.css, Price/admin.php – стили вынесены в отдельный файл и разделы панели получили заголовки.
 - 2025-06-27 13:29 Price/index.php, Price/css/cart.css – удалена клиентская корзина.
+- 2025-07-01 12:33 Price/styles_main.css, Price/css/banner.css – заменены абсолютные пути изображений на относительные.
+- 2025-07-01 13:05 Price/styles_main.css, Price/css/banner.css – пути к изображениям указаны относительно текущей директории.
