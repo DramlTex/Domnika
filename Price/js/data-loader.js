@@ -6,7 +6,7 @@ function loadData() {
   document.getElementById('loader').style.display = 'block';
   document.querySelector('.table-wrapper').style.display = 'none';
   document.getElementById('tabs').style.display = 'none';
-  fetch('http://85.193.91.150/domnika_git/price/data.php')
+  fetch('data.php')
     .then(response => response.json())
     .then(json => {
       if (json && json.rows) {
