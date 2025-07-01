@@ -40,6 +40,14 @@ scripts/install.sh
 1. Укажите логин и пароль для "МойСклад" в файле `Price/config.php`.
 2. При необходимости скорректируйте пути в `product.php` и `output/update.php`.
 
+## Быстрый старт
+
+1. Установите зависимости через `scripts/install.sh`.
+2. Заполните параметры подключения в `Price/config.php`.
+3. Выполните `product.php` или `output/init_db.php` для загрузки товара.
+4. Запустите веб‑сервер командой `scripts/start.sh` и откройте `http://localhost:8000`.
+5. Для проверки синтаксиса и тестов используйте `scripts/test.sh`.
+
 ## Запуск приложения
 
 Локальный веб‑сервер можно запустить командой:
@@ -171,6 +179,7 @@ scripts/test.sh
 - 2025-11-18 Price/admin.php – добавлен выбор параметра typeSort при сохранении правил.
 - 2025-07-01 12:33 Price/index.php, Price/js/data-loader.js, Price/styles_main.css, Price/css/banner.css – заменены абсолютные URL на относительные.
 - 2025-07-01 13:05 Price/index.php, Price/js/data-loader.js, Price/styles_main.css, Price/css/banner.css – пути к файлам указаны без префикса /price.
+- 2025-07-01 13:44 README.md, DOCUMENTATION.md – добавлен раздел "Быстрый старт" и обновлена инструкция по запуску.
 
 
 
