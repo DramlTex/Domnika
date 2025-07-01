@@ -167,7 +167,9 @@ scripts/test.sh
 - 2025-11-15 Price/data.php, docs/php/data.md – отчёт stock/bystore с stockType=quantity, значение в поле quantity.
 - 2025-11-16 Price/js/table.js, Price/js/filters.js – типы сортируются внутри каждой страны без учёта регистра.
 - 2025-11-17 Price/row_sort_rules.json – установлен пользовательский порядок типов.
+
 - 2025-11-18 Price/admin.php – добавлен выбор параметра typeSort при сохранении правил.
+
 
 
 

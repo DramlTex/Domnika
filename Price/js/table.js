@@ -282,6 +282,7 @@ function fillTable(data) {
  */
 function fillFilters(data) {
   const tipSelect = document.getElementById('filterTip');
+
   const typeMap = new Map();
   data.forEach(i => {
     if (!i.tip) return;
@@ -289,6 +290,7 @@ function fillFilters(data) {
     if (!typeMap.has(norm)) typeMap.set(norm, i.tip);
   });
   const orderedTypes = orderTypesList([...typeMap.keys()]);
+
   tipSelect.innerHTML = '<option value="">(Все)</option>';
   orderedTypes.forEach(t => {
     const opt = document.createElement('option');
