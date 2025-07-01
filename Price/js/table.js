@@ -172,7 +172,7 @@ function fillTable(data) {
   const chunkSize = 50;
   let rowNumber = 1;
   let currentCountry = null;
-  let currentType = null;
+  let currentType = null; // normalized type name
 
   const colSpan = COLUMN_RULES.length || 11;
 
@@ -211,12 +211,13 @@ function fillTable(data) {
         currentType = null;
       }
 
-      if (currentType !== (item.tip || '')) {
+      const itemTypeNorm = normalizeType(item.tip);
+      if (currentType !== itemTypeNorm) {
         const typeHeader = document.createElement('tr');
         typeHeader.className = 'type-row';
         typeHeader.innerHTML = `<td colspan="${colSpan}">${item.tip || ''}</td>`;
         tbody.appendChild(typeHeader);
-        currentType = item.tip || '';
+        currentType = itemTypeNorm;
       }
 
       const tr = document.createElement('tr');
@@ -281,13 +282,20 @@ function fillTable(data) {
  */
 function fillFilters(data) {
   const tipSelect = document.getElementById('filterTip');
-  const types = [...new Set(data.map(i => normalizeType(i.tip)).filter(Boolean))];
-  const orderedTypes = orderTypesList(types);
+
+  const typeMap = new Map();
+  data.forEach(i => {
+    if (!i.tip) return;
+    const norm = normalizeType(i.tip);
+    if (!typeMap.has(norm)) typeMap.set(norm, i.tip);
+  });
+  const orderedTypes = orderTypesList([...typeMap.keys()]);
+
   tipSelect.innerHTML = '<option value="">(Все)</option>';
   orderedTypes.forEach(t => {
     const opt = document.createElement('option');
     opt.value = t;
-    opt.textContent = t;
+    opt.textContent = typeMap.get(t) || t;
     tipSelect.appendChild(opt);
   });
 
