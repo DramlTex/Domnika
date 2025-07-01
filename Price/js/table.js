@@ -40,13 +40,17 @@ function normalizeCountry(value) {
   return (value || '').trim().toUpperCase();
 }
 
+function normalizeType(value) {
+  return (value || '').trim().toUpperCase();
+}
+
 function sortByCountry(data) {
   const countryMap = COUNTRY_ORDER.reduce((acc, c, i) => {
     acc[normalizeCountry(c)] = i;
     return acc;
   }, {});
   const typeMap = TYPE_ORDER.reduce((acc, t, i) => {
-    acc[t] = i;
+    acc[normalizeType(t)] = i;
     return acc;
   }, {});
   const sortAlpha = TYPE_SORT === 'alphabetical' || TYPE_ORDER.length === 0;
@@ -57,8 +61,8 @@ function sortByCountry(data) {
     const bi = countryMap.hasOwnProperty(bCountry) ? countryMap[bCountry] : COUNTRY_ORDER.length;
     if (ai !== bi) return ai - bi;
 
-    const aType = a.tip || '';
-    const bType = b.tip || '';
+    const aType = normalizeType(a.tip);
+    const bType = normalizeType(b.tip);
     const ati = typeMap.hasOwnProperty(aType) ? typeMap[aType] : TYPE_ORDER.length;
     const bti = typeMap.hasOwnProperty(bType) ? typeMap[bType] : TYPE_ORDER.length;
     if (!sortAlpha && (ati !== bti)) return ati - bti;
@@ -93,15 +97,17 @@ function orderCountriesList(list) {
  */
 function orderTypesList(list) {
   const map = TYPE_ORDER.reduce((acc, t, i) => {
-    acc[t] = i;
+    acc[normalizeType(t)] = i;
     return acc;
   }, {});
   const sortAlpha = TYPE_SORT === 'alphabetical' || TYPE_ORDER.length === 0;
   return list.slice().sort((a, b) => {
-    const ai = map.hasOwnProperty(a) ? map[a] : TYPE_ORDER.length;
-    const bi = map.hasOwnProperty(b) ? map[b] : TYPE_ORDER.length;
+    const aNorm = normalizeType(a);
+    const bNorm = normalizeType(b);
+    const ai = map.hasOwnProperty(aNorm) ? map[aNorm] : TYPE_ORDER.length;
+    const bi = map.hasOwnProperty(bNorm) ? map[bNorm] : TYPE_ORDER.length;
     if (!sortAlpha && (ai !== bi)) return ai - bi;
-    return a.localeCompare(b);
+    return aNorm.localeCompare(bNorm);
   });
 }
 
@@ -166,7 +172,7 @@ function fillTable(data) {
   const chunkSize = 50;
   let rowNumber = 1;
   let currentCountry = null;
-  let currentType = null;
+  let currentType = null; // normalized type name
 
   const colSpan = COLUMN_RULES.length || 11;
 
@@ -205,12 +211,13 @@ function fillTable(data) {
         currentType = null;
       }
 
-      if (currentType !== (item.tip || '')) {
+      const itemTypeNorm = normalizeType(item.tip);
+      if (currentType !== itemTypeNorm) {
         const typeHeader = document.createElement('tr');
         typeHeader.className = 'type-row';
         typeHeader.innerHTML = `<td colspan="${colSpan}">${item.tip || ''}</td>`;
         tbody.appendChild(typeHeader);
-        currentType = item.tip || '';
+        currentType = itemTypeNorm;
       }
 
       const tr = document.createElement('tr');
@@ -275,13 +282,18 @@ function fillTable(data) {
  */
 function fillFilters(data) {
   const tipSelect = document.getElementById('filterTip');
-  const types = [...new Set(data.map(i => i.tip).filter(Boolean))];
-  const orderedTypes = orderTypesList(types);
+  const typeMap = new Map();
+  data.forEach(i => {
+    if (!i.tip) return;
+    const norm = normalizeType(i.tip);
+    if (!typeMap.has(norm)) typeMap.set(norm, i.tip);
+  });
+  const orderedTypes = orderTypesList([...typeMap.keys()]);
   tipSelect.innerHTML = '<option value="">(Все)</option>';
   orderedTypes.forEach(t => {
     const opt = document.createElement('option');
     opt.value = t;
-    opt.textContent = t;
+    opt.textContent = typeMap.get(t) || t;
     tipSelect.appendChild(opt);
   });
 

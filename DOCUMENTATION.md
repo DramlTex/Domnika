@@ -165,6 +165,8 @@ scripts/test.sh
 - 2025-11-13 Price/data.php, docs/php/data.md – логирование группы при исключении товара с нулевым остатком.
 - 2025-11-14 Price/data.php, docs/php/data.md – сначала берём данные из локальной базы, затем сравниваем с отчётом.
 - 2025-11-15 Price/data.php, docs/php/data.md – отчёт stock/bystore с stockType=quantity, значение в поле quantity.
+- 2025-11-16 Price/js/table.js, Price/js/filters.js – типы сортируются внутри каждой страны без учёта регистра.
+- 2025-11-17 Price/row_sort_rules.json – установлен пользовательский порядок типов.
 
 
 
