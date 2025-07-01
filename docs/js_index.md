@@ -87,3 +87,7 @@
 - 2025-11-07 Price/data.php, Price/js/table.js – удалена группа «Травы и добавки» из ALWAYS_SHOW_GROUPS.
 - 2025-11-10 12:15 Price/data.php, Price/js/table.js – возвращена группа «Травы и добавки» в ALWAYS_SHOW_GROUPS.
 
+- 2025-11-16 Price/js/table.js – сортировка типов внутри каждой страны не зависит от регистра.
+
+- 2025-11-17 Price/row_sort_rules.json – установлен порядок сортировки типов через typeOrder.
+- 2025-11-18 Price/admin.php – добавлено выпадающее меню для параметра typeSort.

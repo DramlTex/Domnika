@@ -17,7 +17,7 @@ function applyFilters() {
   const filtered = allData.filter(item => {
     if (valArticul && !item.articul.toLowerCase().includes(valArticul)) return false;
     if (valName && !item.name.toLowerCase().includes(valName)) return false;
-    if (valTip && item.tip !== valTip) return false;
+    if (valTip && normalizeType(item.tip) !== valTip) return false;
     if (valCountry && item.supplier !== valCountry) return false;
 
     const mass = parseFloat(item.mass) || 0;

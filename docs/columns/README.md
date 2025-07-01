@@ -89,7 +89,9 @@ CSS‑классам в `table.css` (например `name-col`, `type-col`, `c
 `Price/row_sort_rules.json` задаёт порядок стран и типов. Поле `countryOrder`
 указывает приоритет стран, `typeOrder` — список типов в пользовательском
 порядке. Свойство `typeSort` определяет способ сортировки типов: `alphabetical`
-или `order`. При значении `alphabetical` списки типов сортируются по алфавиту.
+или `order`. При значении `alphabetical` списки типов сортируются по алфавиту,
+при `order` — в соответствии с заданным списком. В админ‑панели этот параметр
+можно выбрать из выпадающего списка.
 
 ## История изменений
 
@@ -99,3 +101,4 @@ CSS‑классам в `table.css` (например `name-col`, `type-col`, `c
 - 2025-06-26 Price/admin.php, docs/columns/README.md – управление порядком стран вынесено в admin.php.
 - 2025-07-25 Price/admin.php, docs/columns/README.md – добавлено редактирование порядка типов чая.
 - 2025-08-02 Price/admin.php, docs/columns/README.md – добавлен раздел для изменения `column_rules.json`.
+- 2025-11-18 Price/admin.php, docs/columns/README.md – добавлен выбор параметра `typeSort`.
