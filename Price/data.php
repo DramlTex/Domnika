@@ -519,6 +519,7 @@ foreach ($reportRows as $row) {
     $type = $data['meta']['type'] ?? '';
     $groupKey = $id;
 
+
     if ($type === 'variant') {
         $parentId = $data['product']['id'] ?? '';
         $groupKey = $parentId ?: $id;
@@ -529,6 +530,7 @@ foreach ($reportRows as $row) {
             $parentCheck = checkProductAttributes($parentData);
             if ($parentCheck['include']) {
                 $check = $parentCheck;
+
             }
         }
 
@@ -555,9 +557,11 @@ foreach ($reportRows as $row) {
         }
     }
     if (!isset($combinedItems[$groupKey])) {
+
         // Товар не входит в предварительный список
         continue;
     }
+
 
     $key = array_search($storeId, $storeIds, true);
     if ($key !== false) {
