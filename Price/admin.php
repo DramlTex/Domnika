@@ -328,6 +328,7 @@ if (file_exists($rulesFilePath)) {
 }
 $countryOrder = $sortRules['countryOrder'] ?? [];
 $typeOrder = $sortRules['typeOrder'] ?? [];
+$typeSort = $sortRules['typeSort'] ?? 'alphabetical';
 
 // ------------------ Column rules ------------------
 $columnFilePath = __DIR__ . '/column_rules.json';
@@ -351,6 +352,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveRules'])) {
     $types = array_map('trim', $_POST['typeOrder'] ?? []);
     $types = array_values(array_filter($types, fn($t) => $t !== ''));
     $sortRules['typeOrder'] = $types;
+    $typeSort = $_POST['typeSort'] ?? $typeSort;
+    $sortRules['typeSort'] = in_array($typeSort, ['alphabetical', 'order'], true) ? $typeSort : 'alphabetical';
     file_put_contents(
         $rulesFilePath,
         json_encode($sortRules, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
@@ -573,6 +576,13 @@ $username = $_SESSION['user']['login'];
 <!-- Редактирование порядка типов -->
 <div class="sort-rules">
     <h4>Порядок типов</h4>
+    <label>
+        Способ сортировки:
+        <select name="typeSort" id="typeSort" class="ms-form-control">
+            <option value="alphabetical" <?= $typeSort === 'alphabetical' ? 'selected' : '' ?>>По алфавиту</option>
+            <option value="order" <?= $typeSort === 'order' ? 'selected' : '' ?>>По списку</option>
+        </select>
+    </label>
         <div id="typeFields">
         <?php foreach ($typeOrder as $t): ?>
             <div class="type-row">
