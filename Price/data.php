@@ -467,6 +467,7 @@ log_event('INFO', 'Создано стартовых записей: товар�
  */
 function fetchStockReport($login, $password, $base_url, $params = []) {
     $params['limit'] = 1000;
+    $params['stockType'] = 'quantity';
     $url = $base_url . 'report/stock/bystore/current?' . http_build_query($params);
     log_debug('stock report params: ' . http_build_query($params));
 
@@ -502,7 +503,8 @@ function fetchStockReport($login, $password, $base_url, $params = []) {
  * 9. Загружаем отчёт остатков и объединяем его с локальной базой
  */
 $reportRows = fetchStockReport($login, $password, $base_url, [
-    'include' => 'zeroLines'
+    'include'    => 'zeroLines',
+    'stockType'  => 'quantity'
 ]);
 log_event('INFO', 'Всего получено строк отчёта: ' . count($reportRows));
 log_debug('total report rows: ' . count($reportRows));
@@ -510,7 +512,7 @@ log_debug('total report rows: ' . count($reportRows));
 foreach ($reportRows as $row) {
     $id      = $row['assortmentId'] ?? '';
     $storeId = $row['storeId'] ?? '';
-    $stock   = $row['stock'] ?? 0;
+    $stock   = $row['quantity'] ?? 0;
     if (!$id || !$storeId) {
         continue;
     }
