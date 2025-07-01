@@ -183,6 +183,15 @@ foreach ($productDb as $p) {
 }
 log_event('INFO', 'Из локальной базы загружено товаров: ' . count($productMap));
 
+// Группы, которые выводятся во вкладках интерфейса
+$allowedGroups = [
+    'Классические чаи',
+    'Ароматизированный чай',
+    'Травы и добавки',
+    'Приправы',
+    'По запросу'
+];
+
 /**
  * Проверка атрибутов товара (или родителя модификации):
  * Нужно, чтобы "Группа для счетов" была "Прайс". Если это так, товар включаем в итог.
@@ -432,7 +441,25 @@ function processItemsFromStore($items, $storeKey, &$combined, $login, $password,
     }
 }
 
-log_event('INFO', 'Создано уникальных записей: товаров ' . $createdProducts . ', модификаций ' . $createdVariants);
+// Создаём стартовый список товаров из локальной базы
+foreach ($productMap as $pId => $item) {
+    if (($item['meta']['type'] ?? '') !== 'product') {
+        continue;
+    }
+    $check = checkProductAttributes($item);
+    if (!$check['include']) {
+        continue;
+    }
+    if (!in_array($check['group'], $allowedGroups, true)) {
+        continue;
+    }
+    if (!isset($combinedItems[$pId])) {
+        $combinedItems[$pId] = createCombinedEntry($item, $check, 'product');
+        $createdProducts++;
+    }
+}
+
+log_event('INFO', 'Создано стартовых записей: товаров ' . $createdProducts);
 
 /**
  * Функция обхода отчёта stock/bystore.
@@ -491,7 +518,7 @@ foreach ($reportRows as $row) {
     $data = $productMap[$id] ?? null;
     $type = $data['meta']['type'] ?? '';
     $groupKey = $id;
-    $sourceForEntry = $data;
+
 
     if ($type === 'variant') {
         $parentId = $data['product']['id'] ?? '';
@@ -503,7 +530,7 @@ foreach ($reportRows as $row) {
             $parentCheck = checkProductAttributes($parentData);
             if ($parentCheck['include']) {
                 $check = $parentCheck;
-                $sourceForEntry = $parentData;
+
             }
         }
 
@@ -530,18 +557,11 @@ foreach ($reportRows as $row) {
         }
     }
     if (!isset($combinedItems[$groupKey])) {
-        $combinedItems[$groupKey] = createCombinedEntry(
-            $sourceForEntry,
-            $check,
-            $type === 'variant' ? 'variant' : 'product'
-        );
-        log_debug("added entry $groupKey");
-        if ($type === 'variant') {
-            $createdVariants++;
-        } else {
-            $createdProducts++;
-        }
+
+        // Товар не входит в предварительный список
+        continue;
     }
+
 
     $key = array_search($storeId, $storeIds, true);
     if ($key !== false) {
