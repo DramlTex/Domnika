@@ -177,6 +177,7 @@ scripts/test.sh
 - 2025-11-17 Price/row_sort_rules.json – установлен пользовательский порядок типов.
 
 - 2025-11-18 Price/admin.php – добавлен выбор параметра typeSort при сохранении правил.
+- 2025-11-19 Price/admin.php, Price/data.php, docs/admin/php.md – добавлен блок "Фикс Sea0011" и чтение файла fix.json.
 - 2025-07-01 12:33 Price/index.php, Price/js/data-loader.js, Price/styles_main.css, Price/css/banner.css – заменены абсолютные URL на относительные.
 - 2025-07-01 13:05 Price/index.php, Price/js/data-loader.js, Price/styles_main.css, Price/css/banner.css – пути к файлам указаны без префикса /price.
 - 2025-07-01 13:44 README.md, DOCUMENTATION.md – добавлен раздел "Быстрый старт" и обновлена инструкция по запуску.

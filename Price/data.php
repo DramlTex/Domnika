@@ -58,6 +58,16 @@ $login    = $config['login'];
 $password = $config['password'];
 $base_url = 'https://api.moysklad.ru/api/remap/1.2/';
 
+// ----- Fix Sea0011 configuration -----
+$fixFile = DIR . '/fix.json';
+$fixData = ['enabled' => false, 'price' => 0];
+if (file_exists($fixFile)) {
+    $tmp = json_decode(file_get_contents($fixFile), true);
+    if (is_array($tmp)) {
+        $fixData = array_merge($fixData, $tmp);
+    }
+}
+
 /**
  * 4. Функция для выполнения запросов к API МойСклад
  */
@@ -299,6 +309,12 @@ function createCombinedEntry($source, $checkAttrs, string $sourceType = 'product
                 $price = $first['value'] / 100;
             }
         }
+    }
+
+    // Применяем фикс цены для артикула Sea0011, если настроено
+    global $fixData;
+    if (($fixData['enabled'] ?? false) && $articul === 'Sea0011') {
+        $price = (float) ($fixData['price'] ?? 0);
     }
 
     // Подтягиваем фото, если есть
