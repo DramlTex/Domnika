@@ -181,6 +181,7 @@ scripts/test.sh
 - 2025-07-01 13:05 Price/index.php, Price/js/data-loader.js, Price/styles_main.css, Price/css/banner.css – пути к файлам указаны без префикса /price.
 - 2025-07-01 13:44 README.md, DOCUMENTATION.md – добавлен раздел "Быстрый старт" и обновлена инструкция по запуску.
 - 2025-07-02 Price/data.php, Price/js/table.js – учёт остатков для группы «Травы и добавки».
+- 2025-11-19 Price/js/table.js, Price/export.php – заголовки стран формируются после нормализации названий.
 
 ## Рекомендации по улучшению
 

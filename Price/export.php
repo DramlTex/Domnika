@@ -282,15 +282,16 @@ foreach ($groupedData as $groupName => $items) {
     foreach ($items as $row) {
         $country = $row['supplier'] ?? '';
         $type    = $row['tip'] ?? '';
+        $countryNorm = normalizeCountry($country);
 
-        if ($currentCountry !== $country) {
+        if ($currentCountry !== $countryNorm) {
             $rowNum++;
             $sheet->mergeCells("A{$rowNum}:{$lastColumn}{$rowNum}");
             $sheet->setCellValue("A{$rowNum}", $country);
             $sheet->getStyle("A{$rowNum}:{$lastColumn}{$rowNum}")
                 ->applyFromArray($countryRowStyle);
             applyBorderFill($sheet, "A{$rowNum}:{$lastColumn}{$rowNum}");
-            $currentCountry = $country;
+            $currentCountry = $countryNorm;
             $currentType = null;
         }
 

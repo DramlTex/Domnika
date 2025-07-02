@@ -201,12 +201,13 @@ function fillTable(data) {
         continue;
       }
 
-      if (currentCountry !== item.supplier) {
+      const itemCountryNorm = normalizeCountry(item.supplier);
+      if (currentCountry !== itemCountryNorm) {
         const header = document.createElement('tr');
         header.className = 'country-row';
-        header.innerHTML = `<td colspan="${colSpan}">${item.supplier}</td>`;
+        header.innerHTML = `<td colspan="${colSpan}">${item.supplier.trim()}</td>`;
         tbody.appendChild(header);
-        currentCountry = item.supplier;
+        currentCountry = itemCountryNorm;
         currentType = null;
       }
 
