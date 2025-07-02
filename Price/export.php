@@ -19,12 +19,31 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 set_time_limit(300);
 ini_set('memory_limit', '512M');
 
-// Порядок сортировки стран и типов, аналогичный JavaScript
-$COUNTRY_ORDER = [
-    'ИНДИЯ', 'ЦЕЙЛОН', 'ИРАН', 'ВЬЕТНАМ',
-    'КИТАЙ', 'КЕНИЯ', 'ЕГИПЕТ', 'НИГЕРИЯ', 'ЮЖНАЯ АФРИКА'
-];
-$TYPE_ORDER = [];
+// Файл правил сортировки. Используем тот же, что и в интерфейсе
+$rulesFile = $_SESSION['user']['rules_file'] ?? 'row_sort_rules.json';
+$rulesPath = __DIR__ . '/' . basename($rulesFile);
+
+// Значения по умолчанию
+$COUNTRY_ORDER = [];
+$TYPE_ORDER    = [];
+$TYPE_SORT     = 'alphabetical';
+
+if (is_file($rulesPath)) {
+    $rules = json_decode(file_get_contents($rulesPath), true);
+    if (json_last_error() === JSON_ERROR_NONE) {
+        if (!empty($rules['countryOrder']) && is_array($rules['countryOrder'])) {
+            $COUNTRY_ORDER = array_map(function ($v) {
+                return mb_strtoupper(trim($v));
+            }, $rules['countryOrder']);
+        }
+        if (!empty($rules['typeOrder']) && is_array($rules['typeOrder'])) {
+            $TYPE_ORDER = $rules['typeOrder'];
+        }
+        if (!empty($rules['typeSort'])) {
+            $TYPE_SORT = $rules['typeSort'];
+        }
+    }
+}
 
 // Проверка данных
 $jsonData = $_POST['jsonData'] ?? '';
@@ -55,6 +74,27 @@ foreach ($data as $item) {
     $groupName = $item['group'] ?? 'Остальное';
     $groupedData[$groupName][] = $item;
 }
+
+// Порядок вкладок такой же, как на сайте
+$GROUP_ORDER = [
+    'Классические чаи',
+    'Ароматизированный чай',
+    'Травы и добавки',
+    'Приправы',
+    'По запросу',
+];
+$orderedGroups = [];
+foreach ($GROUP_ORDER as $g) {
+    if (isset($groupedData[$g])) {
+        $orderedGroups[$g] = $groupedData[$g];
+    }
+}
+foreach ($groupedData as $g => $items) {
+    if (!isset($orderedGroups[$g])) {
+        $orderedGroups[$g] = $items;
+    }
+}
+$groupedData = $orderedGroups;
 
 // Создаем документ
 $spreadsheet = new Spreadsheet();
@@ -108,12 +148,26 @@ function normalizeCountry(string $value): string
     return mb_strtoupper(trim($value));
 }
 
-function sortItems(array $items, array $countryOrder, array $typeOrder): array
+function normalizeType(string $value): string
 {
-    $countryMap = array_flip($countryOrder);
-    $typeMap    = array_flip($typeOrder);
+    return mb_strtoupper(trim($value));
+}
 
-    usort($items, function ($a, $b) use ($countryMap, $typeMap, $countryOrder, $typeOrder) {
+function sortItems(array $items, array $countryOrder, array $typeOrder, string $typeSort = 'alphabetical'): array
+{
+    $countryMap = [];
+    foreach ($countryOrder as $i => $c) {
+        $countryMap[normalizeCountry($c)] = $i;
+    }
+
+    $typeMap = [];
+    foreach ($typeOrder as $i => $t) {
+        $typeMap[normalizeType($t)] = $i;
+    }
+
+    $sortAlpha = $typeSort === 'alphabetical' || empty($typeOrder);
+
+    usort($items, function ($a, $b) use ($countryMap, $typeMap, $countryOrder, $typeOrder, $sortAlpha) {
         $aCountry = normalizeCountry($a['supplier'] ?? '');
         $bCountry = normalizeCountry($b['supplier'] ?? '');
         $ai = $countryMap[$aCountry] ?? count($countryOrder);
@@ -122,16 +176,16 @@ function sortItems(array $items, array $countryOrder, array $typeOrder): array
             return $ai <=> $bi;
         }
 
-        $aType = $a['tip'] ?? '';
-        $bType = $b['tip'] ?? '';
-        $ati = $typeMap[$aType] ?? count($typeOrder);
-        $bti = $typeMap[$bType] ?? count($typeOrder);
-        if ($ati !== $bti) {
+        $aTypeNorm = normalizeType($a['tip'] ?? '');
+        $bTypeNorm = normalizeType($b['tip'] ?? '');
+        $ati = $typeMap[$aTypeNorm] ?? count($typeOrder);
+        $bti = $typeMap[$bTypeNorm] ?? count($typeOrder);
+        if (!$sortAlpha && $ati !== $bti) {
             return $ati <=> $bti;
         }
 
-        if ($aType !== $bType) {
-            return strcmp($aType, $bType);
+        if ($aTypeNorm !== $bTypeNorm) {
+            return strcmp($aTypeNorm, $bTypeNorm);
         }
 
         $nameCmp = strcmp($a['name'] ?? '', $b['name'] ?? '');
@@ -272,7 +326,7 @@ foreach ($groupedData as $groupName => $items) {
     applyBorderFill($sheet, "A{$dataStartRow}:{$lastColumn}{$dataStartRow}");
 
     // 4. Сортировка и заполнение данных с группировкой по стране и типу
-    $items = sortItems($items, $COUNTRY_ORDER, $TYPE_ORDER);
+    $items = sortItems($items, $COUNTRY_ORDER, $TYPE_ORDER, $TYPE_SORT);
 
     $rowNum = $dataStartRow;
     $counter = 1;
