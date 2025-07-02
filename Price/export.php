@@ -101,7 +101,7 @@ $spreadsheet = new Spreadsheet();
 $spreadsheet->removeSheetByIndex(0);
 
 // Путь к логотипу
-$logoPath = __DIR__ . '/jfkxlsx.png';
+$logoPath = __DIR__ . '/logo_big.png';
 $hasLogo = file_exists($logoPath);
 
 // Основные стили
