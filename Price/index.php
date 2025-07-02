@@ -535,7 +535,7 @@ function closeProductModal() {
 }
 
 async function loadImageAsBase64(url) {
-  const response = await fetch(url);      // подгружаем файл jfkxlsx.png
+  const response = await fetch(url);      // подгружаем файл logo_big.png
   const blob = await response.blob();     // превращаем в Blob
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

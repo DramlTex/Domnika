@@ -183,6 +183,7 @@ scripts/test.sh
 - 2025-07-01 13:44 README.md, DOCUMENTATION.md – добавлен раздел "Быстрый старт" и обновлена инструкция по запуску.
 - 2025-07-02 Price/data.php, Price/js/table.js – учёт остатков для группы «Травы и добавки».
 - 2025-11-20 Price/export.php – экспорт упорядочивает вкладки и страны как на сайте.
+- 2025-07-02 13:27 Price/logo_big.png, Price/export.php, Price/index.php, docs/export_excel.md – файл jfkxlsx.png переименован в logo_big.png.
 
 ## Рекомендации по улучшению
 
