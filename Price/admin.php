@@ -341,6 +341,16 @@ if (file_exists($columnFilePath)) {
     }
 }
 
+// ------------------ Fix Sea0011 data ------------------
+$fixFilePath = __DIR__ . '/fix.json';
+$fixData = ['enabled' => false, 'price' => 0];
+if (file_exists($fixFilePath)) {
+    $tmp = json_decode(file_get_contents($fixFilePath), true);
+    if (is_array($tmp)) {
+        $fixData = array_merge($fixData, $tmp);
+    }
+}
+
 
 // ------------------ Save sorting and column rules ------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveRules'])) {
@@ -381,6 +391,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveRules'])) {
         json_encode($newCols, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
     );
 
+    $_SESSION['skipMsReload'] = true;
+    header('Location: admin.php');
+    exit;
+}
+
+// ------------------ Save fix price ------------------
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveFix'])) {
+    $fixData['enabled'] = !empty($_POST['fix_enabled']);
+    $fixData['price'] = isset($_POST['fix_price']) ? (float)$_POST['fix_price'] : 0;
+    file_put_contents(
+        $fixFilePath,
+        json_encode($fixData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+    );
     $_SESSION['skipMsReload'] = true;
     header('Location: admin.php');
     exit;
@@ -635,6 +658,16 @@ $username = $_SESSION['user']['login'];
         <?= $msError ?>
     </div>
 <?php endif; ?>
+
+<h3>Фикс Sea0011</h3>
+<form method="post" action="admin.php">
+    <input type="hidden" name="saveFix" value="1">
+    <label>
+        <input type="checkbox" name="fix_enabled" value="1" <?= $fixData['enabled'] ? 'checked' : '' ?>> Включить
+    </label>
+    <input type="number" name="fix_price" value="<?= htmlspecialchars($fixData['price']) ?>" step="0.01" class="ms-form-control">
+    <button type="submit" class="btn-msk btn-success">Сохранить</button>
+</form>
 
 <hr>
 
