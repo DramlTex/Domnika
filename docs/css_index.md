@@ -89,3 +89,4 @@
 - 2025-07-01 12:33 Price/styles_main.css, Price/css/banner.css – заменены абсолютные пути изображений на относительные.
 - 2025-07-01 13:05 Price/styles_main.css, Price/css/banner.css – пути к изображениям указаны относительно текущей директории.
 - 2025-07-02 12:50 Price/styles_main.css, Price/css/banner.css – файл изображения переименован в background.png.
+- 2025-07-04 11:50 Price/styles_main.css, Price/css/modal-photo.css – изображение в модальном окне сохраняет пропорции.
