@@ -1,17 +1,84 @@
 <?php
-header('Content-Type: application/json');
+ini_set('session.save_path', __DIR__ . '/sessions');
+if (!is_dir(__DIR__ . '/sessions')) {
+    mkdir(__DIR__ . '/sessions', 0777, true);
+}
+session_start();
+
+// Проверяем авторизацию администратора
+if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+    http_response_code(403);
+    header('Content-Type: application/json; charset=UTF-8');
+    echo json_encode(['error' => 'Forbidden']);
+    exit;
+}
+
+// Читаем настройки авторизации в МойСклад
+$config = include __DIR__ . '/config.php';
+$login    = $config['login'] ?? '';
+$password = $config['password'] ?? '';
+$token    = $config['token'] ?? '';
+
+header('Content-Type: application/json; charset=UTF-8');
+
 $query = trim($_GET['q'] ?? '');
+if ($query === '') {
+    echo json_encode([]);
+    exit;
+}
+
+$encodedQuery = rawurlencode($query);
+$url = "https://online.moysklad.ru/api/remap/1.2/entity/product?filter=name~{$encodedQuery}&limit=20";
+
+$ch = curl_init($url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_ENCODING, '');
+
+$headers = ['Accept: application/json;charset=utf-8'];
+if ($token !== '') {
+    $headers[] = 'Authorization: Bearer ' . $token;
+} else {
+    curl_setopt($ch, CURLOPT_USERPWD, "$login:$password");
+}
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+$response = curl_exec($ch);
+$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+$error    = curl_error($ch);
+curl_close($ch);
+
+if ($error) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Ошибка cURL']);
+    exit;
+}
+if ($httpCode === 401 || $httpCode === 403) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Недействительный токен']);
+    exit;
+}
+if ($httpCode !== 200) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Ошибка API МойСклад', 'status' => $httpCode]);
+    exit;
+}
+
+$data = json_decode($response, true);
+if (!is_array($data)) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Некорректный ответ от API']);
+    exit;
+}
+
 $results = [];
-if ($query !== '') {
-    $file = __DIR__ . '/output/filtered_products.json';
-    if (file_exists($file)) {
-        $products = json_decode(file_get_contents($file), true);
-        foreach ($products as $p) {
-            if (stripos($p['name'], $query) !== false) {
-                $results[] = ['id' => $p['articul'], 'text' => $p['name']];
-                if (count($results) >= 20) break;
-            }
+if (isset($data['rows']) && is_array($data['rows'])) {
+    foreach ($data['rows'] as $item) {
+        $id   = $item['externalCode'] ?? ($item['article'] ?? '');
+        $name = $item['name'] ?? '';
+        if ($id !== '' && $name !== '') {
+            $results[] = ['id' => $id, 'text' => $name];
         }
     }
 }
+
 echo json_encode($results, JSON_UNESCAPED_UNICODE);
