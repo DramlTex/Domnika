@@ -330,6 +330,17 @@ $countryOrder = $sortRules['countryOrder'] ?? [];
 $typeOrder = $sortRules['typeOrder'] ?? [];
 $typeSort = $sortRules['typeSort'] ?? 'alphabetical';
 
+// ------------------ Product sort rules ------------------
+$productFilePath = __DIR__ . '/product_sort_rules.json';
+$productOrder = [];
+if (file_exists($productFilePath)) {
+    $json = file_get_contents($productFilePath);
+    $tmp  = json_decode($json, true);
+    if (is_array($tmp) && isset($tmp['productOrder']) && is_array($tmp['productOrder'])) {
+        $productOrder = $tmp['productOrder'];
+    }
+}
+
 // ------------------ Column rules ------------------
 $columnFilePath = __DIR__ . '/column_rules.json';
 $columnRules = [];
@@ -389,6 +400,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveRules'])) {
     file_put_contents(
         $columnFilePath,
         json_encode($newCols, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+    );
+
+    // Product rules
+    $productOrder = array_map('trim', $_POST['productOrder'] ?? []);
+    $productOrder = array_values(array_filter($productOrder, fn($p) => $p !== ''));
+    file_put_contents(
+        $productFilePath,
+        json_encode(['productOrder' => $productOrder], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
     );
 
     $_SESSION['skipMsReload'] = true;
@@ -626,6 +645,26 @@ $username = $_SESSION['user']['login'];
     <button type="button" id="addType" class="btn-msk">Добавить тип</button>
 </div>
 
+<!-- Редактирование порядка товаров -->
+<div class="sort-rules">
+    <h4>Порядок товаров</h4>
+    <div id="productFields" class="sort-block">
+        <?php foreach ($productOrder as $articul): ?>
+            <div class="product-row">
+                <span class="drag-handle">&#9776;</span>
+                <span class="product-name"><?= htmlspecialchars($articul) ?></span>
+                <input type="hidden" name="productOrder[]" value="<?= htmlspecialchars($articul) ?>">
+                <button type="button" class="remove-product btn-msk">Удалить</button>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
+    <input id="productSearch" type="text" placeholder="Введите имя товара" style="width:300px;">
+    <button type="button" id="btnSearchProduct">Найти</button>
+    <select id="productResults" style="width:300px; display:none;"></select>
+    <button type="button" id="addProduct" style="display:none;">Добавить</button>
+</div>
+
 <!-- Редактирование колонок -->
 <div class="sort-rules">
     <h4>Колонки таблицы</h4>
@@ -853,6 +892,16 @@ function createTypeRow(value) {
     return row;
 }
 
+function createProductRow(articul, name) {
+    var row = $('<div class="product-row"></div>');
+    var handle = $('<span class="drag-handle">&#9776;</span>');
+    var text   = $('<span class="product-name"></span>').text(name + ' (' + articul + ')');
+    var hidden = $('<input type="hidden" name="productOrder[]">').val(articul);
+    var btn    = $('<button type="button" class="remove-product btn-msk">Удалить</button>');
+    row.append(handle, text, hidden, btn);
+    return row;
+}
+
 var columnOptions = <?php echo json_encode(array_column($columnRules, 'title', 'id'), JSON_UNESCAPED_UNICODE); ?>;
 
 function createColumnRow(id, title, cls, enabled) {
@@ -884,6 +933,10 @@ $(function() {
         handle: '.drag-handle'
     }).disableSelection();
 
+    $('#productFields').sortable({
+        handle: '.drag-handle'
+    }).disableSelection();
+
     $('#addCountry').on('click', function() {
         var newRow = createCountryRow('');
         $('#countryFields').append(newRow);
@@ -898,12 +951,40 @@ $(function() {
         $('#typeFields').sortable('refresh');
     });
 
+    $('#btnSearchProduct').on('click', function() {
+        var term = $('#productSearch').val().trim();
+        if (term.length < 2) return;
+        $.getJSON('search_product.php', { q: term }, function(data) {
+            var select = $('#productResults');
+            select.empty();
+            data.forEach(function(item) {
+                select.append($('<option>').val(item.id).text(item.text));
+            });
+            select.show();
+            $('#addProduct').show();
+        });
+    });
+
+    $('#addProduct').on('click', function() {
+        var select = $('#productResults');
+        var articul = select.val();
+        var name = select.find('option:selected').text();
+        if (!articul) return;
+        var newRow = createProductRow(articul, name);
+        $('#productFields').append(newRow);
+        $('#productFields').sortable('refresh');
+    });
+
     $(document).on('click', '.remove-country', function() {
         $(this).closest('.country-row').remove();
     });
 
     $(document).on('click', '.remove-type', function() {
         $(this).closest('.type-row').remove();
+    });
+
+    $(document).on('click', '.remove-product', function() {
+        $(this).closest('.product-row').remove();
     });
 
     $('#columnFields').sortable({

@@ -22,6 +22,7 @@
 
 .country-row,
 .type-row,
+.product-row,
 .column-row {
     margin-bottom: 5px;
 }
@@ -101,4 +102,18 @@
 
 .user-info {
     margin: 10px 20px;
+}
+
+.product-row {
+    display: flex;
+    align-items: center;
+}
+
+.product-row .drag-handle {
+    cursor: grab;
+    margin-right: 8px;
+}
+
+.product-row .product-name {
+    flex-grow: 1;
 }
