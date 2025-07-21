@@ -7,6 +7,7 @@
 let COUNTRY_ORDER = [];
 let TYPE_ORDER = [];
 let TYPE_SORT = 'alphabetical';
+let PRODUCT_ORDER = [];
 
 /**
  * Описание колонок (порядок и заголовки) также поступает из
@@ -52,18 +53,30 @@ function sortByCountry(data) {
     acc[normalizeType(t)] = i;
     return acc;
   }, {});
+  const productMap = PRODUCT_ORDER.reduce((acc, art, i) => {
+    acc[art] = i;
+    return acc;
+  }, {});
   const sortAlpha = TYPE_SORT === 'alphabetical' || TYPE_ORDER.length === 0;
   return data.slice().sort((a, b) => {
+    const ai = Object.prototype.hasOwnProperty.call(productMap, a.articul) ? productMap[a.articul] : null;
+    const bi = Object.prototype.hasOwnProperty.call(productMap, b.articul) ? productMap[b.articul] : null;
+    if (ai !== null || bi !== null) {
+      if (ai === null) return 1;
+      if (bi === null) return -1;
+      if (ai !== bi) return ai - bi;
+    }
+
     const aCountry = normalizeCountry(a.supplier);
     const bCountry = normalizeCountry(b.supplier);
-    const ai = countryMap.hasOwnProperty(aCountry) ? countryMap[aCountry] : COUNTRY_ORDER.length;
-    const bi = countryMap.hasOwnProperty(bCountry) ? countryMap[bCountry] : COUNTRY_ORDER.length;
-    if (ai !== bi) return ai - bi;
+    const aidx = Object.prototype.hasOwnProperty.call(countryMap, aCountry) ? countryMap[aCountry] : COUNTRY_ORDER.length;
+    const bidx = Object.prototype.hasOwnProperty.call(countryMap, bCountry) ? countryMap[bCountry] : COUNTRY_ORDER.length;
+    if (aidx !== bidx) return aidx - bidx;
 
     const aType = normalizeType(a.tip);
     const bType = normalizeType(b.tip);
-    const ati = typeMap.hasOwnProperty(aType) ? typeMap[aType] : TYPE_ORDER.length;
-    const bti = typeMap.hasOwnProperty(bType) ? typeMap[bType] : TYPE_ORDER.length;
+    const ati = Object.prototype.hasOwnProperty.call(typeMap, aType) ? typeMap[aType] : TYPE_ORDER.length;
+    const bti = Object.prototype.hasOwnProperty.call(typeMap, bType) ? typeMap[bType] : TYPE_ORDER.length;
     if (!sortAlpha && (ati !== bti)) return ati - bti;
 
     if (aType !== bType) return aType.localeCompare(bType);

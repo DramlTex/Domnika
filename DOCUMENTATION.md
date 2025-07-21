@@ -185,6 +185,7 @@ scripts/test.sh
 - 2025-11-20 Price/export.php – экспорт упорядочивает вкладки и страны как на сайте.
 - 2025-07-02 13:27 Price/logo_big.png, Price/export.php, Price/index.php, docs/export_excel.md – файл jfkxlsx.png переименован в logo_big.png.
 
+- 2025-11-21 Price/admin.php, Price/search_product.php – добавлен раздел сортировки товаров.
 ## Рекомендации по улучшению
 
 - Добавить автоматические тесты и линтеры.
