@@ -6,8 +6,8 @@
       Require all denied
   </FilesMatch>
   
-  # 2) Разрешить только login.php, index.php и admin.php
-  <FilesMatch "^(login|logout|index|admin|data|image_proxy|export)\.php$">
+  # 2) Разрешить только основные php-скрипты
+  <FilesMatch "^(login|logout|index|admin|data|image_proxy|export|search_product)\.php$">
       Require all granted
   </FilesMatch>
 </IfModule>
@@ -21,8 +21,8 @@
     Deny from all
   </Files>
   
-  # 2) Разрешить только login.php, index.php и admin.php
-  <FilesMatch "^(login|index|admin)\.php$">
+  # 2) Разрешить только основные php-скрипты
+  <FilesMatch "^(login|index|admin|search_product)\.php$">
     Order Allow,Deny
     Allow from all
   </FilesMatch>
