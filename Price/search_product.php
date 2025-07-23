@@ -51,7 +51,7 @@ if ($query === '') {
 log_event('INFO', "Search query: $query");
 
 $encodedQuery = rawurlencode($query);
-$url = "https://online.moysklad.ru/api/remap/1.2/entity/product?filter=name~{$encodedQuery}&limit=20";
+$url = "https://api.moysklad.ru/api/remap/1.2/entity/product?filter=name~{$encodedQuery}&limit=20";
 log_event('INFO', "Request URL: $url");
 
 $ch = curl_init($url);
