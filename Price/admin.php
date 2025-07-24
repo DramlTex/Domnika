@@ -337,7 +337,13 @@ if (file_exists($productFilePath)) {
     $json = file_get_contents($productFilePath);
     $tmp  = json_decode($json, true);
     if (is_array($tmp) && isset($tmp['productOrder']) && is_array($tmp['productOrder'])) {
-        $productOrder = $tmp['productOrder'];
+        foreach ($tmp['productOrder'] as $item) {
+            if (is_array($item) && isset($item['id'], $item['name'])) {
+                $productOrder[] = ['id' => $item['id'], 'name' => $item['name']];
+            } elseif (is_string($item)) { // legacy format
+                $productOrder[] = ['id' => $item, 'name' => $item];
+            }
+        }
     }
 }
 
@@ -402,12 +408,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveRules'])) {
         json_encode($newCols, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
     );
 
-    // Product rules
-    $productOrder = array_map('trim', $_POST['productOrder'] ?? []);
-    $productOrder = array_values(array_filter($productOrder, fn($p) => $p !== ''));
+    // Product rules (store id and name)
+    $productIds   = array_map('trim', $_POST['productOrder'] ?? []);
+    $productNames = $_POST['productName'] ?? [];
+    $products     = [];
+    foreach ($productIds as $i => $id) {
+        if ($id === '') {
+            continue;
+        }
+        $name = trim($productNames[$i] ?? '');
+        $products[] = ['id' => $id, 'name' => $name];
+    }
     file_put_contents(
         $productFilePath,
-        json_encode(['productOrder' => $productOrder], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+        json_encode(['productOrder' => $products], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
     );
 
     $_SESSION['skipMsReload'] = true;
@@ -649,11 +663,12 @@ $username = $_SESSION['user']['login'];
 <div class="sort-rules">
     <h4>Порядок товаров</h4>
     <div id="productFields" class="sort-block">
-        <?php foreach ($productOrder as $articul): ?>
+        <?php foreach ($productOrder as $p): ?>
             <div class="product-row">
                 <span class="drag-handle">&#9776;</span>
-                <span class="product-name"><?= htmlspecialchars($articul) ?></span>
-                <input type="hidden" name="productOrder[]" value="<?= htmlspecialchars($articul) ?>">
+                <span class="product-name"><?= htmlspecialchars($p['name']) ?></span>
+                <input type="hidden" name="productOrder[]" value="<?= htmlspecialchars($p['id']) ?>">
+                <input type="hidden" name="productName[]" value="<?= htmlspecialchars($p['name']) ?>">
                 <button type="button" class="remove-product btn-msk">Удалить</button>
             </div>
         <?php endforeach; ?>
@@ -895,10 +910,11 @@ function createTypeRow(value) {
 function createProductRow(articul, name) {
     var row = $('<div class="product-row"></div>');
     var handle = $('<span class="drag-handle">&#9776;</span>');
-    var text   = $('<span class="product-name"></span>').text(name + ' (' + articul + ')');
-    var hidden = $('<input type="hidden" name="productOrder[]">').val(articul);
+    var text   = $('<span class="product-name"></span>').text(name);
+    var hiddenId = $('<input type="hidden" name="productOrder[]">').val(articul);
+    var hiddenName = $('<input type="hidden" name="productName[]">').val(name);
     var btn    = $('<button type="button" class="remove-product btn-msk">Удалить</button>');
-    row.append(handle, text, hidden, btn);
+    row.append(handle, text, hiddenId, hiddenName, btn);
     return row;
 }
 

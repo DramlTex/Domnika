@@ -17,7 +17,15 @@ function loadRules() {
     COUNTRY_ORDER = Array.isArray(sort.countryOrder) ? sort.countryOrder : [];
     TYPE_ORDER    = Array.isArray(sort.typeOrder) ? sort.typeOrder : [];
     TYPE_SORT     = sort.typeSort || 'alphabetical';
-    PRODUCT_ORDER = Array.isArray(prod.productOrder) ? prod.productOrder : [];
+    if (Array.isArray(prod.productOrder)) {
+      PRODUCT_ORDER = prod.productOrder.map(item => {
+        if (typeof item === 'string') return item;
+        if (item && typeof item.id === 'string') return item.id;
+        return null;
+      }).filter(id => id);
+    } else {
+      PRODUCT_ORDER = [];
+    }
     renderTableHeader();
   }).catch(err => {
     console.error('Failed to load rules', err);
