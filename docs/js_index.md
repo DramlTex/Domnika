@@ -97,3 +97,4 @@
 - 2025-07-02 Price/data.php, Price/js/table.js – учёт остатков для группы «Травы и добавки».
 - 2025-07-02 13:27 Price/index.php – комментарий обновлён из-за переименования jfkxlsx.png в logo_big.png.
 - 2025-11-21 Price/admin.php, Price/js/rules-loader.js, Price/js/table.js – добавлена сортировка товаров через PRODUCT_ORDER.
+- 2025-11-25 Price/admin.php, Price/js/rules-loader.js – product_sort_rules.json сохраняет id и имя товара.

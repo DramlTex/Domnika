@@ -187,6 +187,7 @@ scripts/test.sh
 
 - 2025-11-21 Price/admin.php, Price/search_product.php – добавлен раздел сортировки товаров.
 - 2025-11-22 Price/search_product.php – поиск товаров через API с проверкой сессии.
+- 2025-11-25 Price/admin.php, Price/js/rules-loader.js – product_sort_rules.json хранит id и имя товара.
 - 2025-07-22 15:30 Price/search_product.php – добавлено логирование.
 ## Рекомендации по улучшению
 
