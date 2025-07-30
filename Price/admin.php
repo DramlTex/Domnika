@@ -587,7 +587,7 @@ $username = $_SESSION['user']['login'];
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" type="text/css" href="styles/styles.css">
     <link rel="stylesheet" type="text/css" href="styles/admin.css">
     <meta charset="UTF-8">
     <title>Админ-панель</title>
