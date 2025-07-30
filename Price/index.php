@@ -14,7 +14,7 @@ $rulesFile = $_SESSION['user']['rules_file'] ?? 'row_sort_rules.json';
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/x-icon" href="favicons/favicon.ico">
   <meta charset="UTF-8">
   <title>Прайс лист ассортимента</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
@@ -39,7 +39,7 @@ $rulesFile = $_SESSION['user']['rules_file'] ?? 'row_sort_rules.json';
 <!-- БАННЕР / ШАПКА -->
 <div class="banner">
   <img class="logo white-svg"
-       src="811140.svg"
+       src="favicons/811140.svg"
        alt="JFK Trading Group">
   <div class="left-text">
     <h1>ООО «Джей Эф Кей»</h1>
