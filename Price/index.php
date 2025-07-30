@@ -21,16 +21,16 @@ $rulesFile = $_SESSION['user']['rules_file'] ?? 'row_sort_rules.json';
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-  <link rel="stylesheet" type="text/css" href="css/reset.css">
-  <link rel="stylesheet" type="text/css" href="css/banner.css">
-  <link rel="stylesheet" type="text/css" href="css/filters.css">
-  <link rel="stylesheet" type="text/css" href="css/buttons.css">
-  <link rel="stylesheet" type="text/css" href="css/table.css">
-  <link rel="stylesheet" type="text/css" href="css/modal-photo.css">
-  <link rel="stylesheet" type="text/css" href="css/product-panel.css">
-  <link rel="stylesheet" type="text/css" href="css/thumbnails.css">
-  <link rel="stylesheet" type="text/css" href="css/tabs.css">
-  <link rel="stylesheet" type="text/css" href="css/effects.css">
+  <link rel="stylesheet" type="text/css" href="styles/reset.css">
+  <link rel="stylesheet" type="text/css" href="styles/banner.css">
+  <link rel="stylesheet" type="text/css" href="styles/filters.css">
+  <link rel="stylesheet" type="text/css" href="styles/buttons.css">
+  <link rel="stylesheet" type="text/css" href="styles/table.css">
+  <link rel="stylesheet" type="text/css" href="styles/modal-photo.css">
+  <link rel="stylesheet" type="text/css" href="styles/product-panel.css">
+  <link rel="stylesheet" type="text/css" href="styles/thumbnails.css">
+  <link rel="stylesheet" type="text/css" href="styles/tabs.css">
+  <link rel="stylesheet" type="text/css" href="styles/effects.css">
 </head>
 
 

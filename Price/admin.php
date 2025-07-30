@@ -588,7 +588,7 @@ $username = $_SESSION['user']['login'];
 <html lang="ru">
 <head>
     <link rel="stylesheet" type="text/css" href="styles.css">
-    <link rel="stylesheet" type="text/css" href="css/admin.css">
+    <link rel="stylesheet" type="text/css" href="styles/admin.css">
     <meta charset="UTF-8">
     <title>Админ-панель</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>

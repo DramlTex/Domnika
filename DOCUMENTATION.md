@@ -201,3 +201,5 @@ scripts/test.sh
 - 2025-07-30 14:22 Price/login.php, Price/styles.css – минимальная ширина контейнера входа и новые стили полей.
 - 2025-07-31 10:00 Price/styles.css – улучшено оформление контейнера авторизации с размытием и тенью.
 - 2025-07-31 11:00 Price/login.php, Price/styles.css – добавлен id `loginForm` и новые стили полей входа.
+
+- 2025-07-31 12:00 Price/index.php, Price/admin.php – каталог `css` переименован в `styles`.
