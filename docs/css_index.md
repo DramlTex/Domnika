@@ -93,3 +93,4 @@
 - 2025-11-21 Price/css/admin.css – добавлены стили блока .product-row.
 
 - 2025-07-30 11:58 Price/login.php – добавлен стиль центрирования формы.
+- 2025-11-26 Price/login.php, Price/styles.css – форма обёрнута в контейнер.
