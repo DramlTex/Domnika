@@ -9,7 +9,7 @@
 - **`product.php`** – CLI‑скрипт для выгрузки товаров из API и сохранения отфильтрованного списка в `output/filtered_products.json`.
 - **`output/update.php`** – обновляет товары в "МойСклад" добавляя недостающие упаковки.
 - **Каталог `Price`** – веб‑интерфейс прайс‑листа и система авторизации.
-  - `login.php`, `admin.php`, `index.php` – основные страницы.
+  - `auth.php`, `admin.php`, `index.php` – основные страницы.
   - `data.php` – загрузка данных из API с учётом складов.
   - `export.php` – экспорт текущего прайса в Excel с использованием `phpoffice/phpspreadsheet`.
   - `config.php` – хранит учётные данные для API.

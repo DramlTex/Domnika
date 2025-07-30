@@ -59,31 +59,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8" />
   <title>Вход в систему</title>
   <link rel="stylesheet" type="text/css" href="styles/styles.css">
-    <style>
-    body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        margin: 0;
-        position: relative;
-    }
-    body::before {
-        content: "";
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: url('tea.jpg') center/cover no-repeat;
-        opacity: 0.6;
-        z-index: -1;
-    }
-  </style>
+  <link rel="stylesheet" type="text/css" href="styles/auth.css">
 </head>
 <body>
   <?php if ($error): ?>
-    <p style="color:red;"><?php echo htmlspecialchars($error); ?></p>
+    <p class="error"><?php echo htmlspecialchars($error); ?></p>
   <?php endif; ?>
   <div class="login-container">
-    <form id="loginForm" method="post" action="login.php">
+    <form id="loginForm" method="post" action="auth.php">
       <label><input type="text" name="login" placeholder="Логин" required></label><br>
       <label><input type="password" name="password" placeholder="Пароль" required></label><br>
       <input type="submit" value="Войти">
