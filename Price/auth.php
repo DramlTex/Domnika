@@ -6,6 +6,10 @@ error_reporting(E_ALL);
 session_start();
 require_once 'function.php';  // подключаем функции loadUsers/saveUsers
 
+// Извлекаем сообщение об ошибке из сессии (если есть)
+$error = $_SESSION['error'] ?? '';
+unset($_SESSION['error']);
+
 // Если пользователь уже авторизован:
 if (isset($_SESSION['user'])) {
     // Проверяем роль
@@ -17,9 +21,6 @@ if (isset($_SESSION['user'])) {
         exit();
     }
 }
-
-// Инициализация переменной для возможного сообщения об ошибке
-$error = '';
 
 // Обработка формы входа
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -50,7 +51,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Если дошли сюда, значит логин/пароль не подошли
-    $error = 'Неверный логин или пароль.';
+    $_SESSION['error'] = 'Неверный логин или пароль.';
+    header('Location: auth.php');
+    exit();
 }
 ?>
 <!DOCTYPE html>
