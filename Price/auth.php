@@ -61,10 +61,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <link rel="stylesheet" type="text/css" href="styles/auth.css">
 </head>
 <body>
-  <?php if ($error): ?>
-    <p class="error"><?php echo htmlspecialchars($error); ?></p>
-  <?php endif; ?>
   <div class="login-container">
+    <?php if ($error): ?>
+      <p class="error"><?php echo htmlspecialchars($error); ?></p>
+    <?php endif; ?>
     <form id="loginForm" method="post" action="auth.php">
       <label><input type="text" name="login" placeholder="Логин" required></label><br>
       <label><input type="password" name="password" placeholder="Пароль" required></label><br>
