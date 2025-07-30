@@ -59,13 +59,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8" />
   <title>Вход в систему</title>
   <link rel="stylesheet" type="text/css" href="styles.css">
-  <style>
+    <style>
     body {
         display: flex;
         justify-content: center;
         align-items: center;
         min-height: 100vh;
         margin: 0;
+        position: relative;
+    }
+    body::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: url('tea.jpg') center/cover no-repeat;
+        opacity: 0.6;
+        z-index: -1;
     }
   </style>
 </head>
