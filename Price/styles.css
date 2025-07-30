@@ -64,11 +64,16 @@ a:hover {
 
 /* Container for login form */
 .login-container {
+    background-color: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     padding: 20px;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    min-width: 300px;
+    max-width: 350px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.3);
 }
 
 /* Rounded inputs inside login container */
