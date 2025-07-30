@@ -83,10 +83,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <p style="color:red;"><?php echo htmlspecialchars($error); ?></p>
   <?php endif; ?>
   <div class="login-container">
-    <form method="post" action="login.php">
+    <form id="loginForm" method="post" action="login.php">
       <label><input type="text" name="login" placeholder="Логин" required></label><br>
       <label><input type="password" name="password" placeholder="Пароль" required></label><br>
-      <button type="submit">Войти</button>
+      <input type="submit" value="Войти">
     </form>
   </div>
 </body>
