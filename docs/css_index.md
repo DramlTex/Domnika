@@ -15,10 +15,10 @@
 9. **TABS** – нижние вкладки категорий.
 10. **ANIMATIONS & SPECIAL EFFECTS** – небольшие анимации и подсветка.
 
-Файл `styles_main.css` подключается в `<head>` страницы:
+Файл `styles/styles_main.css` подключается в `<head>` страницы:
 
 ```html
-<link rel="stylesheet" type="text/css" href="styles_main.css">
+<link rel="stylesheet" type="text/css" href="styles/styles_main.css">
 ```
 
 Помимо внешнего файла в `index.php` присутствуют два встроенных стиля:
@@ -46,4 +46,8 @@
 |`effects.css`|Анимации и особые эффекты (**ANIMATIONS & SPECIAL EFFECTS**).|
 
 После разделения файлы подключаются в `index.php` в указанном порядке. Существующие классы и id следует сохранить, чтобы JavaScript продолжил работать корректно. Также необходимо перенести встроенный стиль `<p style="margin: 10px 20px;">` в подходящий файл, например `reset.css`.
+
+## История изменений
+
+- 2025-12-01 Price/admin.php, Price/login.php – файлы `styles.css` и `styles_main.css` перемещены в каталог `styles/`.
 
