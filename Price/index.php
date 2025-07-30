@@ -4,7 +4,7 @@ session_start();
 
 // Пример проверки авторизации
 if (!isset($_SESSION['user'])) {
-    header('Location: login.php');
+    header('Location: auth.php');
     exit();
 }
 $username = $_SESSION['user']['login'];

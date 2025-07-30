@@ -8,7 +8,7 @@ session_start();
 
 // Проверяем, что пользователь авторизован
 if (!isset($_SESSION['user'])) {
-    header('Location: login.php');
+    header('Location: auth.php');
     exit();
 }
 
@@ -49,7 +49,7 @@ function saveUsers(array $users) {
 
 // ------------------ Проверка, что залогинен как админ ------------------
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
-    header('Location: login.php');
+    header('Location: auth.php');
     exit();
 }
 
