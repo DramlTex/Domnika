@@ -50,7 +50,7 @@ body::before {
 }
 
 .login-container input[type="submit"] {
-    background-color: rgba(50, 96, 145, 0.8);
+    background-color: rgba(156, 204, 101, 0.8); /* цвет свежезаваренного зелёного чая */
     color: white;
     border: none;
     cursor: pointer;
@@ -64,5 +64,5 @@ body::before {
 }
 
 .login-container input[type="submit"]:hover {
-    background-color: rgba(50, 96, 145, 1);
+    background-color: rgba(156, 204, 101, 1);
 }
