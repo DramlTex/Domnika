@@ -84,8 +84,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <?php endif; ?>
   <div class="login-container">
     <form method="post" action="login.php">
-      <label>Логин: <input type="text" name="login" required></label><br>
-      <label>Пароль: <input type="password" name="password" required></label><br>
+      <label><input type="text" name="login" placeholder="Логин" required></label><br>
+      <label><input type="password" name="password" placeholder="Пароль" required></label><br>
       <button type="submit">Войти</button>
     </form>
   </div>
