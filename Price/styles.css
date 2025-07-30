@@ -68,4 +68,19 @@ a:hover {
     background: rgba(255, 255, 255, 0.8);
     border-radius: 4px;
     border: 1px solid #ccc;
+    min-width: 300px;
+}
+
+/* Rounded inputs inside login container */
+.login-container input[type="text"],
+.login-container input[type="password"] {
+    border-radius: 4px;
+}
+
+/* Centered and styled login button */
+.login-container button {
+    display: block;
+    margin: 10px auto 0;
+    border-radius: 4px;
+    background-color: #d0e6b6;
 }
