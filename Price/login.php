@@ -70,14 +70,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </style>
 </head>
 <body>
-  <h2>Авторизация</h2>
   <?php if ($error): ?>
     <p style="color:red;"><?php echo htmlspecialchars($error); ?></p>
   <?php endif; ?>
-  <form method="post" action="login.php">
-    <label>Логин: <input type="text" name="login" required></label><br>
-    <label>Пароль: <input type="password" name="password" required></label><br>
-    <button type="submit">Войти</button>
-  </form>
+  <div class="login-container">
+    <form method="post" action="login.php">
+      <label>Логин: <input type="text" name="login" required></label><br>
+      <label>Пароль: <input type="password" name="password" required></label><br>
+      <button type="submit">Войти</button>
+    </form>
+  </div>
 </body>
 </html>

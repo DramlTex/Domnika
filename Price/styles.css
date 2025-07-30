@@ -62,3 +62,11 @@ a:hover {
 .logout-link:hover {
     background-color: #c9302c;
 }
+
+/* Container for login form */
+.login-container {
+    padding: 20px;
+    background: #eef;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
