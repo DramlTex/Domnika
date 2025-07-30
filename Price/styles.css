@@ -62,7 +62,7 @@ a:hover {
     background-color: #c9302c;
 }
 
-/* Container for login form */
+/* Стили формы авторизации */
 .login-container {
     background-color: rgba(255, 255, 255, 0.25);
     backdrop-filter: blur(10px);
@@ -76,16 +76,34 @@ a:hover {
     border: 1px solid rgba(255,255,255,0.3);
 }
 
-/* Rounded inputs inside login container */
-.login-container input[type="text"],
-.login-container input[type="password"] {
-    border-radius: 4px;
+#loginForm {
+    width: 100%;
 }
 
-/* Centered and styled login button */
-.login-container button {
+.login-container input[type="text"],
+.login-container input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: none;
+    box-sizing: border-box;
+}
+
+.login-container input[type="submit"] {
+    background-color: rgba(50, 96, 145, 0.8);
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    width: 40%;
+    margin: 0 auto;
     display: block;
-    margin: 10px auto 0;
-    border-radius: 4px;
-    background-color: #d0e6b6;
+    margin-bottom: 0;
+}
+
+.login-container input[type="submit"]:hover {
+    background-color: rgba(50, 96, 145, 1);
 }
