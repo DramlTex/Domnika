@@ -55,10 +55,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!DOCTYPE html>
 <html lang="ru">
-<LINK rel=stylesheet type="text/css" href="styles.css">
 <head>
   <meta charset="UTF-8" />
   <title>Вход в систему</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+  <style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+    }
+  </style>
 </head>
 <body>
   <h2>Авторизация</h2>

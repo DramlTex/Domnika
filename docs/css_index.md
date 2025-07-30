@@ -91,3 +91,5 @@
 - 2025-07-02 12:50 Price/styles_main.css, Price/css/banner.css – файл изображения переименован в background.png.
 - 2025-07-04 11:50 Price/styles_main.css, Price/css/modal-photo.css – изображение в модальном окне сохраняет пропорции.
 - 2025-11-21 Price/css/admin.css – добавлены стили блока .product-row.
+
+- 2025-07-30 11:58 Price/login.php – добавлен стиль центрирования формы.
