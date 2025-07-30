@@ -63,10 +63,3 @@ a:hover {
     background-color: #c9302c;
 }
 
-/* Container for login form */
-.login-container {
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 4px;
-    border: 1px solid #ccc;
-}
