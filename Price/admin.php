@@ -595,13 +595,12 @@ $username = $_SESSION['user']['login'];
 </head>
 <body class="ms-login-field">
 <header>
-    <h2>Админ-панель</h2>
+    <p class="user-info">
+        Вы вошли как: <strong><?= htmlspecialchars($username) ?></strong>
+        <a href="logout.php" class="logout-link">Выйти</a>
+    </p>
 </header>
 <div class="admin-container">
-<p class="user-info">
-    Вы вошли как: <strong><?= htmlspecialchars($username) ?></strong>
-    <a href="logout.php" class="logout-link">Выйти</a>
-</p>
 <form method="post" action="admin.php" style="margin-bottom:10px;">
     <button type="submit" name="loadMs" class="btn-msk">Получить данные из Моего Склада</button>
 </form>
