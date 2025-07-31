@@ -830,8 +830,10 @@ $username = $_SESSION['user']['login'];
         <input type="text" name="new_login" placeholder="Логин" required class="ms-form-control">
         <input type="text" name="new_password" placeholder="Пароль" required class="ms-form-control">
     </div>
-    <br><br>
-
+    <br>
+    <label>Скидка (%):
+        <input type="number" name="new_discount" value="0" min="0" max="100" class="ms-form-control">
+    </label>
     <label>Контрагент:
         <select name="new_href">
             <option value="">(Не выбран)</option>
@@ -842,13 +844,7 @@ $username = $_SESSION['user']['login'];
             <?php endforeach; ?>
         </select>
     </label>
-    <br><br>
-
-    <label>Скидка (%):
-        <input type="number" name="new_discount" value="0" min="0" max="100" class="ms-form-control">
-    </label>
-    <br><br>
-
+    <br>
     <label>Группы товаров:</label><br>
     <div class="checkbox-list">
         <?php foreach ($productFolders as $pf):
