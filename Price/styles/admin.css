@@ -48,7 +48,7 @@ header {
     border: 1px solid rgba(255,255,255,0.3);
     z-index: 1000;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
 }
 
@@ -114,6 +114,23 @@ header {
     font-weight: 600;
     background-color: transparent;
     color: #2855af;
+}
+
+/* Buttons in header */
+.header-btn {
+    display: inline-block;
+    background-color: rgba(156, 204, 101);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+}
+
+.header-btn:hover {
+    background-color: rgba(156, 204, 101);
 }
 
 .btn-msk.btn-success {
@@ -184,6 +201,11 @@ form {
     display: inline-block;
 }
 
+.header-form {
+    margin: 0;
+    padding: 0;
+}
+
 label {
     display: block;
     margin: 0.5em 0;
@@ -225,18 +247,6 @@ a:hover {
 }
 
 .logout-link {
-    display: inline-block;
     margin-left: 10px;
-    padding: 5px 10px;
-    background-color: #d9534f;
-    color: #ffffff;
-    text-decoration: none;
-    border-radius: 4px;
-    font-weight: 500;
-    transition: background-color 0.3s;
-}
-
-.logout-link:hover {
-    background-color: #c9302c;
 }
 
