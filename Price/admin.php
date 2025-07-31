@@ -831,19 +831,21 @@ $username = $_SESSION['user']['login'];
         <input type="text" name="new_password" placeholder="Пароль" required class="ms-form-control">
     </div>
     <br>
-    <label>Скидка (%):
-        <input type="number" name="new_discount" value="0" min="0" max="100" class="ms-form-control">
-    </label>
-    <label>Контрагент:
-        <select name="new_href">
-            <option value="">(Не выбран)</option>
-            <?php foreach ($counterparties as $cnt): ?>
-                <option value="<?= htmlspecialchars($cnt['href']) ?>">
-                    <?= htmlspecialchars($cnt['name']) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-    </label>
+    <div class="discount-href-row">
+        <label>Скидка (%):
+            <input type="number" name="new_discount" value="0" min="0" max="100" class="ms-form-control">
+        </label>
+        <label>Контрагент:
+            <select name="new_href">
+                <option value="">(Не выбран)</option>
+                <?php foreach ($counterparties as $cnt): ?>
+                    <option value="<?= htmlspecialchars($cnt['href']) ?>">
+                        <?= htmlspecialchars($cnt['name']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </label>
+    </div>
     <br>
     <label>Группы товаров:</label><br>
     <div class="checkbox-list">
