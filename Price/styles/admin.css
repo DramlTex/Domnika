@@ -255,3 +255,15 @@ a:hover {
     margin-left: 10px;
 }
 
+/* Center the "Add User" section */
+.add-user-title {
+    text-align: center;
+}
+
+.add-user-form {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
+}
+

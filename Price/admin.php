@@ -817,8 +817,8 @@ $username = $_SESSION['user']['login'];
 <hr>
 
 <!-- Форма добавления нового пользователя -->
-<h3>Добавить нового пользователя</h3>
-<form method="post" action="admin.php">
+<h3 class="add-user-title">Добавить нового пользователя</h3>
+<form method="post" action="admin.php" class="add-user-form">
     <input type="hidden" name="addUser" value="1">
 
     <label>Логин:
