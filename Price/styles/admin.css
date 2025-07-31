@@ -264,6 +264,23 @@ a:hover {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: fit-content;
+    width: 100%;
+    max-width: 600px;
+}
+
+/* Row for login and password */
+.add-user-form .login-pass-row {
+    display: flex;
+    width: 100%;
+}
+
+.add-user-form .login-pass-row input {
+    flex: 1;
+    margin-left: 0;
+    box-sizing: border-box;
+}
+
+.add-user-form .login-pass-row input + input {
+    margin-left: 10px;
 }
 
