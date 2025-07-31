@@ -599,6 +599,7 @@ $username = $_SESSION['user']['login'];
     
 </head>
 <body class="ms-login-field">
+<div class="admin-container">
 <h2>Админ-панель</h2>
 <p class="user-info">
     Вы вошли как: <strong><?= htmlspecialchars($username) ?></strong>
@@ -866,6 +867,7 @@ $username = $_SESSION['user']['login'];
 
     <button type="submit" class="btn-msk btn-success">Создать пользователя</button>
 </form>
+</div>
 
 <script>
 var countries = <?= json_encode($countriesList, JSON_UNESCAPED_UNICODE) ?>;
