@@ -47,9 +47,9 @@ header {
     box-sizing: border-box;
     border: 1px solid rgba(255,255,255,0.3);
     z-index: 1000;
-}
-header h2 {
-    margin: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 }
 
 .error {
@@ -154,6 +154,9 @@ header h2 {
 
 .user-info {
     margin: 10px 20px;
+}
+header .user-info {
+    margin: 0;
 }
 
 .product-row {
