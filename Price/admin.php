@@ -33,7 +33,7 @@ $password = $config['password'];
 
 // ------------------ Функции для работы с xNtxj6hsL2.json ------------------
 function loadUsers() {
-    $file = __DIR__ . '/xNtxj6hsL2.json';
+    $file = __DIR__ . '/casa/xNtxj6hsL2.json';
     if (!file_exists($file)) {
         return [];
     }
@@ -43,7 +43,7 @@ function loadUsers() {
 }
 
 function saveUsers(array $users) {
-    $file = __DIR__ . '/xNtxj6hsL2.json';
+    $file = __DIR__ . '/casa/xNtxj6hsL2.json';
     file_put_contents($file, json_encode($users, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 }
 
@@ -261,7 +261,7 @@ $users = loadUsers();
 
 // ------------------ Функции для работы с локальным JSON контрагентов ------------------
 function loadCounterpartiesLocal() {
-    $file = __DIR__ . '/counterparties.json';
+    $file = __DIR__ . '/casa/counterparties.json';
     if (!file_exists($file)) {
         return [];
     }
@@ -271,13 +271,13 @@ function loadCounterpartiesLocal() {
 }
 
 function saveCounterpartiesLocal($data) {
-    $file = __DIR__ . '/counterparties.json';
+    $file = __DIR__ . '/casa/counterparties.json';
     file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 }
 
 // ------------------ Функции для работы с локальным JSON групп товаров ------------------
 function loadProductFoldersLocal() {
-    $file = __DIR__ . '/productfolders.json';
+    $file = __DIR__ . '/casa/productfolders.json';
     if (!file_exists($file)) {
         return [];
     }
@@ -287,7 +287,7 @@ function loadProductFoldersLocal() {
 }
 
 function saveProductFoldersLocal($data) {
-    $file = __DIR__ . '/productfolders.json';
+    $file = __DIR__ . '/casa/productfolders.json';
     file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 }
 
@@ -324,7 +324,7 @@ if ($reloadRequested) {
 }
 
 // ------------------ Row sort rules ------------------
-$rulesFilePath = __DIR__ . '/row_sort_rules.json';
+$rulesFilePath = __DIR__ . '/casa/row_sort_rules.json';
 $sortRules = [];
 if (file_exists($rulesFilePath)) {
     $json = file_get_contents($rulesFilePath);
@@ -338,7 +338,7 @@ $typeOrder = $sortRules['typeOrder'] ?? [];
 $typeSort = $sortRules['typeSort'] ?? 'alphabetical';
 
 // ------------------ Product sort rules ------------------
-$productFilePath = __DIR__ . '/product_sort_rules.json';
+$productFilePath = __DIR__ . '/casa/product_sort_rules.json';
 $productOrder = [];
 if (file_exists($productFilePath)) {
     $json = file_get_contents($productFilePath);
@@ -355,7 +355,7 @@ if (file_exists($productFilePath)) {
 }
 
 // ------------------ Column rules ------------------
-$columnFilePath = __DIR__ . '/column_rules.json';
+$columnFilePath = __DIR__ . '/casa/column_rules.json';
 $columnRules = [];
 if (file_exists($columnFilePath)) {
     $json = file_get_contents($columnFilePath);
@@ -366,7 +366,7 @@ if (file_exists($columnFilePath)) {
 }
 
 // ------------------ Fix Sea0011 data ------------------
-$fixFilePath = __DIR__ . '/fix.json';
+$fixFilePath = __DIR__ . '/casa/fix.json';
 $fixData = ['enabled' => false, 'price' => 0];
 if (file_exists($fixFilePath)) {
     $tmp = json_decode(file_get_contents($fixFilePath), true);

@@ -5,7 +5,7 @@
         "role": "admin",
         "counterparty_href": "https:\/\/api.moysklad.ru\/api\/remap\/1.2\/entity\/counterparty\/b332da86-2958-11e9-9107-50480008abdb",
         "discount": 0,
-        "rules_file": "row_sort_rules.json"
+        "rules_file": "casa/row_sort_rules.json"
     },
     {
         "login": "test2",
@@ -22,7 +22,7 @@
                 "name": "ОПТ JFK"
             }
         ],
-        "rules_file": "row_sort_rules.json"
+        "rules_file": "casa/row_sort_rules.json"
     },
     {
         "login": "domika",
@@ -34,6 +34,6 @@
             "name": "ООО \"МЕДКОВ\""
         },
         "productfolders": [],
-        "rules_file": "row_sort_rules.json"
+        "rules_file": "casa/row_sort_rules.json"
     }
 ]

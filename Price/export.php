@@ -20,7 +20,7 @@ set_time_limit(300);
 ini_set('memory_limit', '512M');
 
 // Файл правил сортировки. Используем тот же, что и в интерфейсе
-$rulesFile = $_SESSION['user']['rules_file'] ?? 'row_sort_rules.json';
+$rulesFile = $_SESSION['user']['rules_file'] ?? 'casa/row_sort_rules.json';
 $rulesPath = __DIR__ . '/' . basename($rulesFile);
 
 // Значения по умолчанию

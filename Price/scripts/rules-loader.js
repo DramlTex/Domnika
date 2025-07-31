@@ -5,10 +5,10 @@
 let PRODUCT_ORDER = [];
 
 function loadRules() {
-  const rulesFile = window.__rulesFile || 'row_sort_rules.json';
-  const colPromise  = fetch('column_rules.json').then(r => r.json());
+  const rulesFile = window.__rulesFile || 'casa/row_sort_rules.json';
+  const colPromise  = fetch('casa/column_rules.json').then(r => r.json());
   const sortPromise = fetch(rulesFile).then(r => r.json());
-  const prodPromise = fetch('product_sort_rules.json')
+  const prodPromise = fetch('casa/product_sort_rules.json')
     .then(r => r.json())
     .catch(() => ({}));
 

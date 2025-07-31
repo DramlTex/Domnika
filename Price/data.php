@@ -59,7 +59,7 @@ $password = $config['password'];
 $base_url = 'https://api.moysklad.ru/api/remap/1.2/';
 
 // ----- Fix Sea0011 configuration -----
-$fixFile = DIR . '/fix.json';
+$fixFile = DIR . '/casa/fix.json';
 $fixData = ['enabled' => false, 'price' => 0];
 if (file_exists($fixFile)) {
     $tmp = json_decode(file_get_contents($fixFile), true);
