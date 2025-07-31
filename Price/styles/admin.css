@@ -33,6 +33,11 @@ body::before {
     border: 1px solid rgba(255,255,255,0.3);
 }
 
+/* Center the main rules heading */
+.admin-container .rules-title {
+    text-align: center;
+}
+
 /* Header bar for admin page */
 header {
     position: fixed;

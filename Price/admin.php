@@ -605,7 +605,7 @@ $username = $_SESSION['user']['login'];
 </header>
 <div class="admin-container">
 <!-- Правила сортировки и столбцов -->
-<h3>Настройка правил</h3>
+<h3 class="rules-title">Настройка правил отображения товаров</h3>
 <form method="post" action="admin.php" id="rulesForm">
 <div class="sort-rules">
     <h4>Порядок стран</h4>
