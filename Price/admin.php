@@ -595,15 +595,15 @@ $username = $_SESSION['user']['login'];
 </head>
 <body class="ms-login-field">
 <header>
+    <form method="post" action="admin.php" class="header-form">
+        <button type="submit" name="loadMs" class="header-btn">Получить данные из Моего Склада</button>
+    </form>
     <p class="user-info">
         Вы вошли как: <strong><?= htmlspecialchars($username) ?></strong>
-        <a href="logout.php" class="logout-link">Выйти</a>
+        <a href="logout.php" class="header-btn logout-link">Выйти</a>
     </p>
 </header>
 <div class="admin-container">
-<form method="post" action="admin.php" style="margin-bottom:10px;">
-    <button type="submit" name="loadMs" class="btn-msk">Получить данные из Моего Склада</button>
-</form>
 <!-- Правила сортировки и столбцов -->
 <h3>Настройка правил</h3>
 <form method="post" action="admin.php" id="rulesForm">
