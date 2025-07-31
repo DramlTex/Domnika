@@ -284,19 +284,3 @@ a:hover {
     margin-left: 10px;
 }
 
-/* Row for discount and counterparty select */
-.add-user-form .discount-href-row {
-    display: flex;
-    align-items: center;
-}
-
-.add-user-form .discount-href-row label {
-    margin: 0 10px 0 0;
-    display: flex;
-    align-items: center;
-}
-
-.add-user-form .discount-href-row label:last-child {
-    margin-right: 0;
-}
-
