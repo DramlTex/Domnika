@@ -264,6 +264,16 @@ a:hover {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: fit-content;
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+}
+
+/* Stretch login and password fields */
+.add-user-form input[type="text"],
+.add-user-form input[type="password"] {
+    width: 100%;
+    margin-left: 0;
+    box-sizing: border-box;
 }
 
