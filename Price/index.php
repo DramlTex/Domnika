@@ -245,14 +245,14 @@ $rulesFile = $_SESSION['user']['rules_file'] ?? 'row_sort_rules.json';
 
 <script>window.__userFolders = <?php echo json_encode($userFolders, JSON_UNESCAPED_UNICODE); ?>;</script>
 <script>window.__rulesFile = <?php echo json_encode($rulesFile, JSON_UNESCAPED_UNICODE); ?>;</script>
-<script src="js/data-loader.js"></script>
-<script src="js/tabs.js"></script>
-<script src="js/table.js"></script>
-<script src="js/filters.js"></script>
-<script src="js/modals.js"></script>
-<script src="js/rules-loader.js"></script>
-<script src="js/export-excel.js"></script>
-<script src="js/main.js"></script>
+<script src="scripts/data-loader.js"></script>
+<script src="scripts/tabs.js"></script>
+<script src="scripts/table.js"></script>
+<script src="scripts/filters.js"></script>
+<script src="scripts/modals.js"></script>
+<script src="scripts/rules-loader.js"></script>
+<script src="scripts/export-excel.js"></script>
+<script src="scripts/main.js"></script>
 
 </body>
 </html>
