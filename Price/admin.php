@@ -594,8 +594,10 @@ $username = $_SESSION['user']['login'];
     
 </head>
 <body class="ms-login-field">
+<header class="admin-header">
+    <h2>Админ-панель</h2>
+</header>
 <div class="admin-container">
-<h2>Админ-панель</h2>
 <p class="user-info">
     Вы вошли как: <strong><?= htmlspecialchars($username) ?></strong>
     <a href="logout.php" class="logout-link">Выйти</a>
