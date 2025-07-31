@@ -1,5 +1,5 @@
 /**
- * Порядок стран и типов загружается из JSON-файла `row_sort_rules.json`.
+ * Порядок стран и типов загружается из JSON-файла `casa/row_sort_rules.json`.
  * Эти переменные заполняются в `rules-loader.js` и используются
  * для сортировки и фильтрации таблицы.
  * @type {string[]}
@@ -11,7 +11,7 @@ let PRODUCT_ORDER = [];
 
 /**
  * Описание колонок (порядок и заголовки) также поступает из
- * JSON-файла `column_rules.json` через `rules-loader.js`.
+ * JSON-файла `casa/column_rules.json` через `rules-loader.js`.
  * @type {Array<Object>}
  */
 let COLUMN_RULES = [];
