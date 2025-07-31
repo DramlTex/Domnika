@@ -32,6 +32,21 @@ body::before {
     border: 1px solid rgba(255,255,255,0.3);
 }
 
+/* Header bar for admin page */
+.admin-header {
+    background-color: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin: 20px;
+    box-sizing: border-box;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+.admin-header h2 {
+    margin: 0;
+}
+
 .error {
     padding: 10px;
     margin: 10px 0;
