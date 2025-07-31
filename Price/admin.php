@@ -826,8 +826,10 @@ $username = $_SESSION['user']['login'];
 <form method="post" action="admin.php" class="add-user-form">
     <input type="hidden" name="addUser" value="1">
 
-    <input type="text" name="new_login" placeholder="Логин" required class="ms-form-control">
-    <input type="text" name="new_password" placeholder="Пароль" required class="ms-form-control">
+    <div class="login-pass-row">
+        <input type="text" name="new_login" placeholder="Логин" required class="ms-form-control">
+        <input type="text" name="new_password" placeholder="Пароль" required class="ms-form-control">
+    </div>
     <br><br>
 
     <label>Контрагент:
