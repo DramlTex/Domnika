@@ -594,7 +594,7 @@ $username = $_SESSION['user']['login'];
     
 </head>
 <body class="ms-login-field">
-<header class="admin-header">
+<header>
     <h2>Админ-панель</h2>
 </header>
 <div class="admin-container">

@@ -9,6 +9,7 @@ body {
     min-height: 100vh;
     margin: 0;
     position: relative;
+    padding-top: 100px; /* space for fixed header */
 }
 
 body::before {
@@ -33,17 +34,21 @@ body::before {
 }
 
 /* Header bar for admin page */
-.admin-header {
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
     background-color: rgba(255, 255, 255, 0.4);
     backdrop-filter: blur(10px);
-    border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     padding: 20px;
-    margin: 20px;
     box-sizing: border-box;
     border: 1px solid rgba(255,255,255,0.3);
+    z-index: 1000;
 }
-.admin-header h2 {
+header h2 {
     margin: 0;
 }
 
