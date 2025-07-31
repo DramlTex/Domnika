@@ -5,7 +5,7 @@
     position: relative;
     width: 100%;
     min-height: 265px;
-    background: url("../image_2025-02-21_12-49-11.png") center/cover no-repeat;
+    background: url("image_2025-02-21_12-49-11.png") center/cover no-repeat;
     filter: grayscale(100%);
     overflow: hidden;
     margin-bottom: 20px;
