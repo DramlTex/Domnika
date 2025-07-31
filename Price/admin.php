@@ -31,9 +31,9 @@ $config   = include __DIR__ . '/config.php';
 $login    = $config['login'];
 $password = $config['password'];
 
-// ------------------ Функции для работы с users.json ------------------
+// ------------------ Функции для работы с xNtxj6hsL2.json ------------------
 function loadUsers() {
-    $file = __DIR__ . '/users.json';
+    $file = __DIR__ . '/xNtxj6hsL2.json';
     if (!file_exists($file)) {
         return [];
     }
@@ -43,7 +43,7 @@ function loadUsers() {
 }
 
 function saveUsers(array $users) {
-    $file = __DIR__ . '/users.json';
+    $file = __DIR__ . '/xNtxj6hsL2.json';
     file_put_contents($file, json_encode($users, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 }
 
