@@ -300,6 +300,10 @@ if ($reloadRequested) {
     $countriesList  = getCountriesMS($login, $password, $msError);
     $typesList      = getTypesMS($login, $password, $msError);
 
+    // cache results locally
+    saveCounterpartiesLocal($counterparties);
+    saveProductFoldersLocal($productFolders);
+
     $_SESSION['msData'] = [
         'counterparties' => $counterparties,
         'productFolders' => $productFolders,
@@ -312,8 +316,9 @@ if ($reloadRequested) {
     $countriesList  = $_SESSION['msData']['countries'];
     $typesList      = $_SESSION['msData']['types'];
 } else {
-    $counterparties = [];
-    $productFolders = [];
+    // fall back to cached data if available
+    $counterparties = loadCounterpartiesLocal();
+    $productFolders = loadProductFoldersLocal();
     $countriesList  = [];
     $typesList      = [];
 }
