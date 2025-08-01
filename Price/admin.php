@@ -869,7 +869,7 @@ $username = $_SESSION['user']['login'];
     <br>
 
 
-      <button type="submit" class="btn-msk btn-success">Создать пользователя</button>
+      <button type="submit" class="header-btn">Созздать</button>
     </form>
   </div>
 </div>
