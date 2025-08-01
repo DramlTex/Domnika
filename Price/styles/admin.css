@@ -387,3 +387,9 @@ a:hover {
     overflow: hidden;
 }
 
+/* Rounded corners for the entire users form */
+#usersModal form {
+    border-radius: 6px;
+    overflow: hidden;
+}
+
