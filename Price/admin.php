@@ -600,10 +600,12 @@ $username = $_SESSION['user']['login'];
 </head>
 <body class="ms-login-field">
 <header>
-    <form method="post" action="admin.php" class="header-form">
-        <button type="submit" name="loadMs" class="header-btn">Получить данные из Моего Склада</button>
-    </form>
-    <button type="button" id="openUsersModal" class="header-btn">Редактировать пользователей</button>
+    <div class="header-left">
+        <form method="post" action="admin.php" class="header-form">
+            <button type="submit" name="loadMs" class="header-btn">Получить данные из Моего Склада</button>
+        </form>
+        <button type="button" id="openUsersModal" class="header-btn">Редактировать пользователей</button>
+    </div>
     <p class="user-info">
         Вы вошли как: <strong><?= htmlspecialchars($username) ?></strong>
         <a href="logout.php" class="header-btn logout-link">Выйти</a>

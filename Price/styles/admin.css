@@ -57,6 +57,13 @@ header {
     align-items: center;
 }
 
+/* Container for buttons on the left side of the header */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .error {
     padding: 10px;
     margin: 10px 0;
