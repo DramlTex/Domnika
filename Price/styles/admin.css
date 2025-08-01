@@ -228,6 +228,8 @@ label {
 /* Ensure labels in the "Add User" form span the full width */
 .add-user-form label {
     width: 100%;
+    display: flex;
+    align-items: center;
 }
 
 input[type="text"], input[type="password"], input[type="number"], select {
@@ -303,8 +305,9 @@ a:hover {
 
 /* Stretch fields in the "Add User" form */
 .add-user-form select {
-    width: 100%;
+    width: auto;
     box-sizing: border-box;
+    flex: 1;
 }
 
 /* Select2 container should also stretch across the available width */
