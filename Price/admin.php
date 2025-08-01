@@ -730,6 +730,7 @@ $username = $_SESSION['user']['login'];
 </form>
 
 <hr>
+</div>
 
 <div id="usersModal" class="modal">
   <div class="modal-content">
@@ -869,7 +870,6 @@ $username = $_SESSION['user']['login'];
       <button type="submit" class="btn-msk btn-success">Создать пользователя</button>
     </form>
   </div>
-</div>
 </div>
 
 <script>
