@@ -1,7 +1,8 @@
 <?php
 // Загрузка пользователей из JSON-файла
 function loadUsers(): array {
-    $jsonData = @file_get_contents('casa/xNtxj6hsL2.json');
+    $file = __DIR__ . '/casa/xNtxj6hsL2.json';
+    $jsonData = @file_get_contents($file);
     if ($jsonData === false) {
         return []; // если файла нет или ошибка чтения
     }
@@ -11,5 +12,6 @@ function loadUsers(): array {
 
 // Сохранение массива пользователей в JSON-файл
 function saveUsers(array $users): void {
-    file_put_contents('casa/xNtxj6hsL2.json', json_encode($users, JSON_PRETTY_PRINT));
+    $file = __DIR__ . '/casa/xNtxj6hsL2.json';
+    file_put_contents($file, json_encode($users, JSON_PRETTY_PRINT));
 }
