@@ -736,7 +736,7 @@ $username = $_SESSION['user']['login'];
   <div class="modal-content">
     <span class="close-modal" id="closeUsersModal">&times;</span>
     <!-- Таблица пользователей (исключая админа) -->
-    <h3>Пользователи</h3>
+    <h3 class="users-modal-title">Пользователи</h3>
     <form method="post" action="admin.php">
         <table>
             <tr>
