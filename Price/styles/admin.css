@@ -381,3 +381,9 @@ a:hover {
     margin: 20px auto;
 }
 
+/* Rounded corners for the users table */
+#usersModal table {
+    border-radius: 6px;
+    overflow: hidden;
+}
+
