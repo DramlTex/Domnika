@@ -818,10 +818,10 @@ $username = $_SESSION['user']['login'];
         </table>
 
         <br>
-        <button type="submit" name="saveChanges" class="btn-msk btn-success">Сохранить изменения</button>
+        <button type="submit" name="saveChanges" class="header-btn save-changes-btn">Сохранить изменения</button>
     </form>
 
-    <button type="button" id="openAddUserModal" class="btn-msk btn-success">Добавить пользователя</button>
+    <button type="button" id="openAddUserModal" class="header-btn">Создать нового</button>
   </div>
 </div>
 

@@ -362,3 +362,8 @@ a:hover {
     right: 60px;
 }
 
+#usersModal .save-changes-btn {
+    display: block;
+    margin: 20px auto;
+}
+
