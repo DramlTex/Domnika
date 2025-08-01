@@ -25,7 +25,7 @@
         "rules_file": "casa/row_sort_rules.json"
     },
     {
-        "login": "Dommika",
+        "login": "dommika",
         "password_hash": "$2y$10$3u1l.s\/K6FoiH.\/QkVpS3Oa7PyEjlrrdD3BZMPVubK3EIgUcGYgoa",
         "role": "user",
         "discount": 0,
