@@ -2,7 +2,8 @@
  * Load column and row sorting rules from JSON files.
  * @returns {Promise<void>}
  */
-let PRODUCT_ORDER = [];
+// PRODUCT_ORDER is declared in table.js
+PRODUCT_ORDER = [];
 
 function loadRules() {
   const rulesFile = window.__rulesFile || 'casa/row_sort_rules.json';
