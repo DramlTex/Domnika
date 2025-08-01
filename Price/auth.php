@@ -29,8 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $users = loadUsers();
 
     foreach ($users as $u) {
-        // Проверяем совпадение логина и хэш пароля
-        if ($u['login'] === $login && password_verify($pass, $u['password_hash'])) {
+        // Проверяем совпадение логина и пароля
+        if ($u['login'] === $login && $pass === ($u['password'] ?? '')) {
             // Успешный вход: сохраняем данные пользователя в сессии
             $_SESSION['user'] = [
                 'login'            => $u['login'],

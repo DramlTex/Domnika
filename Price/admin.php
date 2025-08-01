@@ -501,7 +501,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveChanges'])) {
       // 3) Новый пароль (если задан)
       $newPassword = $_POST['new_password'][$index] ?? '';
       if (!empty($newPassword)) {
-          $u['password_hash'] = password_hash($newPassword, PASSWORD_DEFAULT);
+          $u['password'] = $newPassword;
       }
 
   }
@@ -515,7 +515,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveChanges'])) {
 }
 
 
-// ------------------ ADD NEW USER (role=user, password_hash) ------------------
+// ------------------ ADD NEW USER (role=user, password) ------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
   $newLogin    = trim($_POST['new_login'] ?? '');
   $newPassword = trim($_POST['new_password'] ?? '');
@@ -564,9 +564,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
   }
 
   // Добавляем нового пользователя
-  $users[] = [
+    $users[] = [
       'login'       => $newLogin,
-      'password_hash' => password_hash($newPassword, PASSWORD_DEFAULT),
+      'password'    => $newPassword,
       'role'        => 'user',
       'discount'    => max(0, min(100, $newDiscount)),
       'counterparty'=> [
