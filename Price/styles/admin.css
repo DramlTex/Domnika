@@ -329,8 +329,8 @@ a:hover {
     margin: 3% auto;
     padding: 20px;
     border-radius: 6px;
-    max-width: 90%;
-    width: 90%;
+    width: 100%;
+    max-width: none;
     box-sizing: border-box;
     overflow-x: auto;
     position: relative;
