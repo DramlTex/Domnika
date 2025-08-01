@@ -1,7 +1,7 @@
 [
     {
         "login": "admin",
-        "password_hash": "$2y$10$SNF6LPDmYXSFQ0TnKN9RT.1VJbHKM4d0.FFHh3qPql4CyesQH2cN2",
+        "password": "adminpass",
         "role": "admin",
         "counterparty_href": "https:\/\/api.moysklad.ru\/api\/remap\/1.2\/entity\/counterparty\/b332da86-2958-11e9-9107-50480008abdb",
         "discount": 0,
@@ -9,7 +9,7 @@
     },
     {
         "login": "test2",
-        "password_hash": "$2y$10$SxIZUkn40GLgsLOt6UazcubScYKEfLE776uGIT7d\/.iK9.OKJSJ5O",
+        "password": "test2pass",
         "role": "user",
         "discount": 30,
         "counterparty": {
@@ -26,7 +26,7 @@
     },
     {
         "login": "dommika",
-        "password_hash": "$2y$10$3u1l.s\/K6FoiH.\/QkVpS3Oa7PyEjlrrdD3BZMPVubK3EIgUcGYgoa",
+        "password": "dommikapass",
         "role": "user",
         "discount": 0,
         "counterparty": {
