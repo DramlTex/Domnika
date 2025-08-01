@@ -819,12 +819,17 @@ $username = $_SESSION['user']['login'];
     <button type="submit" name="saveChanges" class="btn-msk btn-success">Сохранить изменения</button>
 </form>
 
+<button type="button" id="openAddUserModal" class="btn-msk btn-success">Добавить пользователя</button>
+
 <hr>
 
-<!-- Форма добавления нового пользователя -->
-<h3 class="add-user-title">Добавить нового пользователя</h3>
-<form method="post" action="admin.php" class="add-user-form">
-    <input type="hidden" name="addUser" value="1">
+<!-- Модальное окно добавления нового пользователя -->
+<div id="addUserModal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal" id="closeAddUserModal">&times;</span>
+    <h3 class="add-user-title">Добавить нового пользователя</h3>
+    <form method="post" action="admin.php" class="add-user-form">
+      <input type="hidden" name="addUser" value="1">
 
     <div class="login-pass-row">
         <input type="text" name="new_login" placeholder="Логин" required class="ms-form-control">
@@ -861,8 +866,11 @@ $username = $_SESSION['user']['login'];
     </div>
     <br>
 
-    <button type="submit" class="btn-msk btn-success">Создать пользователя</button>
-</form>
+
+      <button type="submit" class="btn-msk btn-success">Создать пользователя</button>
+    </form>
+  </div>
+</div>
 </div>
 
 <script>
@@ -1018,6 +1026,20 @@ $(function() {
             input.val('1');
             $(this).text('Выключить');
             row.removeClass('disabled');
+        }
+    });
+
+    $('#openAddUserModal').on('click', function() {
+        $('#addUserModal').show();
+    });
+
+    $('#closeAddUserModal').on('click', function() {
+        $('#addUserModal').hide();
+    });
+
+    $('#addUserModal').on('click', function(e) {
+        if (e.target.id === 'addUserModal') {
+            $('#addUserModal').hide();
         }
     });
 
