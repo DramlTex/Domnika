@@ -231,6 +231,10 @@ label {
     display: flex;
     align-items: center;
 }
+/* Center specific labels horizontally */
+.add-user-form label.centered-label {
+    justify-content: center;
+}
 
 input[type="text"], input[type="password"], input[type="number"], select {
     padding: 5px;
