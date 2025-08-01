@@ -603,6 +603,7 @@ $username = $_SESSION['user']['login'];
     <form method="post" action="admin.php" class="header-form">
         <button type="submit" name="loadMs" class="header-btn">Получить данные из Моего Склада</button>
     </form>
+    <button type="button" id="openUsersModal" class="header-btn">Редактировать пользователей</button>
     <p class="user-info">
         Вы вошли как: <strong><?= htmlspecialchars($username) ?></strong>
         <a href="logout.php" class="header-btn logout-link">Выйти</a>
@@ -730,98 +731,96 @@ $username = $_SESSION['user']['login'];
 
 <hr>
 
-<!-- Таблица пользователей (исключая админа) -->
-<h3>Пользователи</h3>
-<form method="post" action="admin.php">
-    <table>
-        <tr>
-            <th>Логин</th>
-            <th>Контрагент</th>
-            <th>Скидка %</th>
-            <th>Новый пароль</th>
-            <th>Группы товаров</th>
-            <th>Удалить?</th>
-        </tr>
-        <?php foreach ($users as $index => $u): ?>
-            <?php if ($u['role'] === 'admin') continue; // не отображаем админа ?>
+<div id="usersModal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal" id="closeUsersModal">&times;</span>
+    <!-- Таблица пользователей (исключая админа) -->
+    <h3>Пользователи</h3>
+    <form method="post" action="admin.php">
+        <table>
             <tr>
-                <td><?= htmlspecialchars($u['login']) ?></td>
-
-                <!-- Контрагент (один) -->
-                <td>
-                    <select name="counterparty_href[<?= $index ?>]">
-                        <option value="">(Не выбран)</option>
-                        <?php
-                        // Текущий href контрагента
-                        $currentCounterpartyHref = $u['counterparty']['href'] ?? '';
-                        foreach ($counterparties as $cnt):
-                            $selected = ($cnt['href'] === $currentCounterpartyHref) ? 'selected' : '';
-                            ?>
-                            <option value="<?= htmlspecialchars($cnt['href']) ?>" <?= $selected ?>>
-                                <?= htmlspecialchars($cnt['name']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </td>
-
-                <!-- Скидка -->
-                <td>
-                    <input type="number"
-                           name="discount[<?= $index ?>]"
-                           value="<?= (int)($u['discount'] ?? 0) ?>"
-                           min="0"
-                           max="100"
-                           class="ms-form-control"
-                           style="width:60px;">
-                </td>
-
-                <!-- Новый пароль -->
-                <td>
-                    <input type="text" name="new_password[<?= $index ?>]" class="ms-form-control" placeholder="Новый пароль">
-                </td>
-
-                <!-- Группы товаров (множественный выбор через чекбоксы) -->
-                <td>
-                    <div class="checkbox-list">
-                        <?php
-                        // Какие группы сейчас привязаны к пользователю:
-                        // $u['productfolders'] — массив объектов [ ['href'=>'...', 'name'=>'...'], ... ]
-                        $currentFolders = $u['productfolders'] ?? [];
-                        // Получим массив только href для сравнения
-                        $currentFoldersHrefs = array_column($currentFolders, 'href');
-
-                        foreach ($productFolders as $pf):
-                            $pfHref = $pf['href'];
-                            $pfName = $pf['name'];
-                            // Если href текущей папки есть у пользователя, ставим checked
-                            $checked = in_array($pfHref, $currentFoldersHrefs) ? 'checked' : '';
-                            ?>
-                            <label style="display:block;">
-                                <input type="checkbox"
-                                       name="productfolder_hrefs[<?= $index ?>][]"
-                                       value="<?= htmlspecialchars($pfHref) ?>"
-                                    <?= $checked ?>>
-                                <?= htmlspecialchars($pfName) ?>
-                            </label>
-                        <?php endforeach; ?>
-                    </div>
-                </td>
-
-                <!-- Удалить -->
-                <td style="text-align:center;">
-                    <input type="checkbox" name="delete[<?= $index ?>]" value="1">
-                </td>
+                <th>Логин</th>
+                <th>Контрагент</th>
+                <th>Скидка %</th>
+                <th>Новый пароль</th>
+                <th>Группы товаров</th>
+                <th>Удалить?</th>
             </tr>
-        <?php endforeach; ?>
-    </table>
+            <?php foreach ($users as $index => $u): ?>
+                <?php if ($u['role'] === 'admin') continue; ?>
+                <tr>
+                    <td><?= htmlspecialchars($u['login']) ?></td>
 
-    <br>
-    <button type="submit" name="saveChanges" class="btn-msk btn-success">Сохранить изменения</button>
-</form>
+                    <!-- Контрагент (один) -->
+                    <td>
+                        <select name="counterparty_href[<?= $index ?>]">
+                            <option value="">(Не выбран)</option>
+                            <?php
+                            $currentCounterpartyHref = $u['counterparty']['href'] ?? '';
+                            foreach ($counterparties as $cnt):
+                                $selected = ($cnt['href'] === $currentCounterpartyHref) ? 'selected' : '';
+                                ?>
+                                <option value="<?= htmlspecialchars($cnt['href']) ?>" <?= $selected ?>>
+                                    <?= htmlspecialchars($cnt['name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </td>
 
-<button type="button" id="openAddUserModal" class="btn-msk btn-success">Добавить пользователя</button>
+                    <!-- Скидка -->
+                    <td>
+                        <input type="number"
+                               name="discount[<?= $index ?>]"
+                               value="<?= (int)($u['discount'] ?? 0) ?>"
+                               min="0"
+                               max="100"
+                               class="ms-form-control"
+                               style="width:60px;">
+                    </td>
 
-<hr>
+                    <!-- Новый пароль -->
+                    <td>
+                        <input type="text" name="new_password[<?= $index ?>]" class="ms-form-control" placeholder="Новый пароль">
+                    </td>
+
+                    <!-- Группы товаров (множественный выбор через чекбоксы) -->
+                    <td>
+                        <div class="checkbox-list">
+                            <?php
+                            $currentFolders = $u['productfolders'] ?? [];
+                            $currentFoldersHrefs = array_column($currentFolders, 'href');
+
+                            foreach ($productFolders as $pf):
+                                $pfHref = $pf['href'];
+                                $pfName = $pf['name'];
+                                $checked = in_array($pfHref, $currentFoldersHrefs) ? 'checked' : '';
+                                ?>
+                                <label style="display:block;">
+                                    <input type="checkbox"
+                                           name="productfolder_hrefs[<?= $index ?>][]"
+                                           value="<?= htmlspecialchars($pfHref) ?>"
+                                        <?= $checked ?>>
+                                    <?= htmlspecialchars($pfName) ?>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    </td>
+
+                    <!-- Удалить -->
+                    <td style="text-align:center;">
+                        <input type="checkbox" name="delete[<?= $index ?>]" value="1">
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+
+        <br>
+        <button type="submit" name="saveChanges" class="btn-msk btn-success">Сохранить изменения</button>
+    </form>
+
+    <button type="button" id="openAddUserModal" class="btn-msk btn-success">Добавить пользователя</button>
+  </div>
+</div>
 
 <!-- Модальное окно добавления нового пользователя -->
 <div id="addUserModal" class="modal">
@@ -1026,6 +1025,20 @@ $(function() {
             input.val('1');
             $(this).text('Выключить');
             row.removeClass('disabled');
+        }
+    });
+
+    $('#openUsersModal').on('click', function() {
+        $('#usersModal').show();
+    });
+
+    $('#closeUsersModal').on('click', function() {
+        $('#usersModal').hide();
+    });
+
+    $('#usersModal').on('click', function(e) {
+        if (e.target.id === 'usersModal') {
+            $('#usersModal').hide();
         }
     });
 
