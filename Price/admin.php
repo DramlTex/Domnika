@@ -588,6 +588,7 @@ $username = $_SESSION['user']['login'];
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <link rel="icon" type="image/x-icon" href="favicons/favicon.ico">
     <link rel="stylesheet" type="text/css" href="styles/admin.css">
     <meta charset="UTF-8">
     <title>Админ-панель</title>

@@ -59,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+  <link rel="icon" type="image/x-icon" href="favicons/favicon.ico">
   <meta charset="UTF-8" />
   <title>Вход в систему</title>
   <link rel="stylesheet" type="text/css" href="styles/auth.css">
