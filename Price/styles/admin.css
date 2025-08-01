@@ -331,6 +331,8 @@ a:hover {
     border-radius: 6px;
     max-width: 90%;
     width: 90%;
+    box-sizing: border-box;
+    overflow-x: auto;
     position: relative;
 }
 #usersModal .close-modal {
