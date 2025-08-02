@@ -69,5 +69,7 @@ function createTabs(groupedData) {
  */
 function showTab(groupName, groupedData) {
   window.__currentGroup = groupName;
-  fillTable(groupedData[groupName]);
+  loadRules(groupName).then(() => {
+    fillTable(groupedData[groupName]);
+  });
 }

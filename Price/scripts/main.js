@@ -2,7 +2,7 @@
  * Entry point for page scripts.
  */
 document.addEventListener('DOMContentLoaded', () => {
-  loadRules().then(loadData);
+  loadData();
   document.getElementById('btnRefresh').addEventListener('click', () => {
     loadData();
   });

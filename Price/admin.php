@@ -323,8 +323,21 @@ if ($reloadRequested) {
     $typesList      = [];
 }
 
+// ------------------ Tabs for rules ------------------
+$adminTabs = [
+    'classic' => 'Классические чаи',
+    'aroma'   => 'Ароматизированный чай',
+    'herbs'   => 'Травы и добавки',
+    'spices'  => 'Приправы'
+];
+$currentTab = $_GET['tab'] ?? 'classic';
+if (!isset($adminTabs[$currentTab])) {
+    $currentTab = 'classic';
+}
+$currentTabName = $adminTabs[$currentTab];
+
 // ------------------ Row sort rules ------------------
-$rulesFilePath = __DIR__ . '/casa/row_sort_rules.json';
+$rulesFilePath = __DIR__ . "/casa/row_sort_rules_{$currentTab}.json";
 $sortRules = [];
 if (file_exists($rulesFilePath)) {
     $json = file_get_contents($rulesFilePath);
@@ -338,7 +351,7 @@ $typeOrder = $sortRules['typeOrder'] ?? [];
 $typeSort = $sortRules['typeSort'] ?? 'alphabetical';
 
 // ------------------ Product sort rules ------------------
-$productFilePath = __DIR__ . '/casa/product_sort_rules.json';
+$productFilePath = __DIR__ . "/casa/product_sort_rules_{$currentTab}.json";
 $productOrder = [];
 if (file_exists($productFilePath)) {
     $json = file_get_contents($productFilePath);
@@ -355,7 +368,7 @@ if (file_exists($productFilePath)) {
 }
 
 // ------------------ Column rules ------------------
-$columnFilePath = __DIR__ . '/casa/column_rules.json';
+$columnFilePath = __DIR__ . "/casa/column_rules_{$currentTab}.json";
 $columnRules = [];
 if (file_exists($columnFilePath)) {
     $json = file_get_contents($columnFilePath);
@@ -431,7 +444,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveRules'])) {
         json_encode(['productOrder' => $products], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
     );
 
-    header('Location: admin.php');
+    header('Location: admin.php?tab=' . $currentTab);
     exit;
 }
 
@@ -443,7 +456,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveFix'])) {
         $fixFilePath,
         json_encode($fixData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
     );
-    header('Location: admin.php');
+    header('Location: admin.php?tab=' . $currentTab);
     exit;
 }
 
@@ -510,7 +523,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveChanges'])) {
   $users = array_values($users);
   saveUsers($users);
 
-  header('Location: admin.php');
+  header('Location: admin.php?tab=' . $currentTab);
   exit;
 }
 
@@ -526,14 +539,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
   $newFolders = $_POST['new_productfolder_hrefs'] ?? []; // массив href
 
   if ($newLogin === '' || $newPassword === '') {
-      header('Location: admin.php');
+      header('Location: admin.php?tab=' . $currentTab);
       exit;
   }
 
   // Проверка логина на уникальность
   foreach ($users as $u) {
       if ($u['login'] === $newLogin) {
-          header('Location: admin.php');
+          header('Location: admin.php?tab=' . $currentTab);
           exit;
       }
   }
@@ -577,7 +590,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
   ];
 
   saveUsers($users);
-  header('Location: admin.php');
+  header('Location: admin.php?tab=' . $currentTab);
   exit;
 }
 
@@ -602,7 +615,7 @@ $username = $_SESSION['user']['login'];
 <body class="ms-login-field">
 <header>
     <div class="header-left">
-        <form method="post" action="admin.php" class="header-form">
+        <form method="post" action="admin.php?tab=<?= $currentTab ?>" class="header-form">
             <button type="submit" name="loadMs" class="header-btn">Получить данные из Моего Склада</button>
         </form>
         <button type="button" id="openUsersModal" class="header-btn">Редактировать пользователей</button>
@@ -613,9 +626,14 @@ $username = $_SESSION['user']['login'];
     </p>
 </header>
 <div class="admin-container">
+<div class="admin-tabs">
+<?php foreach ($adminTabs as $slug => $title): ?>
+    <a href="admin.php?tab=<?= $slug ?>" class="admin-tab<?= $slug === $currentTab ? ' active' : '' ?>"><?= htmlspecialchars($title) ?></a>
+<?php endforeach; ?>
+</div>
 <!-- Правила сортировки и столбцов -->
-<h3 class="rules-title">Настройка правил отображения товаров</h3>
-<form method="post" action="admin.php" id="rulesForm">
+<h3 class="rules-title">Настройка правил отображения товаров — <?= htmlspecialchars($currentTabName) ?></h3>
+<form method="post" action="admin.php?tab=<?= $currentTab ?>" id="rulesForm">
 <div class="sort-rules">
     <h4>Порядок стран</h4>
         <div id="countryFields">
@@ -723,7 +741,7 @@ $username = $_SESSION['user']['login'];
 <?php endif; ?>
 
 <h3>Фикс Sea0011</h3>
-<form method="post" action="admin.php">
+<form method="post" action="admin.php?tab=<?= $currentTab ?>">
     <input type="hidden" name="saveFix" value="1">
     <label>
         <input type="checkbox" name="fix_enabled" value="1" <?= $fixData['enabled'] ? 'checked' : '' ?>> Включить
@@ -740,7 +758,7 @@ $username = $_SESSION['user']['login'];
     <span class="close-modal" id="closeUsersModal">&times;</span>
     <!-- Таблица пользователей (исключая админа) -->
     <h3 class="users-modal-title">Пользователи</h3>
-    <form method="post" action="admin.php">
+    <form method="post" action="admin.php?tab=<?= $currentTab ?>">
         <table>
             <tr>
                 <th>Логин</th>
@@ -831,7 +849,7 @@ $username = $_SESSION['user']['login'];
   <div class="modal-content">
     <span class="close-modal" id="closeAddUserModal">&times;</span>
     <h3 class="add-user-title">Добавить нового пользователя</h3>
-    <form method="post" action="admin.php" class="add-user-form">
+    <form method="post" action="admin.php?tab=<?= $currentTab ?>" class="add-user-form">
       <input type="hidden" name="addUser" value="1">
 
     <div class="login-pass-row">
