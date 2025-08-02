@@ -38,6 +38,11 @@ body::before {
     text-align: center;
 }
 
+/* Center the selected tea type label */
+.admin-container .current-tab-info {
+    text-align: center;
+}
+
 /* Header bar for admin page */
 header {
     position: fixed;
