@@ -612,6 +612,30 @@ $username = $_SESSION['user']['login'];
 <p class="current-tab-info">Какой тип чая выбран: <?= htmlspecialchars($currentTabName) ?></p>
 <!-- Правила сортировки и столбцов -->
 <form method="post" action="admin.php?tab=<?= $currentTab ?>" id="rulesForm">
+<hr>
+<!-- Редактирование колонок -->
+<div class="sort-rules">
+    <h4>Колонки таблицы</h4>
+        <div id="columnFields">
+        <?php foreach ($columnRules as $col): ?>
+            <div class="column-row<?php if (empty($col['enabled'])) echo ' disabled'; ?>">
+                <span class="drag-handle">&#9776;</span>
+                <select name="col_id[]" class="column-select">
+                    <?php foreach ($columnRules as $opt): ?>
+                        <option value="<?= htmlspecialchars($opt['id']) ?>" <?= $opt['id'] === $col['id'] ? 'selected' : '' ?>><?= htmlspecialchars($opt['title']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <input type="text" name="col_title[]" value="<?= htmlspecialchars($col['title']) ?>" class="ms-form-control" style="width:150px;" />
+                <input type="hidden" name="col_class[]" value="<?= htmlspecialchars($col['class'] ?? '') ?>">
+                <input type="hidden" name="col_enabled[]" class="col-enabled" value="<?= $col['enabled'] ? '1' : '0' ?>">
+                <button type="button" class="toggle-column btn-msk">
+                    <?= $col['enabled'] ? 'Выключить' : 'Включить' ?>
+                </button>
+            </div>
+        <?php endforeach; ?>
+        </div>
+</div>
+<hr>
 <div class="sort-rules">
     <h4>Порядок стран</h4>
         <div id="countryFields">
@@ -684,29 +708,6 @@ $username = $_SESSION['user']['login'];
     <select id="productResults" style="width:300px; display:none;"></select>
     <button type="button" id="addProduct" style="display:none;">Добавить</button>
 </div>
-
-<!-- Редактирование колонок -->
-<div class="sort-rules">
-    <h4>Колонки таблицы</h4>
-
-        <div id="columnFields">
-        <?php foreach ($columnRules as $col): ?>
-            <div class="column-row<?php if (empty($col['enabled'])) echo ' disabled'; ?>">
-                <span class="drag-handle">&#9776;</span>
-                <select name="col_id[]" class="column-select">
-                    <?php foreach ($columnRules as $opt): ?>
-                        <option value="<?= htmlspecialchars($opt['id']) ?>" <?= $opt['id'] === $col['id'] ? 'selected' : '' ?>><?= htmlspecialchars($opt['title']) ?></option>
-                    <?php endforeach; ?>
-                </select>
-                <input type="text" name="col_title[]" value="<?= htmlspecialchars($col['title']) ?>" class="ms-form-control" style="width:150px;" />
-                <input type="hidden" name="col_class[]" value="<?= htmlspecialchars($col['class'] ?? '') ?>">
-                <input type="hidden" name="col_enabled[]" class="col-enabled" value="<?= $col['enabled'] ? '1' : '0' ?>">
-                <button type="button" class="toggle-column btn-msk">
-                    <?= $col['enabled'] ? 'Выключить' : 'Включить' ?>
-                </button>
-            </div>
-        <?php endforeach; ?>
-        </div>
 
 <button type="submit" name="saveRules" class="btn-msk btn-success">Сохранить</button>
 </form>
