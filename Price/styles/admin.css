@@ -106,6 +106,28 @@ header {
     margin-bottom: 5px;
 }
 
+/* Stretch column configuration rows across full width */
+.column-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.column-row .column-select,
+.column-row .ms-form-control {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.column-row .toggle-column {
+    margin-left: auto;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.column-row .toggle-column:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
 .column-row.disabled {
     opacity: 0.5;
 }
@@ -268,7 +290,8 @@ h2, h3 {
 form {
     margin: 1em 0;
     padding: 1em;
-    display: inline-block;
+    display: block;
+    width: 100%;
 }
 
 .header-form {
