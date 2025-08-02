@@ -626,13 +626,14 @@ $username = $_SESSION['user']['login'];
     </p>
 </header>
 <div class="admin-container">
+<h3 class="rules-title">Настройка правил отображения товаров</h3>
 <div class="admin-tabs">
 <?php foreach ($adminTabs as $slug => $title): ?>
     <a href="admin.php?tab=<?= $slug ?>" class="admin-tab<?= $slug === $currentTab ? ' active' : '' ?>"><?= htmlspecialchars($title) ?></a>
 <?php endforeach; ?>
 </div>
+<p class="current-tab-info">Какой тип чая выбран: <?= htmlspecialchars($currentTabName) ?></p>
 <!-- Правила сортировки и столбцов -->
-<h3 class="rules-title">Настройка правил отображения товаров — <?= htmlspecialchars($currentTabName) ?></h3>
 <form method="post" action="admin.php?tab=<?= $currentTab ?>" id="rulesForm">
 <div class="sort-rules">
     <h4>Порядок стран</h4>
