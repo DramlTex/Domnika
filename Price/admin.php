@@ -625,7 +625,7 @@ $username = $_SESSION['user']['login'];
                         <option value="<?= htmlspecialchars($opt['id']) ?>" <?= $opt['id'] === $col['id'] ? 'selected' : '' ?>><?= htmlspecialchars($opt['title']) ?></option>
                     <?php endforeach; ?>
                 </select>
-                <input type="text" name="col_title[]" value="<?= htmlspecialchars($col['title']) ?>" class="ms-form-control" style="width:150px;" />
+                <input type="text" name="col_title[]" value="<?= htmlspecialchars($col['title']) ?>" class="ms-form-control" />
                 <input type="hidden" name="col_class[]" value="<?= htmlspecialchars($col['class'] ?? '') ?>">
                 <input type="hidden" name="col_enabled[]" class="col-enabled" value="<?= $col['enabled'] ? '1' : '0' ?>">
                 <button type="button" class="toggle-column btn-msk<?= $col['enabled'] ? ' active' : '' ?>">
@@ -924,7 +924,7 @@ function createColumnRow(id, title, cls, enabled) {
         if (key === id) opt.attr('selected', 'selected');
         select.append(opt);
     });
-    var titleInput = $('<input type="text" name="col_title[]" class="ms-form-control" style="width:150px;">').val(title || '');
+    var titleInput = $('<input type="text" name="col_title[]" class="ms-form-control">').val(title || '');
     var classInput = $('<input type="hidden" name="col_class[]">').val(cls || '');
     var enabledInput = $('<input type="hidden" name="col_enabled[]" class="col-enabled">').val(enabled ? '1' : '0');
     var toggleBtn = $('<button type="button" class="toggle-column btn-msk"></button>').text(enabled ? 'Выключить' : 'Включить');
