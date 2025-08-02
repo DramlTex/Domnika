@@ -615,7 +615,7 @@ $username = $_SESSION['user']['login'];
 <hr>
 <!-- Редактирование колонок -->
 <div class="sort-rules">
-    <h4>Колонки таблицы</h4>
+    <h4 class="column-title">Колонки таблицы</h4>
         <div id="columnFields">
         <?php foreach ($columnRules as $col): ?>
             <div class="column-row<?php if (empty($col['enabled'])) echo ' disabled'; ?>">
@@ -628,7 +628,7 @@ $username = $_SESSION['user']['login'];
                 <input type="text" name="col_title[]" value="<?= htmlspecialchars($col['title']) ?>" class="ms-form-control" style="width:150px;" />
                 <input type="hidden" name="col_class[]" value="<?= htmlspecialchars($col['class'] ?? '') ?>">
                 <input type="hidden" name="col_enabled[]" class="col-enabled" value="<?= $col['enabled'] ? '1' : '0' ?>">
-                <button type="button" class="toggle-column btn-msk">
+                <button type="button" class="toggle-column btn-msk<?= $col['enabled'] ? ' active' : '' ?>">
                     <?= $col['enabled'] ? 'Выключить' : 'Включить' ?>
                 </button>
             </div>
@@ -928,6 +928,7 @@ function createColumnRow(id, title, cls, enabled) {
     var classInput = $('<input type="hidden" name="col_class[]">').val(cls || '');
     var enabledInput = $('<input type="hidden" name="col_enabled[]" class="col-enabled">').val(enabled ? '1' : '0');
     var toggleBtn = $('<button type="button" class="toggle-column btn-msk"></button>').text(enabled ? 'Выключить' : 'Включить');
+    if (enabled) toggleBtn.addClass('active');
     row.append(handle, select, titleInput, classInput, enabledInput, toggleBtn);
     return row;
 }
@@ -1008,11 +1009,11 @@ $(function() {
         var val = input.val() === '1';
         if (val) {
             input.val('0');
-            $(this).text('Включить');
+            $(this).text('Включить').removeClass('active');
             row.addClass('disabled');
         } else {
             input.val('1');
-            $(this).text('Выключить');
+            $(this).text('Выключить').addClass('active');
             row.removeClass('disabled');
         }
     });
