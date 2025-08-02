@@ -91,6 +91,14 @@ header {
     margin: 20px 0;
 }
 
+.column-title {
+    text-align: center;
+}
+
+#columnFields {
+    width: 100%;
+}
+
 .country-row,
 .type-row,
 .product-row,
@@ -133,6 +141,11 @@ header {
     font-weight: 600;
     background-color: transparent;
     color: #2855af;
+}
+
+.toggle-column.active {
+    border-color: rgb(56, 204, 101);
+    color: rgb(56, 204, 101);
 }
 
 /* Buttons in header */
