@@ -1,15 +1,30 @@
 /**
- * Load column and row sorting rules from JSON files.
+ * Load column and row sorting rules for a specific group.
+ * @param {string} groupName
  * @returns {Promise<void>}
  */
 
-function loadRules() {
-  const rulesFile = window.__rulesFile || 'casa/row_sort_rules.json';
-  const colPromise  = fetch('casa/column_rules.json').then(r => r.json());
-  const sortPromise = fetch(rulesFile).then(r => r.json());
-  const prodPromise = fetch('casa/product_sort_rules.json')
-    .then(r => r.json())
-    .catch(() => ({}));
+function groupToSlug(name) {
+  switch (name) {
+    case 'Ароматизированный чай': return 'aroma';
+    case 'Травы и добавки': return 'herbs';
+    case 'Приправы': return 'spices';
+    case 'Классические чаи':
+    default: return 'classic';
+  }
+}
+
+function fetchJson(path, def) {
+  return fetch(path)
+    .then(r => (r.ok ? r.json() : def))
+    .catch(() => def);
+}
+
+function loadRules(groupName) {
+  const slug = groupToSlug(groupName || 'Классические чаи');
+  const colPromise  = fetchJson(`casa/column_rules_${slug}.json`, []);
+  const sortPromise = fetchJson(`casa/row_sort_rules_${slug}.json`, {});
+  const prodPromise = fetchJson(`casa/product_sort_rules_${slug}.json`, {});
 
   return Promise.all([colPromise, sortPromise, prodPromise]).then(([cols, sort, prod]) => {
     COLUMN_RULES  = Array.isArray(cols) ? cols.filter(c => c.enabled !== false) : [];

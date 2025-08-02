@@ -15,9 +15,7 @@ function loadData() {
         window.__productsData = rows;
         const groupedData = groupProductsByCategory(rows);
         window.__groupedData = groupedData;
-        window.__currentGroup = 'Остальное';
         createTabs(groupedData);
-        fillTable(groupedData['Остальное'] || []);
         fillFilters(rows);
         document.getElementById('loader').style.display = 'none';
         document.querySelector('.table-wrapper').style.display = '';

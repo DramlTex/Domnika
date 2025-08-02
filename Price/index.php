@@ -9,7 +9,6 @@ if (!isset($_SESSION['user'])) {
 }
 $username = $_SESSION['user']['login'];
 $userFolders = $_SESSION['user']['productfolders'] ?? [];
-$rulesFile = $_SESSION['user']['rules_file'] ?? 'casa/row_sort_rules.json';
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -244,7 +243,6 @@ $rulesFile = $_SESSION['user']['rules_file'] ?? 'casa/row_sort_rules.json';
 
 
 <script>window.__userFolders = <?php echo json_encode($userFolders, JSON_UNESCAPED_UNICODE); ?>;</script>
-<script>window.__rulesFile = <?php echo json_encode($rulesFile, JSON_UNESCAPED_UNICODE); ?>;</script>
 <script src="scripts/data-loader.js"></script>
 <script src="scripts/tabs.js"></script>
 <script src="scripts/table.js"></script>

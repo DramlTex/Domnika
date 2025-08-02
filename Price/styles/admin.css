@@ -159,6 +159,27 @@ header {
     border-color: #004fed;
 }
 
+.admin-tabs {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.admin-tab {
+    display: inline-block;
+    padding: 8px 16px;
+    margin: 0 5px;
+    border: 1px solid #004fed;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #004fed;
+}
+
+.admin-tab.active,
+.admin-tab:hover {
+    background-color: #004fed;
+    color: #fff;
+}
+
 /* Input fields */
 .ms-login-field .ms-form-control:-webkit-autofill {
     -webkit-box-shadow: 0 0 0 1000px #fff inset;
