@@ -169,11 +169,22 @@ header {
     flex: 1;
     text-align: center;
     padding: 8px 16px;
-    border: 1px solid #004fed;
-    border-radius: 6px;
-    background-color: #f0f0f0;
+    border: 1px solid rgba(128, 128, 128, 0.5);
+    box-shadow: 0 0 4px rgba(128, 128, 128, 0.5);
+    background-color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    color: #004fed;
+    color: #000;
+    border-radius: 0;
+}
+
+.admin-tab:first-child {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
+.admin-tab:last-child {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
 }
 
 .admin-tab + .admin-tab {
@@ -182,8 +193,8 @@ header {
 
 .admin-tab.active,
 .admin-tab:hover {
-    background-color: #004fed;
-    color: #fff;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #000;
 }
 
 /* Input fields */
