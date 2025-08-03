@@ -29,8 +29,8 @@ body::before {
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     padding: 20px;
-    width: 100%;
-    max-width: 100%;
+    max-width: none;
+    width: fit-content;
     box-sizing: border-box;
     border: 1px solid rgba(255,255,255,0.3);
     display: flex;
@@ -110,27 +110,7 @@ header .user-info {
 }
 
 /* Блок сортировки и таблица колонок */
-/* Блок сортировки товаров */
-.sort-rules,
-.sort-rules #countryContainer,
-.sort-rules .country-block,
-.sort-rules .type-container,
-.sort-rules .type-block,
-.sort-rules .product-container,
-.sort-rules .product-row {
-    width: 100%;
-    box-sizing: border-box;
-}
 
-.sort-rules select,
-.sort-rules input[type="text"],
-.sort-rules .productResults,
-.sort-rules .btnSearchProduct,
-.sort-rules .addProduct {
-    width: 100%;
-    box-sizing: border-box;
-    display: block;
-}
 
 /* Таблица настроек колонок */
 .column-table {
