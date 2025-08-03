@@ -364,9 +364,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveRules'])) {
     $postedCountries = $_POST['countries'] ?? [];
     $newCountries = [];
     if (is_array($postedCountries)) {
-        usort($postedCountries, function($a, $b) {
-            return intval($a['order'] ?? 0) <=> intval($b['order'] ?? 0);
-        });
         foreach ($postedCountries as $c) {
             $cName = trim($c['name'] ?? '');
             if ($cName === '') continue;
@@ -638,8 +635,8 @@ $username = $_SESSION['user']['login'];
             <div class="sort-rules">
         <div id="countryContainer">
             <?php foreach ($countryRules as $ci => $country): ?>
-                <div class="country-block" data-index="<?= $ci ?>">
-                    <input type="number" class="country-number" name="countries[<?= $ci ?>][order]" value="<?= $ci + 1 ?>" min="1">
+                <div class="country-block">
+                    <span class="country-number"><?= $ci + 1 ?></span>
                     <select name="countries[<?= $ci ?>][name]" class="country-select">
                         <option value="">(Не выбрана)</option>
                         <?php foreach ($countriesList as $name): ?>
@@ -846,14 +843,11 @@ $username = $_SESSION['user']['login'];
 <script>
 var countries = <?= json_encode($countriesList, JSON_UNESCAPED_UNICODE) ?>;
 var types = <?= json_encode($typesList, JSON_UNESCAPED_UNICODE) ?>;
-var countryIndex = 0;
 
 function createCountryBlock(value) {
-    var index = countryIndex++;
-    var block = $('<div class="country-block"></div>').attr('data-index', index);
-    var number = $('<input type="number" class="country-number" min="1">')
-        .attr('name', 'countries[' + index + '][order]')
-        .val(index + 1);
+    var index = $('#countryContainer .country-block').length;
+    var block = $('<div class="country-block"></div>');
+    var number = $('<span class="country-number"></span>');
     var select = $('<select class="country-select"></select>').attr('name', 'countries[' + index + '][name]');
     select.append('<option value="">(Не выбрана)</option>');
     countries.forEach(function(c){
@@ -872,7 +866,7 @@ function createCountryBlock(value) {
 }
 
 function createTypeBlock(cIndex, value) {
-    var tIndex = $('#countryContainer .country-block[data-index="' + cIndex + '"]').find('.type-block').length;
+    var tIndex = $('#countryContainer .country-block').eq(cIndex).find('.type-block').length;
     var block = $('<div class="type-block"></div>');
     var select = $('<select class="type-select"></select>').attr('name', 'countries[' + cIndex + '][types][' + tIndex + '][name]');
     select.append('<option value="">(Не выбран)</option>');
@@ -895,7 +889,7 @@ function createTypeBlock(cIndex, value) {
 }
 
 function createProductRow(cIndex, tIndex, id, name){
-    var pIndex = $('#countryContainer .country-block[data-index="' + cIndex + '"]').find('.type-block').eq(tIndex).find('.product-row').length;
+    var pIndex = $('#countryContainer .country-block').eq(cIndex).find('.type-block').eq(tIndex).find('.product-row').length;
     var row = $('<div class="product-row"></div>');
     var text = $('<span class="product-name"></span>').text(name);
     var hidId = $('<input type="hidden">').attr('name','countries['+cIndex+'][types]['+tIndex+'][products]['+pIndex+'][id]').val(id);
@@ -933,17 +927,27 @@ function createColumnRow(id, title, cls, enabled) {
 
 $(function(){
     $('select').select2();
-    countryIndex = $('#countryContainer .country-block').length;
+    function updateCountryNumbers(){
+        $('#countryContainer .country-block').each(function(i){
+            $(this).find('.country-number').text(i + 1);
+        });
+    }
+    $('#countryContainer').sortable({
+        update: updateCountryNumbers
+    }).disableSelection();
+    updateCountryNumbers();
 
     $(document).on('click','#addCountry', function(){
         var block = createCountryBlock('');
         $('#countryContainer').append(block);
         block.find('select').select2();
+        $('#countryContainer').sortable('refresh');
+        updateCountryNumbers();
     });
 
     $(document).on('click','.add-type', function(){
         var cBlock = $(this).closest('.country-block');
-        var cIndex = cBlock.data('index');
+        var cIndex = cBlock.index();
         var block = createTypeBlock(cIndex, '');
         cBlock.find('.type-container').append(block);
         block.find('select').select2();
@@ -965,7 +969,7 @@ $(function(){
 
     $(document).on('click','.addProduct', function(){
         var tBlock = $(this).closest('.type-block');
-        var cIndex = tBlock.closest('.country-block').data('index');
+        var cIndex = tBlock.closest('.country-block').index();
         var tIndex = tBlock.index();
         var select = tBlock.find('.productResults');
         var id = select.val();
@@ -978,6 +982,7 @@ $(function(){
 
     $(document).on('click','.remove-country', function(){
         $(this).closest('.country-block').remove();
+        updateCountryNumbers();
     });
     $(document).on('click','.remove-type', function(){ $(this).closest('.type-block').remove(); });
     $(document).on('click','.remove-product', function(){ $(this).closest('.product-row').remove(); });
