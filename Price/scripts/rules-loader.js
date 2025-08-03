@@ -24,22 +24,36 @@ function loadRules(groupName) {
   const slug = groupToSlug(groupName || 'Классические чаи');
   const colPromise  = fetchJson(`casa/column_rules_${slug}.json`, []);
   const sortPromise = fetchJson(`casa/row_sort_rules_${slug}.json`, {});
-  const prodPromise = fetchJson(`casa/product_sort_rules_${slug}.json`, {});
 
-  return Promise.all([colPromise, sortPromise, prodPromise]).then(([cols, sort, prod]) => {
-    COLUMN_RULES  = Array.isArray(cols) ? cols.filter(c => c.enabled !== false) : [];
-    COUNTRY_ORDER = Array.isArray(sort.countryOrder) ? sort.countryOrder : [];
-    TYPE_ORDER    = Array.isArray(sort.typeOrder) ? sort.typeOrder : [];
-    TYPE_SORT     = sort.typeSort || 'alphabetical';
-    if (Array.isArray(prod.productOrder)) {
-      PRODUCT_ORDER = prod.productOrder.map(item => {
-        if (typeof item === 'string') return item;
-        if (item && typeof item.id === 'string') return item.id;
-        return null;
-      }).filter(id => id);
-    } else {
-      PRODUCT_ORDER = [];
-    }
+  return Promise.all([colPromise, sortPromise]).then(([cols, sort]) => {
+    COLUMN_RULES = Array.isArray(cols) ? cols.filter(c => c.enabled !== false) : [];
+    TYPE_SORT    = sort.typeSort || 'alphabetical';
+
+    const order = Array.isArray(sort.order) ? sort.order : [];
+    COUNTRY_ORDER = order.map(o => o.country);
+    TYPE_ORDER_MAP = {};
+    PRODUCT_ORDER_MAP = {};
+    TYPE_ORDER = [];
+
+    const normCountry = v => (v || '').trim().toUpperCase();
+    const normType = v => (v || '').trim().toUpperCase();
+
+    order.forEach(c => {
+      const cNorm = normCountry(c.country);
+      const types = Array.isArray(c.types) ? c.types : [];
+      TYPE_ORDER_MAP[cNorm] = types.map(t => t.type);
+      types.forEach(t => {
+        if (!TYPE_ORDER.includes(t.type)) TYPE_ORDER.push(t.type);
+        const key = cNorm + '|' + normType(t.type);
+        const prodArr = Array.isArray(t.products) ? t.products : [];
+        PRODUCT_ORDER_MAP[key] = prodArr.map(p => {
+          if (typeof p === 'string') return p;
+          if (p && typeof p.id === 'string') return p.id;
+          return null;
+        }).filter(id => id);
+      });
+    });
+
     renderTableHeader();
   }).catch(err => {
     console.error('Failed to load rules', err);
