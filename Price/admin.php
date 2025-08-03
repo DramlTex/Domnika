@@ -631,9 +631,8 @@ $username = $_SESSION['user']['login'];
     </div>
     <hr>
     <div class="sort-rules">
-        <h4>Порядок стран</h4>
+        <h4>Порядок сортировки товаров</h4>
             <div class="sort-rules">
-        <h4>Порядок стран, типов и товаров</h4>
         <div id="countryContainer">
             <?php foreach ($countryRules as $ci => $country): ?>
                 <div class="country-block">
