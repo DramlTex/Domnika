@@ -87,6 +87,7 @@ header {
     box-sizing: border-box;
 }
 
+
 .sort-rules {
     margin: 20px 0;
 }
@@ -97,20 +98,22 @@ header {
 
 #columnFields {
     width: 100%;
+    padding: 0 10px;
+    box-sizing: border-box;
 }
 
 .country-row,
 .type-row,
-.product-row,
-.column-row {
+.product-row {
     margin-bottom: 5px;
 }
 
-/* Stretch column configuration rows across full width */
+/* Column configuration rows */
 .column-row {
     display: flex;
     align-items: center;
     width: 100%;
+    margin-bottom: 5px;
 }
 
 .column-row .column-select,
