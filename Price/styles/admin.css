@@ -1,5 +1,6 @@
-/* Styles for admin panel */
+/* Стили админ-панели */
 
+/* Страница и фон */
 body {
     font-family: Arial, sans-serif;
     color: #333;
@@ -21,6 +22,7 @@ body::before {
     z-index: -1;
 }
 
+/* Контейнер админ-панели */
 .admin-container {
     background-color: rgba(255, 255, 255, 0.25);
     backdrop-filter: blur(10px);
@@ -33,12 +35,12 @@ body::before {
     border: 1px solid rgba(255,255,255,0.3);
 }
 
-/* Center the main rules heading */
+/* Заголовок блока правил внутри контейнера */
 .admin-container .rules-title {
     text-align: center;
 }
 
-/* Header bar for admin page */
+/* Шапка страницы */
 header {
     position: fixed;
     top: 0;
@@ -57,19 +59,29 @@ header {
     align-items: center;
 }
 
-/* Centered title in header */
+/* Заголовок в шапке */
 .header-title {
     margin: 0;
     text-align: center;
 }
 
-/* Container for buttons on the left side of the header */
+/* Левая часть шапки с кнопками */
 .header-left {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
+/* Информация о пользователе в шапке */
+.user-info {
+    margin: 10px 20px;
+}
+header .user-info {
+    margin: 0;
+    justify-self: end;
+}
+
+/* Сообщение об ошибке */
 .error {
     padding: 10px;
     margin: 10px 0;
@@ -78,6 +90,7 @@ header {
     font-weight: bold;
 }
 
+/* Список чекбоксов */
 .checkbox-list {
     width: 100%;
     max-height: 150px;
@@ -88,7 +101,7 @@ header {
     box-sizing: border-box;
 }
 
-
+/* Блок сортировки и таблица колонок */
 .sort-rules {
     margin: 20px 0;
 }
@@ -107,7 +120,7 @@ header {
     margin-bottom: 5px;
 }
 
-/* Column configuration table */
+/* Таблица настроек колонок */
 .column-table {
     width: 100%;
     border-collapse: collapse;
@@ -139,7 +152,22 @@ header {
     cursor: move;
 }
 
-/* Select2 adjustments */
+/* Строка продукта в таблице */
+.product-row {
+    display: flex;
+    align-items: center;
+}
+
+.product-row .drag-handle {
+    cursor: grab;
+    margin-right: 8px;
+}
+
+.product-row .product-name {
+    flex-grow: 1;
+}
+
+/* Настройки Select2 */
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: #444;
     line-height: 28px;
@@ -154,7 +182,7 @@ header {
     white-space: nowrap;
 }
 
-/* Buttons */
+/* Кнопки */
 .btn-msk {
     padding: 10px 25px;
     text-decoration: none;
@@ -172,7 +200,6 @@ header {
     color: rgb(56, 204, 101);
 }
 
-/* Buttons in header */
 .header-btn {
     display: inline-block;
     background-color: rgba(156, 204, 101);
@@ -205,6 +232,7 @@ header {
     border-color: #004fed;
 }
 
+/* Вкладки в админке */
 .admin-tabs {
     display: flex;
     width: 100%;
@@ -243,7 +271,7 @@ header {
     color: #000;
 }
 
-/* Input fields */
+/* Поля ввода */
 .ms-login-field .ms-form-control:-webkit-autofill {
     -webkit-box-shadow: 0 0 0 1000px #fff inset;
 }
@@ -267,29 +295,7 @@ header {
     }
 }
 
-.user-info {
-    margin: 10px 20px;
-}
-header .user-info {
-    margin: 0;
-    justify-self: end;
-}
-
-.product-row {
-    display: flex;
-    align-items: center;
-}
-
-.product-row .drag-handle {
-    cursor: grab;
-    margin-right: 8px;
-}
-
-.product-row .product-name {
-    flex-grow: 1;
-}
-
-/* Base styles from styles.css */
+/* Базовые элементы */
 h2, h3 {
     color: #2c3e50;
 }
@@ -311,13 +317,12 @@ label {
     margin: 0.5em 0;
 }
 
-/* Ensure labels in the "Add User" form span the full width */
 .add-user-form label {
     width: 100%;
     display: flex;
     align-items: center;
 }
-/* Center specific labels horizontally */
+
 .add-user-form label.centered-label {
     justify-content: center;
 }
@@ -361,7 +366,7 @@ a:hover {
     margin-left: 10px;
 }
 
-/* Center the "Add User" section */
+/* Блок добавления пользователя */
 .add-user-title {
     text-align: center;
 }
@@ -377,7 +382,6 @@ a:hover {
     box-sizing: border-box;
 }
 
-/* Row for login and password */
 .add-user-form .login-pass-row {
     display: flex;
     width: 100%;
@@ -393,20 +397,18 @@ a:hover {
     margin-left: 10px;
 }
 
-/* Stretch fields in the "Add User" form */
 .add-user-form select {
     width: auto;
     box-sizing: border-box;
     flex: 1;
 }
 
-/* Select2 container should also stretch across the available width */
 .add-user-form .select2-container {
     width: 100% !important;
     box-sizing: border-box;
 }
 
-/* Modal window for adding user */
+/* Модальное окно добавления пользователя */
 #addUserModal {
     display: none;
     position: fixed;
@@ -417,6 +419,7 @@ a:hover {
     background-color: rgba(0, 0, 0, 0.6);
     z-index: 1000;
 }
+
 #addUserModal .modal-content {
     background: #fff;
     margin: 5% auto;
@@ -430,6 +433,7 @@ a:hover {
     flex-direction: column;
     align-items: center;
 }
+
 #addUserModal .close-modal {
     position: absolute;
     top: 10px;
@@ -439,7 +443,7 @@ a:hover {
     cursor: pointer;
 }
 
-/* Modal window for editing users */
+/* Модальное окно списка пользователей */
 #usersModal {
     display: none;
     position: fixed;
@@ -450,6 +454,7 @@ a:hover {
     background-color: rgba(0, 0, 0, 0.6);
     z-index: 1000;
 }
+
 #usersModal .modal-content {
     background: #fff;
     margin: 3% auto;
@@ -461,6 +466,7 @@ a:hover {
     overflow-x: auto;
     position: relative;
 }
+
 #usersModal .close-modal {
     position: absolute;
     top: 10px;
@@ -470,7 +476,7 @@ a:hover {
     cursor: pointer;
 }
 
-/* Center heading and position create user button */
+/* Заголовок и кнопка создания пользователя в модальном окне */
 #usersModal .users-modal-title {
     text-align: center;
 }
@@ -486,13 +492,12 @@ a:hover {
     margin: 20px auto;
 }
 
-/* Rounded corners for the users table */
+/* Скругление углов у таблиц и форм в модальном окне */
 #usersModal table {
     border-radius: 6px;
     overflow: hidden;
 }
 
-/* Rounded corners for the entire users form */
 #usersModal form {
     border-radius: 6px;
     overflow: hidden;
