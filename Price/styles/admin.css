@@ -114,7 +114,8 @@ header .user-info {
 
 /* Таблица настроек колонок */
 .column-table {
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0 1px;
     width: 100%;
 }
 
