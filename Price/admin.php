@@ -595,6 +595,14 @@ $username = $_SESSION['user']['login'];
 <div class="sort-rules">
     <h4 class="column-title">Колонки таблицы</h4>
     <table class="column-table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Колонка</th>
+                <th>Название</th>
+                <th>Статус</th>
+            </tr>
+        </thead>
         <tbody id="columnFields">
         <?php foreach ($columnRules as $col): ?>
             <tr class="column-row<?php if (empty($col['enabled'])) echo ' disabled'; ?>">
@@ -698,14 +706,17 @@ $username = $_SESSION['user']['login'];
     <h3 class="users-modal-title">Пользователи</h3>
     <form method="post" action="admin.php?tab=<?= $currentTab ?>">
         <table>
-            <tr>
-                <th>Логин</th>
-                <th>Контрагент</th>
-                <th>Скидка %</th>
-                <th>Новый пароль</th>
-                <th>Группы товаров</th>
-                <th>Удалить?</th>
-            </tr>
+            <thead>
+                <tr>
+                    <th>Логин</th>
+                    <th>Контрагент</th>
+                    <th>Скидка %</th>
+                    <th>Новый пароль</th>
+                    <th>Группы товаров</th>
+                    <th>Удалить?</th>
+                </tr>
+            </thead>
+            <tbody>
             <?php foreach ($users as $index => $u): ?>
                 <?php if ($u['role'] === 'admin') continue; ?>
                 <tr>
@@ -772,6 +783,7 @@ $username = $_SESSION['user']['login'];
                     </td>
                 </tr>
             <?php endforeach; ?>
+            </tbody>
         </table>
 
         <br>
