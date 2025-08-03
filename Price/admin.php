@@ -569,10 +569,10 @@ $username = $_SESSION['user']['login'];
 <body class="ms-login-field">
 <header>
     <div class="header-left">
+        <button type="button" id="openUsersModal" class="header-btn">Редактировать пользователей</button>
         <form method="post" action="admin.php?tab=<?= $currentTab ?>" class="header-form">
             <button type="submit" name="loadMs" class="header-btn">Получить данные из Моего Склада</button>
         </form>
-        <button type="button" id="openUsersModal" class="header-btn">Редактировать пользователей</button>
     </div>
     <h2 class="header-title"><?= htmlspecialchars($currentTabName) ?></h2>
     <p class="user-info">
