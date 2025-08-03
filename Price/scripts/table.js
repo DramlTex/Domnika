@@ -7,10 +7,7 @@
 let COUNTRY_ORDER = [];
 let TYPE_ORDER = [];
 let TYPE_SORT = 'alphabetical';
-// Массив типов по каждой стране
-let TYPE_ORDER_MAP = {};
-// Порядок товаров в разрезе страна+тип
-let PRODUCT_ORDER_MAP = {};
+let PRODUCT_ORDER = [];
 
 /**
  * Описание колонок (порядок и заголовки) также поступает из
@@ -52,54 +49,37 @@ function sortByCountry(data) {
     acc[normalizeCountry(c)] = i;
     return acc;
   }, {});
-
-  // Формируем карту типов и товаров по каждой стране
-  const typeMapByCountry = {};
-  const productMapByCT = {};
-  Object.keys(TYPE_ORDER_MAP).forEach(c => {
-    const types = TYPE_ORDER_MAP[c];
-    typeMapByCountry[c] = types.reduce((acc, t, i) => {
-      acc[normalizeType(t)] = i;
-      return acc;
-    }, {});
-    types.forEach(t => {
-      const key = c + '|' + normalizeType(t);
-      const prodList = PRODUCT_ORDER_MAP[key] || [];
-      productMapByCT[key] = prodList.reduce((acc, id, i) => {
-        acc[id] = i;
-        return acc;
-      }, {});
-    });
-  });
-
-  const sortAlpha = TYPE_SORT === 'alphabetical';
+  const typeMap = TYPE_ORDER.reduce((acc, t, i) => {
+    acc[normalizeType(t)] = i;
+    return acc;
+  }, {});
+  const productMap = PRODUCT_ORDER.reduce((acc, art, i) => {
+    acc[art] = i;
+    return acc;
+  }, {});
+  const sortAlpha = TYPE_SORT === 'alphabetical' || TYPE_ORDER.length === 0;
   return data.slice().sort((a, b) => {
+    const ai = Object.prototype.hasOwnProperty.call(productMap, a.articul) ? productMap[a.articul] : null;
+    const bi = Object.prototype.hasOwnProperty.call(productMap, b.articul) ? productMap[b.articul] : null;
+    if (ai !== null || bi !== null) {
+      if (ai === null) return 1;
+      if (bi === null) return -1;
+      if (ai !== bi) return ai - bi;
+    }
+
     const aCountry = normalizeCountry(a.supplier);
     const bCountry = normalizeCountry(b.supplier);
-    const aidx = countryMap.hasOwnProperty(aCountry) ? countryMap[aCountry] : COUNTRY_ORDER.length;
-    const bidx = countryMap.hasOwnProperty(bCountry) ? countryMap[bCountry] : COUNTRY_ORDER.length;
+    const aidx = Object.prototype.hasOwnProperty.call(countryMap, aCountry) ? countryMap[aCountry] : COUNTRY_ORDER.length;
+    const bidx = Object.prototype.hasOwnProperty.call(countryMap, bCountry) ? countryMap[bCountry] : COUNTRY_ORDER.length;
     if (aidx !== bidx) return aidx - bidx;
 
     const aType = normalizeType(a.tip);
     const bType = normalizeType(b.tip);
-    const aTypeMap = typeMapByCountry[aCountry] || {};
-    const bTypeMap = typeMapByCountry[bCountry] || {};
-    const ati = aTypeMap.hasOwnProperty(aType) ? aTypeMap[aType] : (TYPE_ORDER_MAP[aCountry] ? TYPE_ORDER_MAP[aCountry].length : 0);
-    const bti = bTypeMap.hasOwnProperty(bType) ? bTypeMap[bType] : (TYPE_ORDER_MAP[bCountry] ? TYPE_ORDER_MAP[bCountry].length : 0);
+    const ati = Object.prototype.hasOwnProperty.call(typeMap, aType) ? typeMap[aType] : TYPE_ORDER.length;
+    const bti = Object.prototype.hasOwnProperty.call(typeMap, bType) ? typeMap[bType] : TYPE_ORDER.length;
     if (!sortAlpha && (ati !== bti)) return ati - bti;
-    if (aType !== bType) return aType.localeCompare(bType);
 
-    const aKey = aCountry + '|' + aType;
-    const bKey = bCountry + '|' + bType;
-    const aProdMap = productMapByCT[aKey] || {};
-    const bProdMap = productMapByCT[bKey] || {};
-    const ai = aProdMap[a.articul];
-    const bi = bProdMap[b.articul];
-    if (ai !== undefined || bi !== undefined) {
-      if (ai === undefined) return 1;
-      if (bi === undefined) return -1;
-      if (ai !== bi) return ai - bi;
-    }
+    if (aType !== bType) return aType.localeCompare(bType);
 
     return a.name.localeCompare(b.name);
   });
