@@ -4,10 +4,11 @@
  * для сортировки и фильтрации таблицы.
  * @type {string[]}
  */
-let COUNTRY_ORDER = [];
-let TYPE_ORDER = [];
-let TYPE_SORT = 'alphabetical';
-let PRODUCT_ORDER = [];
+let COUNTRY_RULES = [];
+let COUNTRY_MAP = {};
+let TYPE_MAP = {};
+let PRODUCT_MAP = {};
+let GLOBAL_TYPE_ORDER = [];
 
 /**
  * Описание колонок (порядок и заголовки) также поступает из
@@ -44,40 +45,60 @@ function normalizeType(value) {
   return (value || '').trim().toUpperCase();
 }
 
+function buildSortMaps() {
+  COUNTRY_MAP = {};
+  TYPE_MAP = {};
+  PRODUCT_MAP = {};
+  GLOBAL_TYPE_ORDER = [];
+  COUNTRY_RULES.forEach((c, ci) => {
+    const cName = c.name || '';
+    const cNorm = normalizeCountry(cName);
+    COUNTRY_MAP[cNorm] = ci;
+    const types = Array.isArray(c.types) ? c.types : [];
+    TYPE_MAP[cNorm] = {};
+    types.forEach((t, ti) => {
+      const tName = t.name || '';
+      const tNorm = normalizeType(tName);
+      TYPE_MAP[cNorm][tNorm] = ti;
+      if (!GLOBAL_TYPE_ORDER.some(x => normalizeType(x) === tNorm)) {
+        GLOBAL_TYPE_ORDER.push(tName);
+      }
+      const prods = Array.isArray(t.products) ? t.products : [];
+      prods.forEach((p, pi) => {
+        let id = typeof p === 'string' ? p : p.id;
+        if (id) {
+          PRODUCT_MAP[id] = { country: ci, type: ti, index: pi };
+        }
+      });
+    });
+  });
+}
+
 function sortByCountry(data) {
-  const countryMap = COUNTRY_ORDER.reduce((acc, c, i) => {
-    acc[normalizeCountry(c)] = i;
-    return acc;
-  }, {});
-  const typeMap = TYPE_ORDER.reduce((acc, t, i) => {
-    acc[normalizeType(t)] = i;
-    return acc;
-  }, {});
-  const productMap = PRODUCT_ORDER.reduce((acc, art, i) => {
-    acc[art] = i;
-    return acc;
-  }, {});
-  const sortAlpha = TYPE_SORT === 'alphabetical' || TYPE_ORDER.length === 0;
   return data.slice().sort((a, b) => {
-    const ai = Object.prototype.hasOwnProperty.call(productMap, a.articul) ? productMap[a.articul] : null;
-    const bi = Object.prototype.hasOwnProperty.call(productMap, b.articul) ? productMap[b.articul] : null;
-    if (ai !== null || bi !== null) {
-      if (ai === null) return 1;
-      if (bi === null) return -1;
-      if (ai !== bi) return ai - bi;
+    const aProd = PRODUCT_MAP[a.articul];
+    const bProd = PRODUCT_MAP[b.articul];
+    if (aProd || bProd) {
+      if (!aProd) return 1;
+      if (!bProd) return -1;
+      if (aProd.country !== bProd.country) return aProd.country - bProd.country;
+      if (aProd.type !== bProd.type) return aProd.type - bProd.type;
+      if (aProd.index !== bProd.index) return aProd.index - bProd.index;
     }
 
     const aCountry = normalizeCountry(a.supplier);
     const bCountry = normalizeCountry(b.supplier);
-    const aidx = Object.prototype.hasOwnProperty.call(countryMap, aCountry) ? countryMap[aCountry] : COUNTRY_ORDER.length;
-    const bidx = Object.prototype.hasOwnProperty.call(countryMap, bCountry) ? countryMap[bCountry] : COUNTRY_ORDER.length;
+    const aidx = Object.prototype.hasOwnProperty.call(COUNTRY_MAP, aCountry) ? COUNTRY_MAP[aCountry] : COUNTRY_RULES.length;
+    const bidx = Object.prototype.hasOwnProperty.call(COUNTRY_MAP, bCountry) ? COUNTRY_MAP[bCountry] : COUNTRY_RULES.length;
     if (aidx !== bidx) return aidx - bidx;
 
     const aType = normalizeType(a.tip);
     const bType = normalizeType(b.tip);
-    const ati = Object.prototype.hasOwnProperty.call(typeMap, aType) ? typeMap[aType] : TYPE_ORDER.length;
-    const bti = Object.prototype.hasOwnProperty.call(typeMap, bType) ? typeMap[bType] : TYPE_ORDER.length;
-    if (!sortAlpha && (ati !== bti)) return ati - bti;
+    const aTypeMap = TYPE_MAP[aCountry] || {};
+    const bTypeMap = TYPE_MAP[bCountry] || {};
+    const ati = Object.prototype.hasOwnProperty.call(aTypeMap, aType) ? aTypeMap[aType] : Object.keys(aTypeMap).length;
+    const bti = Object.prototype.hasOwnProperty.call(bTypeMap, bType) ? bTypeMap[bType] : Object.keys(bTypeMap).length;
+    if (ati !== bti) return ati - bti;
 
     if (aType !== bType) return aType.localeCompare(bType);
 
@@ -91,13 +112,9 @@ function sortByCountry(data) {
  * @returns {string[]}
  */
 function orderCountriesList(list) {
-  const map = COUNTRY_ORDER.reduce((acc, c, i) => {
-    acc[normalizeCountry(c)] = i;
-    return acc;
-  }, {});
   return list.slice().sort((a, b) => {
-    const ai = map.hasOwnProperty(normalizeCountry(a)) ? map[normalizeCountry(a)] : COUNTRY_ORDER.length;
-    const bi = map.hasOwnProperty(normalizeCountry(b)) ? map[normalizeCountry(b)] : COUNTRY_ORDER.length;
+    const ai = Object.prototype.hasOwnProperty.call(COUNTRY_MAP, normalizeCountry(a)) ? COUNTRY_MAP[normalizeCountry(a)] : COUNTRY_RULES.length;
+    const bi = Object.prototype.hasOwnProperty.call(COUNTRY_MAP, normalizeCountry(b)) ? COUNTRY_MAP[normalizeCountry(b)] : COUNTRY_RULES.length;
     return ai - bi;
   });
 }
@@ -108,17 +125,16 @@ function orderCountriesList(list) {
  * @returns {string[]}
  */
 function orderTypesList(list) {
-  const map = TYPE_ORDER.reduce((acc, t, i) => {
+  const map = GLOBAL_TYPE_ORDER.reduce((acc, t, i) => {
     acc[normalizeType(t)] = i;
     return acc;
   }, {});
-  const sortAlpha = TYPE_SORT === 'alphabetical' || TYPE_ORDER.length === 0;
   return list.slice().sort((a, b) => {
     const aNorm = normalizeType(a);
     const bNorm = normalizeType(b);
-    const ai = map.hasOwnProperty(aNorm) ? map[aNorm] : TYPE_ORDER.length;
-    const bi = map.hasOwnProperty(bNorm) ? map[bNorm] : TYPE_ORDER.length;
-    if (!sortAlpha && (ai !== bi)) return ai - bi;
+    const ai = Object.prototype.hasOwnProperty.call(map, aNorm) ? map[aNorm] : GLOBAL_TYPE_ORDER.length;
+    const bi = Object.prototype.hasOwnProperty.call(map, bNorm) ? map[bNorm] : GLOBAL_TYPE_ORDER.length;
+    if (ai !== bi) return ai - bi;
     return aNorm.localeCompare(bNorm);
   });
 }
