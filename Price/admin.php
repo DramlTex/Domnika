@@ -606,7 +606,7 @@ $username = $_SESSION['user']['login'];
             <tbody id="columnFields">
             <?php foreach ($columnRules as $col): ?>
                 <tr class="column-row<?php if (empty($col['enabled'])) echo ' disabled'; ?>">
-                    <td><span class="drag-handle">&#9776;</span></td>
+                    <td></td>
                     <td>
                         <select name="col_id[]" class="column-select">
                             <?php foreach ($columnRules as $opt): ?>
@@ -636,7 +636,7 @@ $username = $_SESSION['user']['login'];
         <div id="countryContainer">
             <?php foreach ($countryRules as $ci => $country): ?>
                 <div class="country-block">
-                    <span class="drag-handle">&#9776;</span>
+                    <span class="country-number"><?= $ci + 1 ?></span>
                     <select name="countries[<?= $ci ?>][name]" class="country-select">
                         <option value="">(Не выбрана)</option>
                         <?php foreach ($countriesList as $name): ?>
@@ -650,7 +650,6 @@ $username = $_SESSION['user']['login'];
                     <div class="type-container">
                         <?php foreach (($country['types'] ?? []) as $ti => $type): ?>
                             <div class="type-block">
-                                <span class="drag-handle">&#9776;</span>
                                 <select name="countries[<?= $ci ?>][types][<?= $ti ?>][name]" class="type-select">
                                     <option value="">(Не выбран)</option>
                                     <?php foreach ($typesList as $name): ?>
@@ -664,7 +663,6 @@ $username = $_SESSION['user']['login'];
                                 <div class="product-container">
                                     <?php foreach (($type['products'] ?? []) as $pi => $p): ?>
                                         <div class="product-row">
-                                            <span class="drag-handle">&#9776;</span>
                                             <span class="product-name"><?= htmlspecialchars($p['name']) ?></span>
                                             <input type="hidden" name="countries[<?= $ci ?>][types][<?= $ti ?>][products][<?= $pi ?>][id]" value="<?= htmlspecialchars($p['id']) ?>">
                                             <input type="hidden" name="countries[<?= $ci ?>][types][<?= $ti ?>][products][<?= $pi ?>][name]" value="<?= htmlspecialchars($p['name']) ?>">
@@ -849,7 +847,7 @@ var types = <?= json_encode($typesList, JSON_UNESCAPED_UNICODE) ?>;
 function createCountryBlock(value) {
     var index = $('#countryContainer .country-block').length;
     var block = $('<div class="country-block"></div>');
-    var handle = $('<span class="drag-handle">&#9776;</span>');
+    var number = $('<span class="country-number"></span>');
     var select = $('<select class="country-select"></select>').attr('name', 'countries[' + index + '][name]');
     select.append('<option value="">(Не выбрана)</option>');
     countries.forEach(function(c){
@@ -863,14 +861,13 @@ function createCountryBlock(value) {
     var remove = $('<button type="button" class="remove-country btn-msk">Удалить страну</button>');
     var typeCont = $('<div class="type-container"></div>');
     var addType = $('<button type="button" class="add-type btn-msk">Добавить тип</button>');
-    block.append(handle, select, remove, typeCont, addType);
+    block.append(number, select, remove, typeCont, addType);
     return block;
 }
 
 function createTypeBlock(cIndex, value) {
     var tIndex = $('#countryContainer .country-block').eq(cIndex).find('.type-block').length;
     var block = $('<div class="type-block"></div>');
-    var handle = $('<span class="drag-handle">&#9776;</span>');
     var select = $('<select class="type-select"></select>').attr('name', 'countries[' + cIndex + '][types][' + tIndex + '][name]');
     select.append('<option value="">(Не выбран)</option>');
     types.forEach(function(t){
@@ -887,19 +884,18 @@ function createTypeBlock(cIndex, value) {
     var btnSearch = $('<button type="button" class="btnSearchProduct">Найти</button>');
     var results = $('<select class="productResults" style="width:300px; display:none;"></select>');
     var addProd = $('<button type="button" class="addProduct" style="display:none;">Добавить</button>');
-    block.append(handle, select, remove, prodCont, search, btnSearch, results, addProd);
+    block.append(select, remove, prodCont, search, btnSearch, results, addProd);
     return block;
 }
 
 function createProductRow(cIndex, tIndex, id, name){
     var pIndex = $('#countryContainer .country-block').eq(cIndex).find('.type-block').eq(tIndex).find('.product-row').length;
     var row = $('<div class="product-row"></div>');
-    var handle = $('<span class="drag-handle">&#9776;</span>');
     var text = $('<span class="product-name"></span>').text(name);
     var hidId = $('<input type="hidden">').attr('name','countries['+cIndex+'][types]['+tIndex+'][products]['+pIndex+'][id]').val(id);
     var hidName = $('<input type="hidden">').attr('name','countries['+cIndex+'][types]['+tIndex+'][products]['+pIndex+'][name]').val(name);
     var remove = $('<button type="button" class="remove-product btn-msk">Удалить</button>');
-    row.append(handle, text, hidId, hidName, remove);
+    row.append(text, hidId, hidName, remove);
     return row;
 }
 
@@ -908,7 +904,6 @@ var columnOptions = <?php echo json_encode(array_column($columnRules, 'title', '
 function createColumnRow(id, title, cls, enabled) {
     var row = $('<tr class="column-row"></tr>');
     if (!enabled) row.addClass('disabled');
-    var handle = $('<td><span class="drag-handle">&#9776;</span></td>');
     var selectTd = $('<td></td>');
     var select = $('<select name="col_id[]" class="column-select"></select>');
     $.each(columnOptions, function(key, val){
@@ -926,19 +921,28 @@ function createColumnRow(id, title, cls, enabled) {
     var toggleBtn = $('<button type="button" class="toggle-column btn-msk"></button>').text(enabled ? 'Выключить' : 'Включить');
     if (enabled) toggleBtn.addClass('active');
     toggleTd.append(toggleBtn);
-    row.append(handle, selectTd, titleTd, toggleTd);
+    row.append($('<td></td>'), selectTd, titleTd, toggleTd);
     return row;
 }
 
 $(function(){
     $('select').select2();
-    $('#countryContainer').sortable({handle: '.drag-handle'}).disableSelection();
+    function updateCountryNumbers(){
+        $('#countryContainer .country-block').each(function(i){
+            $(this).find('.country-number').text(i + 1);
+        });
+    }
+    $('#countryContainer').sortable({
+        update: updateCountryNumbers
+    }).disableSelection();
+    updateCountryNumbers();
 
     $(document).on('click','#addCountry', function(){
         var block = createCountryBlock('');
         $('#countryContainer').append(block);
         block.find('select').select2();
         $('#countryContainer').sortable('refresh');
+        updateCountryNumbers();
     });
 
     $(document).on('click','.add-type', function(){
@@ -947,7 +951,7 @@ $(function(){
         var block = createTypeBlock(cIndex, '');
         cBlock.find('.type-container').append(block);
         block.find('select').select2();
-        cBlock.find('.type-container').sortable({handle: '.drag-handle'}).disableSelection();
+        cBlock.find('.type-container').sortable().disableSelection();
     });
 
     $(document).on('click','.btnSearchProduct', function(){
@@ -973,14 +977,17 @@ $(function(){
         if(!id) return;
         var row = createProductRow(cIndex, tIndex, id, name);
         tBlock.find('.product-container').append(row);
-        tBlock.find('.product-container').sortable({handle: '.drag-handle'}).disableSelection();
+        tBlock.find('.product-container').sortable().disableSelection();
     });
 
-    $(document).on('click','.remove-country', function(){ $(this).closest('.country-block').remove(); });
+    $(document).on('click','.remove-country', function(){
+        $(this).closest('.country-block').remove();
+        updateCountryNumbers();
+    });
     $(document).on('click','.remove-type', function(){ $(this).closest('.type-block').remove(); });
     $(document).on('click','.remove-product', function(){ $(this).closest('.product-row').remove(); });
 
-    $('#columnFields').sortable({handle: '.drag-handle'}).disableSelection();
+    $('#columnFields').sortable().disableSelection();
 
     $(document).on('click', '.toggle-column', function(){
         var row = $(this).closest('.column-row');

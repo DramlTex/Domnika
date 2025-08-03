@@ -148,13 +148,13 @@ header .user-info {
     opacity: 0.5;
 }
 
-.drag-handle {
-    cursor: move;
+.country-block {
+    margin: 0;
+    padding: 0;
 }
 
-/* Строка продукта в таблице */
-.product-row .drag-handle {
-    cursor: grab;
+.country-number {
+    margin-right: 8px;
 }
 
 /* Настройки Select2 */
