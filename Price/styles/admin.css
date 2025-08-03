@@ -187,6 +187,10 @@ header {
     text-decoration: none;
 }
 
+#openUsersModal {
+    white-space: nowrap;
+}
+
 .header-btn:hover {
     background-color: rgba(156, 204, 101);
 }
