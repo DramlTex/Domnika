@@ -594,24 +594,32 @@ $username = $_SESSION['user']['login'];
 <!-- Редактирование колонок -->
 <div class="sort-rules">
     <h4 class="column-title">Колонки таблицы</h4>
-        <div id="columnFields">
+    <table class="column-table">
+        <tbody id="columnFields">
         <?php foreach ($columnRules as $col): ?>
-            <div class="column-row<?php if (empty($col['enabled'])) echo ' disabled'; ?>">
-                <span class="drag-handle">&#9776;</span>
-                <select name="col_id[]" class="column-select">
-                    <?php foreach ($columnRules as $opt): ?>
-                        <option value="<?= htmlspecialchars($opt['id']) ?>" <?= $opt['id'] === $col['id'] ? 'selected' : '' ?>><?= htmlspecialchars($opt['title']) ?></option>
-                    <?php endforeach; ?>
-                </select>
-                <input type="text" name="col_title[]" value="<?= htmlspecialchars($col['title']) ?>" class="ms-form-control" />
-                <input type="hidden" name="col_class[]" value="<?= htmlspecialchars($col['class'] ?? '') ?>">
-                <input type="hidden" name="col_enabled[]" class="col-enabled" value="<?= $col['enabled'] ? '1' : '0' ?>">
-                <button type="button" class="toggle-column btn-msk<?= $col['enabled'] ? ' active' : '' ?>">
-                    <?= $col['enabled'] ? 'Выключить' : 'Включить' ?>
-                </button>
-            </div>
+            <tr class="column-row<?php if (empty($col['enabled'])) echo ' disabled'; ?>">
+                <td><span class="drag-handle">&#9776;</span></td>
+                <td>
+                    <select name="col_id[]" class="column-select">
+                        <?php foreach ($columnRules as $opt): ?>
+                            <option value="<?= htmlspecialchars($opt['id']) ?>" <?= $opt['id'] === $col['id'] ? 'selected' : '' ?>><?= htmlspecialchars($opt['title']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="col_title[]" value="<?= htmlspecialchars($col['title']) ?>" class="ms-form-control" />
+                    <input type="hidden" name="col_class[]" value="<?= htmlspecialchars($col['class'] ?? '') ?>">
+                    <input type="hidden" name="col_enabled[]" class="col-enabled" value="<?= $col['enabled'] ? '1' : '0' ?>">
+                </td>
+                <td>
+                    <button type="button" class="toggle-column btn-msk<?= $col['enabled'] ? ' active' : '' ?>">
+                        <?= $col['enabled'] ? 'Выключить' : 'Включить' ?>
+                    </button>
+                </td>
+            </tr>
         <?php endforeach; ?>
-        </div>
+        </tbody>
+    </table>
 </div>
 <hr>
 <div class="sort-rules">
@@ -888,21 +896,27 @@ function createProductRow(cIndex, tIndex, id, name){
 var columnOptions = <?php echo json_encode(array_column($columnRules, 'title', 'id'), JSON_UNESCAPED_UNICODE); ?>;
 
 function createColumnRow(id, title, cls, enabled) {
-    var row = $('<div class="column-row"></div>');
+    var row = $('<tr class="column-row"></tr>');
     if (!enabled) row.addClass('disabled');
-    var handle = $('<span class="drag-handle">&#9776;</span>');
+    var handle = $('<td><span class="drag-handle">&#9776;</span></td>');
+    var selectTd = $('<td></td>');
     var select = $('<select name="col_id[]" class="column-select"></select>');
     $.each(columnOptions, function(key, val){
         var opt = $('<option>').val(key).text(val);
         if (key === id) opt.attr('selected','selected');
         select.append(opt);
     });
+    selectTd.append(select);
+    var titleTd = $('<td></td>');
     var titleInput = $('<input type="text" name="col_title[]" class="ms-form-control">').val(title || '');
     var classInput = $('<input type="hidden" name="col_class[]">').val(cls || '');
     var enabledInput = $('<input type="hidden" name="col_enabled[]" class="col-enabled">').val(enabled ? '1' : '0');
+    titleTd.append(titleInput, classInput, enabledInput);
+    var toggleTd = $('<td></td>');
     var toggleBtn = $('<button type="button" class="toggle-column btn-msk"></button>').text(enabled ? 'Выключить' : 'Включить');
     if (enabled) toggleBtn.addClass('active');
-    row.append(handle, select, titleInput, classInput, enabledInput, toggleBtn);
+    toggleTd.append(toggleBtn);
+    row.append(handle, selectTd, titleTd, toggleTd);
     return row;
 }
 
