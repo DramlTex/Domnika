@@ -99,8 +99,6 @@ header {
 
 #columnFields {
     width: 100%;
-    padding: 0 10px;
-    box-sizing: border-box;
 }
 
 .country-row,
@@ -109,22 +107,23 @@ header {
     margin-bottom: 5px;
 }
 
-/* Column configuration rows */
-.column-row {
-    display: flex;
-    align-items: center;
+/* Column configuration table */
+.column-table {
     width: 100%;
-    margin-bottom: 5px;
+    border-collapse: collapse;
+}
+
+.column-table td {
+    border: none;
+    padding: 4px 10px 4px 0;
 }
 
 .column-row .column-select,
 .column-row .ms-form-control {
-    flex: 1;
-    margin-right: 10px;
+    width: 100%;
 }
 
 .column-row .toggle-column {
-    margin-left: auto;
     background-color: rgba(255, 255, 255, 0.8);
 }
 
@@ -138,7 +137,6 @@ header {
 
 .drag-handle {
     cursor: move;
-    margin-right: 5px;
 }
 
 /* Select2 adjustments */
