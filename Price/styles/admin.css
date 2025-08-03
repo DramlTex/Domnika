@@ -441,14 +441,3 @@ a:hover {
     overflow: hidden;
 }
 
-/* Sort rules: occupy full width */
-.sort-rules select,
-.sort-rules input,
-.sort-rules button,
-.sort-rules .country-block,
-.sort-rules .type-block,
-.sort-rules .product-row {
-    width: 100%;
-    box-sizing: border-box;
-}
-
