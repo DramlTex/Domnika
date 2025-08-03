@@ -581,266 +581,265 @@ $username = $_SESSION['user']['login'];
     </p>
 </header>
 <div class="admin-container">
-<h3 class="rules-title">Настройка правил отображения товаров</h3>
-<div class="admin-tabs">
-<?php foreach ($adminTabs as $slug => $title): ?>
-    <a href="admin.php?tab=<?= $slug ?>" class="admin-tab<?= $slug === $currentTab ? ' active' : '' ?>"><?= htmlspecialchars($title) ?></a>
-<?php endforeach; ?>
-</div>
-
-<!-- Правила сортировки и столбцов -->
-<form method="post" action="admin.php?tab=<?= $currentTab ?>" id="rulesForm">
-<hr>
-<!-- Редактирование колонок -->
-<div class="sort-rules">
-    <h4 class="column-title">Колонки таблицы</h4>
-    <table class="column-table">
-        <thead>
-            <tr>
-                <th></th>
-                <th>Колонка</th>
-                <th>Название</th>
-                <th>Статус</th>
-            </tr>
-        </thead>
-        <tbody id="columnFields">
-        <?php foreach ($columnRules as $col): ?>
-            <tr class="column-row<?php if (empty($col['enabled'])) echo ' disabled'; ?>">
-                <td><span class="drag-handle">&#9776;</span></td>
-                <td>
-                    <select name="col_id[]" class="column-select">
-                        <?php foreach ($columnRules as $opt): ?>
-                            <option value="<?= htmlspecialchars($opt['id']) ?>" <?= $opt['id'] === $col['id'] ? 'selected' : '' ?>><?= htmlspecialchars($opt['title']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </td>
-                <td>
-                    <input type="text" name="col_title[]" value="<?= htmlspecialchars($col['title']) ?>" class="ms-form-control" />
-                    <input type="hidden" name="col_class[]" value="<?= htmlspecialchars($col['class'] ?? '') ?>">
-                    <input type="hidden" name="col_enabled[]" class="col-enabled" value="<?= $col['enabled'] ? '1' : '0' ?>">
-                </td>
-                <td>
-                    <button type="button" class="toggle-column btn-msk<?= $col['enabled'] ? ' active' : '' ?>">
-                        <?= $col['enabled'] ? 'Выключить' : 'Включить' ?>
-                    </button>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
-</div>
-<hr>
-<div class="sort-rules">
-    <h4>Порядок стран</h4>
-        <div class="sort-rules">
-    <h4>Порядок стран, типов и товаров</h4>
-    <div id="countryContainer">
-        <?php foreach ($countryRules as $ci => $country): ?>
-            <div class="country-block">
-                <span class="drag-handle">&#9776;</span>
-                <select name="countries[<?= $ci ?>][name]" class="country-select">
-                    <option value="">(Не выбрана)</option>
-                    <?php foreach ($countriesList as $name): ?>
-                        <option value="<?= htmlspecialchars($name) ?>" <?= $name === ($country['name'] ?? '') ? 'selected' : '' ?>><?= htmlspecialchars($name) ?></option>
-                    <?php endforeach; ?>
-                    <?php if (!in_array($country['name'] ?? '', $countriesList, true)): ?>
-                        <option value="<?= htmlspecialchars($country['name'] ?? '') ?>" selected><?= htmlspecialchars($country['name'] ?? '') ?></option>
-                    <?php endif; ?>
-                </select>
-                <button type="button" class="remove-country btn-msk">Удалить страну</button>
-                <div class="type-container">
-                    <?php foreach (($country['types'] ?? []) as $ti => $type): ?>
-                        <div class="type-block">
-                            <span class="drag-handle">&#9776;</span>
-                            <select name="countries[<?= $ci ?>][types][<?= $ti ?>][name]" class="type-select">
-                                <option value="">(Не выбран)</option>
-                                <?php foreach ($typesList as $name): ?>
-                                    <option value="<?= htmlspecialchars($name) ?>" <?= $name === ($type['name'] ?? '') ? 'selected' : '' ?>><?= htmlspecialchars($name) ?></option>
-                                <?php endforeach; ?>
-                                <?php if (!in_array($type['name'] ?? '', $typesList, true)): ?>
-                                    <option value="<?= htmlspecialchars($type['name'] ?? '') ?>" selected><?= htmlspecialchars($type['name'] ?? '') ?></option>
-                                <?php endif; ?>
-                            </select>
-                            <button type="button" class="remove-type btn-msk">Удалить тип</button>
-                            <div class="product-container">
-                                <?php foreach (($type['products'] ?? []) as $pi => $p): ?>
-                                    <div class="product-row">
-                                        <span class="drag-handle">&#9776;</span>
-                                        <span class="product-name"><?= htmlspecialchars($p['name']) ?></span>
-                                        <input type="hidden" name="countries[<?= $ci ?>][types][<?= $ti ?>][products][<?= $pi ?>][id]" value="<?= htmlspecialchars($p['id']) ?>">
-                                        <input type="hidden" name="countries[<?= $ci ?>][types][<?= $ti ?>][products][<?= $pi ?>][name]" value="<?= htmlspecialchars($p['name']) ?>">
-                                        <button type="button" class="remove-product btn-msk">Удалить</button>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                            <input type="text" class="product-search" placeholder="Введите имя товара" style="width:300px;">
-                            <button type="button" class="btnSearchProduct">Найти</button>
-                            <select class="productResults" style="width:300px; display:none;"></select>
-                            <button type="button" class="addProduct" style="display:none;">Добавить</button>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-                <button type="button" class="add-type btn-msk">Добавить тип</button>
-            </div>
-        <?php endforeach; ?>
+    <h3 class="rules-title">Настройка правил отображения товаров</h3>
+    <div class="admin-tabs">
+    <?php foreach ($adminTabs as $slug => $title): ?>
+        <a href="admin.php?tab=<?= $slug ?>" class="admin-tab<?= $slug === $currentTab ? ' active' : '' ?>"><?= htmlspecialchars($title) ?></a>
+    <?php endforeach; ?>
     </div>
-    <button type="button" id="addCountry" class="btn-msk">Добавить страну</button>
-</div>
-
-<button type="submit" name="saveRules" class="btn-msk btn-success">Сохранить</button>
-</form>
-</div>
-<?php if ($msError): ?>
-    <div class="error">
-        <strong>Ошибка при обращении к МойСклад:</strong><br>
-        <?= $msError ?>
-    </div>
-<?php endif; ?>
-
-</div>
-
-<div id="usersModal" class="modal">
-  <div class="modal-content">
-    <span class="close-modal" id="closeUsersModal">&times;</span>
-    <!-- Таблица пользователей (исключая админа) -->
-    <h3 class="users-modal-title">Пользователи</h3>
-    <form method="post" action="admin.php?tab=<?= $currentTab ?>">
-        <table>
+    
+    <!-- Правила сортировки и столбцов -->
+    <form method="post" action="admin.php?tab=<?= $currentTab ?>" id="rulesForm">
+    <hr>
+    <!-- Редактирование колонок -->
+    <div class="sort-rules">
+        <h4 class="column-title">Колонки таблицы</h4>
+        <table class="column-table">
             <thead>
                 <tr>
-                    <th>Логин</th>
-                    <th>Контрагент</th>
-                    <th>Скидка %</th>
-                    <th>Новый пароль</th>
-                    <th>Группы товаров</th>
-                    <th>Удалить?</th>
+                    <th></th>
+                    <th>Колонка</th>
+                    <th>Название</th>
+                    <th>Статус</th>
                 </tr>
             </thead>
-            <tbody>
-            <?php foreach ($users as $index => $u): ?>
-                <?php if ($u['role'] === 'admin') continue; ?>
-                <tr>
-                    <td><?= htmlspecialchars($u['login']) ?></td>
-
-                    <!-- Контрагент (один) -->
+            <tbody id="columnFields">
+            <?php foreach ($columnRules as $col): ?>
+                <tr class="column-row<?php if (empty($col['enabled'])) echo ' disabled'; ?>">
+                    <td><span class="drag-handle">&#9776;</span></td>
                     <td>
-                        <select name="counterparty_href[<?= $index ?>]">
-                            <option value="">(Не выбран)</option>
-                            <?php
-                            $currentCounterpartyHref = $u['counterparty']['href'] ?? '';
-                            foreach ($counterparties as $cnt):
-                                $selected = ($cnt['href'] === $currentCounterpartyHref) ? 'selected' : '';
-                                ?>
-                                <option value="<?= htmlspecialchars($cnt['href']) ?>" <?= $selected ?>>
-                                    <?= htmlspecialchars($cnt['name']) ?>
-                                </option>
+                        <select name="col_id[]" class="column-select">
+                            <?php foreach ($columnRules as $opt): ?>
+                                <option value="<?= htmlspecialchars($opt['id']) ?>" <?= $opt['id'] === $col['id'] ? 'selected' : '' ?>><?= htmlspecialchars($opt['title']) ?></option>
                             <?php endforeach; ?>
                         </select>
                     </td>
-
-                    <!-- Скидка -->
                     <td>
-                        <input type="number"
-                               name="discount[<?= $index ?>]"
-                               value="<?= (int)($u['discount'] ?? 0) ?>"
-                               min="0"
-                               max="100"
-                               class="ms-form-control"
-                               style="width:60px;">
+                        <input type="text" name="col_title[]" value="<?= htmlspecialchars($col['title']) ?>" class="ms-form-control" />
+                        <input type="hidden" name="col_class[]" value="<?= htmlspecialchars($col['class'] ?? '') ?>">
+                        <input type="hidden" name="col_enabled[]" class="col-enabled" value="<?= $col['enabled'] ? '1' : '0' ?>">
                     </td>
-
-                    <!-- Новый пароль -->
                     <td>
-                        <input type="text" name="new_password[<?= $index ?>]" class="ms-form-control" placeholder="Новый пароль">
-                    </td>
-
-                    <!-- Группы товаров (множественный выбор через чекбоксы) -->
-                    <td>
-                        <div class="checkbox-list">
-                            <?php
-                            $currentFolders = $u['productfolders'] ?? [];
-                            $currentFoldersHrefs = array_column($currentFolders, 'href');
-
-                            foreach ($productFolders as $pf):
-                                $pfHref = $pf['href'];
-                                $pfName = $pf['name'];
-                                $checked = in_array($pfHref, $currentFoldersHrefs) ? 'checked' : '';
-                                ?>
-                                <label style="display:block;">
-                                    <input type="checkbox"
-                                           name="productfolder_hrefs[<?= $index ?>][]"
-                                           value="<?= htmlspecialchars($pfHref) ?>"
-                                        <?= $checked ?>>
-                                    <?= htmlspecialchars($pfName) ?>
-                                </label>
-                            <?php endforeach; ?>
-                        </div>
-                    </td>
-
-                    <!-- Удалить -->
-                    <td style="text-align:center;">
-                        <input type="checkbox" name="delete[<?= $index ?>]" value="1">
+                        <button type="button" class="toggle-column btn-msk<?= $col['enabled'] ? ' active' : '' ?>">
+                            <?= $col['enabled'] ? 'Выключить' : 'Включить' ?>
+                        </button>
                     </td>
                 </tr>
             <?php endforeach; ?>
             </tbody>
         </table>
-
-        <br>
-        <button type="submit" name="saveChanges" class="header-btn save-changes-btn">Сохранить изменения</button>
+    </div>
+    <hr>
+    <div class="sort-rules">
+        <h4>Порядок стран</h4>
+            <div class="sort-rules">
+        <h4>Порядок стран, типов и товаров</h4>
+        <div id="countryContainer">
+            <?php foreach ($countryRules as $ci => $country): ?>
+                <div class="country-block">
+                    <span class="drag-handle">&#9776;</span>
+                    <select name="countries[<?= $ci ?>][name]" class="country-select">
+                        <option value="">(Не выбрана)</option>
+                        <?php foreach ($countriesList as $name): ?>
+                            <option value="<?= htmlspecialchars($name) ?>" <?= $name === ($country['name'] ?? '') ? 'selected' : '' ?>><?= htmlspecialchars($name) ?></option>
+                        <?php endforeach; ?>
+                        <?php if (!in_array($country['name'] ?? '', $countriesList, true)): ?>
+                            <option value="<?= htmlspecialchars($country['name'] ?? '') ?>" selected><?= htmlspecialchars($country['name'] ?? '') ?></option>
+                        <?php endif; ?>
+                    </select>
+                    <button type="button" class="remove-country btn-msk">Удалить страну</button>
+                    <div class="type-container">
+                        <?php foreach (($country['types'] ?? []) as $ti => $type): ?>
+                            <div class="type-block">
+                                <span class="drag-handle">&#9776;</span>
+                                <select name="countries[<?= $ci ?>][types][<?= $ti ?>][name]" class="type-select">
+                                    <option value="">(Не выбран)</option>
+                                    <?php foreach ($typesList as $name): ?>
+                                        <option value="<?= htmlspecialchars($name) ?>" <?= $name === ($type['name'] ?? '') ? 'selected' : '' ?>><?= htmlspecialchars($name) ?></option>
+                                    <?php endforeach; ?>
+                                    <?php if (!in_array($type['name'] ?? '', $typesList, true)): ?>
+                                        <option value="<?= htmlspecialchars($type['name'] ?? '') ?>" selected><?= htmlspecialchars($type['name'] ?? '') ?></option>
+                                    <?php endif; ?>
+                                </select>
+                                <button type="button" class="remove-type btn-msk">Удалить тип</button>
+                                <div class="product-container">
+                                    <?php foreach (($type['products'] ?? []) as $pi => $p): ?>
+                                        <div class="product-row">
+                                            <span class="drag-handle">&#9776;</span>
+                                            <span class="product-name"><?= htmlspecialchars($p['name']) ?></span>
+                                            <input type="hidden" name="countries[<?= $ci ?>][types][<?= $ti ?>][products][<?= $pi ?>][id]" value="<?= htmlspecialchars($p['id']) ?>">
+                                            <input type="hidden" name="countries[<?= $ci ?>][types][<?= $ti ?>][products][<?= $pi ?>][name]" value="<?= htmlspecialchars($p['name']) ?>">
+                                            <button type="button" class="remove-product btn-msk">Удалить</button>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                                <input type="text" class="product-search" placeholder="Введите имя товара" style="width:300px;">
+                                <button type="button" class="btnSearchProduct">Найти</button>
+                                <select class="productResults" style="width:300px; display:none;"></select>
+                                <button type="button" class="addProduct" style="display:none;">Добавить</button>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <button type="button" class="add-type btn-msk">Добавить тип</button>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        <button type="button" id="addCountry" class="btn-msk">Добавить страну</button>
+    </div>
+    
+    <button type="submit" name="saveRules" class="btn-msk btn-success">Сохранить</button>
     </form>
+    </div>
+    <?php if ($msError): ?>
+        <div class="error">
+            <strong>Ошибка при обращении к МойСклад:</strong><br>
+            <?= $msError ?>
+        </div>
+    <?php endif; ?>
+    
+</div>
 
-    <button type="button" id="openAddUserModal" class="header-btn">Создать нового</button>
-  </div>
+<div id="usersModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" id="closeUsersModal">&times;</span>
+        <!-- Таблица пользователей (исключая админа) -->
+        <h3 class="users-modal-title">Пользователи</h3>
+        <form method="post" action="admin.php?tab=<?= $currentTab ?>">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Логин</th>
+                        <th>Контрагент</th>
+                        <th>Скидка %</th>
+                        <th>Новый пароль</th>
+                        <th>Группы товаров</th>
+                        <th>Удалить?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($users as $index => $u): ?>
+                        <?php if ($u['role'] === 'admin') continue; ?>
+                        <tr>
+                            <td><?= htmlspecialchars($u['login']) ?></td>
+
+                            <!-- Контрагент (один) -->
+                            <td>
+                                <select name="counterparty_href[<?= $index ?>]">
+                                    <option value="">(Не выбран)</option>
+                                    <?php
+                                    $currentCounterpartyHref = $u['counterparty']['href'] ?? '';
+                                    foreach ($counterparties as $cnt):
+                                        $selected = ($cnt['href'] === $currentCounterpartyHref) ? 'selected' : '';
+                                        ?>
+                                        <option value="<?= htmlspecialchars($cnt['href']) ?>" <?= $selected ?>>
+                                            <?= htmlspecialchars($cnt['name']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </td>
+
+                            <!-- Скидка -->
+                            <td>
+                                <input type="number"
+                                       name="discount[<?= $index ?>]"
+                                       value="<?= (int)($u['discount'] ?? 0) ?>"
+                                       min="0"
+                                       max="100"
+                                       class="ms-form-control"
+                                       style="width:60px;">
+                            </td>
+
+                            <!-- Новый пароль -->
+                            <td>
+                                <input type="text" name="new_password[<?= $index ?>]" class="ms-form-control" placeholder="Новый пароль">
+                            </td>
+
+                            <!-- Группы товаров (множественный выбор через чекбоксы) -->
+                            <td>
+                                <div class="checkbox-list">
+                                    <?php
+                                    $currentFolders = $u['productfolders'] ?? [];
+                                    $currentFoldersHrefs = array_column($currentFolders, 'href');
+
+                                    foreach ($productFolders as $pf):
+                                        $pfHref = $pf['href'];
+                                        $pfName = $pf['name'];
+                                        $checked = in_array($pfHref, $currentFoldersHrefs) ? 'checked' : '';
+                                        ?>
+                                        <label style="display:block;">
+                                            <input type="checkbox"
+                                                   name="productfolder_hrefs[<?= $index ?>][]"
+                                                   value="<?= htmlspecialchars($pfHref) ?>"
+                                                <?= $checked ?>>
+                                            <?= htmlspecialchars($pfName) ?>
+                                        </label>
+                                    <?php endforeach; ?>
+                                </div>
+                            </td>
+
+                            <!-- Удалить -->
+                            <td style="text-align:center;">
+                                <input type="checkbox" name="delete[<?= $index ?>]" value="1">
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+
+            <br>
+            <button type="submit" name="saveChanges" class="header-btn save-changes-btn">Сохранить изменения</button>
+        </form>
+
+        <button type="button" id="openAddUserModal" class="header-btn">Создать нового</button>
+    </div>
 </div>
 
 <!-- Модальное окно добавления нового пользователя -->
 <div id="addUserModal" class="modal">
-  <div class="modal-content">
-    <span class="close-modal" id="closeAddUserModal">&times;</span>
-    <h3 class="add-user-title">Добавить нового пользователя</h3>
-    <form method="post" action="admin.php?tab=<?= $currentTab ?>" class="add-user-form">
-      <input type="hidden" name="addUser" value="1">
+    <div class="modal-content">
+        <span class="close-modal" id="closeAddUserModal">&times;</span>
+        <h3 class="add-user-title">Добавить нового пользователя</h3>
+        <form method="post" action="admin.php?tab=<?= $currentTab ?>" class="add-user-form">
+            <input type="hidden" name="addUser" value="1">
 
-    <div class="login-pass-row">
-        <input type="text" name="new_login" placeholder="Логин" required class="ms-form-control">
-        <input type="text" name="new_password" placeholder="Пароль" required class="ms-form-control">
-    </div>
-    <br>
-     <label class="centered-label">Скидка (%):
-        <input type="number" name="new_discount" value="0" min="0" max="100" class="ms-form-control">
-    </label>
-    <label>Контрагент:
-        <select name="new_href">
-            <option value="">(Не выбран)</option>
-            <?php foreach ($counterparties as $cnt): ?>
-                <option value="<?= htmlspecialchars($cnt['href']) ?>">
-                    <?= htmlspecialchars($cnt['name']) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-    </label>
-    <br>
-    <label class="centered-label">Группы товаров:</label><br>
-    <div class="checkbox-list">
-        <?php foreach ($productFolders as $pf):
-            $pfHref = $pf['href'];
-            $pfName = $pf['name'];
-            ?>
-            <label style="display:block;">
-                <input type="checkbox"
-                       name="new_productfolder_hrefs[]"
-                       value="<?= htmlspecialchars($pfHref) ?>">
-                <?= htmlspecialchars($pfName) ?>
+            <div class="login-pass-row">
+                <input type="text" name="new_login" placeholder="Логин" required class="ms-form-control">
+                <input type="text" name="new_password" placeholder="Пароль" required class="ms-form-control">
+            </div>
+            <br>
+            <label class="centered-label">Скидка (%):
+                <input type="number" name="new_discount" value="0" min="0" max="100" class="ms-form-control">
             </label>
-        <?php endforeach; ?>
+            <label>Контрагент:
+                <select name="new_href">
+                    <option value="">(Не выбран)</option>
+                    <?php foreach ($counterparties as $cnt): ?>
+                        <option value="<?= htmlspecialchars($cnt['href']) ?>">
+                            <?= htmlspecialchars($cnt['name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </label>
+            <br>
+            <label class="centered-label">Группы товаров:</label><br>
+            <div class="checkbox-list">
+                <?php foreach ($productFolders as $pf):
+                    $pfHref = $pf['href'];
+                    $pfName = $pf['name'];
+                    ?>
+                    <label style="display:block;">
+                        <input type="checkbox"
+                               name="new_productfolder_hrefs[]"
+                               value="<?= htmlspecialchars($pfHref) ?>">
+                        <?= htmlspecialchars($pfName) ?>
+                    </label>
+                <?php endforeach; ?>
+            </div>
+            <br>
+
+            <button type="submit" class="header-btn">Созздать</button>
+        </form>
     </div>
-    <br>
-
-
-      <button type="submit" class="header-btn">Созздать</button>
-    </form>
-  </div>
 </div>
 
 
