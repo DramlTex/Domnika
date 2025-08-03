@@ -66,8 +66,12 @@ function buildSortMaps() {
       const prods = Array.isArray(t.products) ? t.products : [];
       prods.forEach((p, pi) => {
         let id = typeof p === 'string' ? p : p.id;
+        let name = typeof p === 'string' ? p : p.name;
         if (id) {
           PRODUCT_MAP[id] = { country: ci, type: ti, index: pi };
+        }
+        if (name) {
+          PRODUCT_MAP[name] = { country: ci, type: ti, index: pi };
         }
       });
     });
@@ -76,8 +80,8 @@ function buildSortMaps() {
 
 function sortByCountry(data) {
   return data.slice().sort((a, b) => {
-    const aProd = PRODUCT_MAP[a.articul];
-    const bProd = PRODUCT_MAP[b.articul];
+    const aProd = PRODUCT_MAP[a.articul] || PRODUCT_MAP[a.name];
+    const bProd = PRODUCT_MAP[b.articul] || PRODUCT_MAP[b.name];
     if (aProd || bProd) {
       if (!aProd) return 1;
       if (!bProd) return -1;
