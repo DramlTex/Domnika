@@ -110,25 +110,7 @@ header .user-info {
 }
 
 /* Блок сортировки и таблица колонок */
-/* Элементы сортировки товаров занимают всю ширину */
-.country-block,
-.type-block,
-.product-row {
-    width: 100%;
-}
 
-.country-block select,
-.type-block select,
-.product-search,
-.productResults {
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.sort-rules .select2-container {
-    width: 100% !important;
-    box-sizing: border-box;
-}
 
 /* Таблица настроек колонок */
 .column-table {

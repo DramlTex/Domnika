@@ -672,9 +672,9 @@ $username = $_SESSION['user']['login'];
                                         </div>
                                     <?php endforeach; ?>
                                 </div>
-                                <input type="text" class="product-search" placeholder="Введите имя товара">
+                                <input type="text" class="product-search" placeholder="Введите имя товара" style="width:300px;">
                                 <button type="button" class="btnSearchProduct">Найти</button>
-                                <select class="productResults" style="display:none;"></select>
+                                <select class="productResults" style="width:300px; display:none;"></select>
                                 <button type="button" class="addProduct" style="display:none;">Добавить</button>
                             </div>
                         <?php endforeach; ?>
@@ -883,9 +883,9 @@ function createTypeBlock(cIndex, value) {
     }
     var remove = $('<button type="button" class="remove-type btn-msk">Удалить тип</button>');
     var prodCont = $('<div class="product-container"></div>');
-    var search = $('<input type="text" class="product-search" placeholder="Введите имя товара">');
+    var search = $('<input type="text" class="product-search" placeholder="Введите имя товара" style="width:300px;">');
     var btnSearch = $('<button type="button" class="btnSearchProduct">Найти</button>');
-    var results = $('<select class="productResults" style="display:none;"></select>');
+    var results = $('<select class="productResults" style="width:300px; display:none;"></select>');
     var addProd = $('<button type="button" class="addProduct" style="display:none;">Добавить</button>');
     block.append(handle, select, remove, prodCont, search, btnSearch, results, addProd);
     return block;
