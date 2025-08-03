@@ -574,6 +574,7 @@ $username = $_SESSION['user']['login'];
         </form>
         <button type="button" id="openUsersModal" class="header-btn">Редактировать пользователей</button>
     </div>
+    <h2 class="header-title"><?= htmlspecialchars($currentTabName) ?></h2>
     <p class="user-info">
         Вы вошли как: <strong><?= htmlspecialchars($username) ?></strong>
         <a href="logout.php" class="header-btn logout-link">Выйти</a>
@@ -586,7 +587,7 @@ $username = $_SESSION['user']['login'];
     <a href="admin.php?tab=<?= $slug ?>" class="admin-tab<?= $slug === $currentTab ? ' active' : '' ?>"><?= htmlspecialchars($title) ?></a>
 <?php endforeach; ?>
 </div>
-<p class="current-tab-info">Какой тип чая выбран: <?= htmlspecialchars($currentTabName) ?></p>
+
 <!-- Правила сортировки и столбцов -->
 <form method="post" action="admin.php?tab=<?= $currentTab ?>" id="rulesForm">
 <hr>
