@@ -115,10 +115,24 @@ header .user-info {
 /* Таблица настроек колонок */
 .column-table {
     border-collapse: collapse;
+    width: 100%;
 }
 
 .column-table td {
     border: none;
+}
+
+.column-table .column-select,
+.column-table .toggle-column,
+.column-table .ms-form-control {
+    height: 44px;
+    box-sizing: border-box;
+}
+
+.column-table .toggle-column {
+    padding: 0 14px;
+    display: inline-flex;
+    align-items: center;
 }
 
 .column-row .toggle-column {
