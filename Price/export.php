@@ -24,23 +24,31 @@ $rulesFile = $_SESSION['user']['rules_file'] ?? 'casa/row_sort_rules.json';
 $rulesPath = __DIR__ . '/' . basename($rulesFile);
 
 // Значения по умолчанию
-$COUNTRY_ORDER = [];
-$TYPE_ORDER    = [];
-$TYPE_SORT     = 'alphabetical';
+$COUNTRY_MAP = [];
+$TYPE_MAP    = [];
+$PRODUCT_MAP = [];
 
 if (is_file($rulesPath)) {
     $rules = json_decode(file_get_contents($rulesPath), true);
-    if (json_last_error() === JSON_ERROR_NONE) {
-        if (!empty($rules['countryOrder']) && is_array($rules['countryOrder'])) {
-            $COUNTRY_ORDER = array_map(function ($v) {
-                return mb_strtoupper(trim($v));
-            }, $rules['countryOrder']);
-        }
-        if (!empty($rules['typeOrder']) && is_array($rules['typeOrder'])) {
-            $TYPE_ORDER = $rules['typeOrder'];
-        }
-        if (!empty($rules['typeSort'])) {
-            $TYPE_SORT = $rules['typeSort'];
+    if (json_last_error() === JSON_ERROR_NONE && isset($rules['countries']) && is_array($rules['countries'])) {
+        foreach ($rules['countries'] as $ci => $country) {
+            $cName = $country['name'] ?? '';
+            $cNorm = normalizeCountry($cName);
+            $COUNTRY_MAP[$cNorm] = $ci;
+            $TYPE_MAP[$cNorm] = [];
+            $types = $country['types'] ?? [];
+            foreach ($types as $ti => $type) {
+                $tName = $type['name'] ?? '';
+                $tNorm = normalizeType($tName);
+                $TYPE_MAP[$cNorm][$tNorm] = $ti;
+                $products = $type['products'] ?? [];
+                foreach ($products as $pi => $p) {
+                    $id = is_array($p) ? ($p['id'] ?? '') : $p;
+                    if ($id !== '') {
+                        $PRODUCT_MAP[$id] = [$ci, $ti, $pi];
+                    }
+                }
+            }
         }
     }
 }
@@ -153,39 +161,37 @@ function normalizeType(string $value): string
     return mb_strtoupper(trim($value));
 }
 
-function sortItems(array $items, array $countryOrder, array $typeOrder, string $typeSort = 'alphabetical'): array
+function sortItems(array $items, array $countryMap, array $typeMap, array $productMap): array
 {
-    $countryMap = [];
-    foreach ($countryOrder as $i => $c) {
-        $countryMap[normalizeCountry($c)] = $i;
-    }
+    usort($items, function ($a, $b) use ($countryMap, $typeMap, $productMap) {
+        $aId = $a['articul'] ?? '';
+        $bId = $b['articul'] ?? '';
+        $aProd = $productMap[$aId] ?? null;
+        $bProd = $productMap[$bId] ?? null;
+        if ($aProd || $bProd) {
+            if (!$aProd) return 1;
+            if (!$bProd) return -1;
+            if ($aProd[0] !== $bProd[0]) return $aProd[0] <=> $bProd[0];
+            if ($aProd[1] !== $bProd[1]) return $aProd[1] <=> $bProd[1];
+            if ($aProd[2] !== $bProd[2]) return $aProd[2] <=> $bProd[2];
+        }
 
-    $typeMap = [];
-    foreach ($typeOrder as $i => $t) {
-        $typeMap[normalizeType($t)] = $i;
-    }
-
-    $sortAlpha = $typeSort === 'alphabetical' || empty($typeOrder);
-
-    usort($items, function ($a, $b) use ($countryMap, $typeMap, $countryOrder, $typeOrder, $sortAlpha) {
         $aCountry = normalizeCountry($a['supplier'] ?? '');
         $bCountry = normalizeCountry($b['supplier'] ?? '');
-        $ai = $countryMap[$aCountry] ?? count($countryOrder);
-        $bi = $countryMap[$bCountry] ?? count($countryOrder);
+        $ai = $countryMap[$aCountry] ?? count($countryMap);
+        $bi = $countryMap[$bCountry] ?? count($countryMap);
         if ($ai !== $bi) {
             return $ai <=> $bi;
         }
 
         $aTypeNorm = normalizeType($a['tip'] ?? '');
         $bTypeNorm = normalizeType($b['tip'] ?? '');
-        $ati = $typeMap[$aTypeNorm] ?? count($typeOrder);
-        $bti = $typeMap[$bTypeNorm] ?? count($typeOrder);
-        if (!$sortAlpha && $ati !== $bti) {
+        $aTypeMap = $typeMap[$aCountry] ?? [];
+        $bTypeMap = $typeMap[$bCountry] ?? [];
+        $ati = $aTypeMap[$aTypeNorm] ?? count($aTypeMap);
+        $bti = $bTypeMap[$bTypeNorm] ?? count($bTypeMap);
+        if ($ati !== $bti) {
             return $ati <=> $bti;
-        }
-
-        if ($aTypeNorm !== $bTypeNorm) {
-            return strcmp($aTypeNorm, $bTypeNorm);
         }
 
         $nameCmp = strcmp($a['name'] ?? '', $b['name'] ?? '');
@@ -326,7 +332,7 @@ foreach ($groupedData as $groupName => $items) {
     applyBorderFill($sheet, "A{$dataStartRow}:{$lastColumn}{$dataStartRow}");
 
     // 4. Сортировка и заполнение данных с группировкой по стране и типу
-    $items = sortItems($items, $COUNTRY_ORDER, $TYPE_ORDER, $TYPE_SORT);
+    $items = sortItems($items, $COUNTRY_MAP, $TYPE_MAP, $PRODUCT_MAP);
 
     $rowNum = $dataStartRow;
     $counter = 1;

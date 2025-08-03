@@ -338,32 +338,12 @@ $currentTabName = $adminTabs[$currentTab];
 
 // ------------------ Row sort rules ------------------
 $rulesFilePath = __DIR__ . "/casa/row_sort_rules_{$currentTab}.json";
-$sortRules = [];
+$countryRules = [];
 if (file_exists($rulesFilePath)) {
     $json = file_get_contents($rulesFilePath);
-    $sortRules = json_decode($json, true);
-    if (!is_array($sortRules)) {
-        $sortRules = [];
-    }
-}
-$countryOrder = $sortRules['countryOrder'] ?? [];
-$typeOrder = $sortRules['typeOrder'] ?? [];
-$typeSort = $sortRules['typeSort'] ?? 'alphabetical';
-
-// ------------------ Product sort rules ------------------
-$productFilePath = __DIR__ . "/casa/product_sort_rules_{$currentTab}.json";
-$productOrder = [];
-if (file_exists($productFilePath)) {
-    $json = file_get_contents($productFilePath);
     $tmp  = json_decode($json, true);
-    if (is_array($tmp) && isset($tmp['productOrder']) && is_array($tmp['productOrder'])) {
-        foreach ($tmp['productOrder'] as $item) {
-            if (is_array($item) && isset($item['id'], $item['name'])) {
-                $productOrder[] = ['id' => $item['id'], 'name' => $item['name']];
-            } elseif (is_string($item)) { // legacy format
-                $productOrder[] = ['id' => $item, 'name' => $item];
-            }
-        }
+    if (is_array($tmp) && isset($tmp['countries']) && is_array($tmp['countries'])) {
+        $countryRules = $tmp['countries'];
     }
 }
 
@@ -380,19 +360,32 @@ if (file_exists($columnFilePath)) {
 
 // ------------------ Save sorting and column rules ------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveRules'])) {
-    // Row sorting rules
-    $countries = array_map('trim', $_POST['countryOrder'] ?? []);
-    $countries = array_values(array_filter($countries, fn($c) => $c !== ''));
-    $sortRules['countryOrder'] = $countries;
-
-    $types = array_map('trim', $_POST['typeOrder'] ?? []);
-    $types = array_values(array_filter($types, fn($t) => $t !== ''));
-    $sortRules['typeOrder'] = $types;
-    $typeSort = $_POST['typeSort'] ?? $typeSort;
-    $sortRules['typeSort'] = in_array($typeSort, ['alphabetical', 'order'], true) ? $typeSort : 'alphabetical';
+    // Nested sorting rules
+    $postedCountries = $_POST['countries'] ?? [];
+    $newCountries = [];
+    if (is_array($postedCountries)) {
+        foreach ($postedCountries as $c) {
+            $cName = trim($c['name'] ?? '');
+            if ($cName === '') continue;
+            $newTypes = [];
+            foreach ($c['types'] ?? [] as $t) {
+                $tName = trim($t['name'] ?? '');
+                if ($tName === '') continue;
+                $newProducts = [];
+                foreach ($t['products'] ?? [] as $p) {
+                    $id = trim($p['id'] ?? '');
+                    if ($id === '') continue;
+                    $pName = trim($p['name'] ?? '');
+                    $newProducts[] = ['id' => $id, 'name' => $pName];
+                }
+                $newTypes[] = ['name' => $tName, 'products' => $newProducts];
+            }
+            $newCountries[] = ['name' => $cName, 'types' => $newTypes];
+        }
+    }
     file_put_contents(
         $rulesFilePath,
-        json_encode($sortRules, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+        json_encode(['countries' => $newCountries], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
     );
 
     // Column rules
@@ -415,22 +408,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveRules'])) {
     file_put_contents(
         $columnFilePath,
         json_encode($newCols, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
-    );
-
-    // Product rules (store id and name)
-    $productIds   = array_map('trim', $_POST['productOrder'] ?? []);
-    $productNames = $_POST['productName'] ?? [];
-    $products     = [];
-    foreach ($productIds as $i => $id) {
-        if ($id === '') {
-            continue;
-        }
-        $name = trim($productNames[$i] ?? '');
-        $products[] = ['id' => $id, 'name' => $name];
-    }
-    file_put_contents(
-        $productFilePath,
-        json_encode(['productOrder' => $products], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
     );
 
     header('Location: admin.php?tab=' . $currentTab);
@@ -638,75 +615,59 @@ $username = $_SESSION['user']['login'];
 <hr>
 <div class="sort-rules">
     <h4>Порядок стран</h4>
-        <div id="countryFields">
-        <?php foreach ($countryOrder as $c): ?>
-            <div class="country-row">
+        <div class="sort-rules">
+    <h4>Порядок стран, типов и товаров</h4>
+    <div id="countryContainer">
+        <?php foreach ($countryRules as $ci => $country): ?>
+            <div class="country-block">
                 <span class="drag-handle">&#9776;</span>
-                <select name="countryOrder[]" class="country-select">
+                <select name="countries[<?= $ci ?>][name]" class="country-select">
                     <option value="">(Не выбрана)</option>
                     <?php foreach ($countriesList as $name): ?>
-                        <option value="<?= htmlspecialchars($name) ?>" <?= $name === $c ? 'selected' : '' ?>><?= htmlspecialchars($name) ?></option>
+                        <option value="<?= htmlspecialchars($name) ?>" <?= $name === ($country['name'] ?? '') ? 'selected' : '' ?>><?= htmlspecialchars($name) ?></option>
                     <?php endforeach; ?>
-                    <?php if (!in_array($c, $countriesList, true)): ?>
-                        <option value="<?= htmlspecialchars($c) ?>" selected><?= htmlspecialchars($c) ?></option>
+                    <?php if (!in_array($country['name'] ?? '', $countriesList, true)): ?>
+                        <option value="<?= htmlspecialchars($country['name'] ?? '') ?>" selected><?= htmlspecialchars($country['name'] ?? '') ?></option>
                     <?php endif; ?>
                 </select>
-                <button type="button" class="remove-country btn-msk">Удалить</button>
-            </div>
-        <?php endforeach; ?>
-        </div>
-        <button type="button" id="addCountry" class="btn-msk">Добавить страну</button>
-</div>
-
-<!-- Редактирование порядка типов -->
-<div class="sort-rules">
-    <h4>Порядок типов</h4>
-    <label>
-        Способ сортировки:
-        <select name="typeSort" id="typeSort" class="ms-form-control">
-            <option value="alphabetical" <?= $typeSort === 'alphabetical' ? 'selected' : '' ?>>По алфавиту</option>
-            <option value="order" <?= $typeSort === 'order' ? 'selected' : '' ?>>По списку</option>
-        </select>
-    </label>
-        <div id="typeFields">
-        <?php foreach ($typeOrder as $t): ?>
-            <div class="type-row">
-                <span class="drag-handle">&#9776;</span>
-                <select name="typeOrder[]" class="type-select">
-                    <option value="">(Не выбран)</option>
-                    <?php foreach ($typesList as $name): ?>
-                        <option value="<?= htmlspecialchars($name) ?>" <?= $name === $t ? 'selected' : '' ?>><?= htmlspecialchars($name) ?></option>
+                <button type="button" class="remove-country btn-msk">Удалить страну</button>
+                <div class="type-container">
+                    <?php foreach (($country['types'] ?? []) as $ti => $type): ?>
+                        <div class="type-block">
+                            <span class="drag-handle">&#9776;</span>
+                            <select name="countries[<?= $ci ?>][types][<?= $ti ?>][name]" class="type-select">
+                                <option value="">(Не выбран)</option>
+                                <?php foreach ($typesList as $name): ?>
+                                    <option value="<?= htmlspecialchars($name) ?>" <?= $name === ($type['name'] ?? '') ? 'selected' : '' ?>><?= htmlspecialchars($name) ?></option>
+                                <?php endforeach; ?>
+                                <?php if (!in_array($type['name'] ?? '', $typesList, true)): ?>
+                                    <option value="<?= htmlspecialchars($type['name'] ?? '') ?>" selected><?= htmlspecialchars($type['name'] ?? '') ?></option>
+                                <?php endif; ?>
+                            </select>
+                            <button type="button" class="remove-type btn-msk">Удалить тип</button>
+                            <div class="product-container">
+                                <?php foreach (($type['products'] ?? []) as $pi => $p): ?>
+                                    <div class="product-row">
+                                        <span class="drag-handle">&#9776;</span>
+                                        <span class="product-name"><?= htmlspecialchars($p['name']) ?></span>
+                                        <input type="hidden" name="countries[<?= $ci ?>][types][<?= $ti ?>][products][<?= $pi ?>][id]" value="<?= htmlspecialchars($p['id']) ?>">
+                                        <input type="hidden" name="countries[<?= $ci ?>][types][<?= $ti ?>][products][<?= $pi ?>][name]" value="<?= htmlspecialchars($p['name']) ?>">
+                                        <button type="button" class="remove-product btn-msk">Удалить</button>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <input type="text" class="product-search" placeholder="Введите имя товара" style="width:300px;">
+                            <button type="button" class="btnSearchProduct">Найти</button>
+                            <select class="productResults" style="width:300px; display:none;"></select>
+                            <button type="button" class="addProduct" style="display:none;">Добавить</button>
+                        </div>
                     <?php endforeach; ?>
-                    <?php if (!in_array($t, $typesList, true)): ?>
-                        <option value="<?= htmlspecialchars($t) ?>" selected><?= htmlspecialchars($t) ?></option>
-                    <?php endif; ?>
-                </select>
-                <button type="button" class="remove-type btn-msk">Удалить</button>
-            </div>
-        <?php endforeach; ?>
-        </div>
-    <button type="button" id="addType" class="btn-msk">Добавить тип</button>
-</div>
-
-<!-- Редактирование порядка товаров -->
-<div class="sort-rules">
-    <h4>Порядок товаров</h4>
-    <div id="productFields" class="sort-block">
-        <?php foreach ($productOrder as $p): ?>
-            <div class="product-row">
-                <span class="drag-handle">&#9776;</span>
-                <span class="product-name"><?= htmlspecialchars($p['name']) ?></span>
-                <input type="hidden" name="productOrder[]" value="<?= htmlspecialchars($p['id']) ?>">
-                <input type="hidden" name="productName[]" value="<?= htmlspecialchars($p['name']) ?>">
-                <button type="button" class="remove-product btn-msk">Удалить</button>
+                </div>
+                <button type="button" class="add-type btn-msk">Добавить тип</button>
             </div>
         <?php endforeach; ?>
     </div>
-
-    <input id="productSearch" type="text" placeholder="Введите имя товара" style="width:300px;">
-    <button type="button" id="btnSearchProduct">Найти</button>
-    <select id="productResults" style="width:300px; display:none;"></select>
-    <button type="button" id="addProduct" style="display:none;">Добавить</button>
+    <button type="button" id="addCountry" class="btn-msk">Добавить страну</button>
 </div>
 
 <button type="submit" name="saveRules" class="btn-msk btn-success">Сохранить</button>
@@ -861,54 +822,65 @@ $username = $_SESSION['user']['login'];
   </div>
 </div>
 
+
 <script>
 var countries = <?= json_encode($countriesList, JSON_UNESCAPED_UNICODE) ?>;
 var types = <?= json_encode($typesList, JSON_UNESCAPED_UNICODE) ?>;
 
-function createCountryRow(value) {
-    var row = $('<div class="country-row"></div>');
+function createCountryBlock(value) {
+    var index = $('#countryContainer .country-block').length;
+    var block = $('<div class="country-block"></div>');
     var handle = $('<span class="drag-handle">&#9776;</span>');
-    var select = $('<select name="countryOrder[]" class="country-select"></select>');
+    var select = $('<select class="country-select"></select>').attr('name', 'countries[' + index + '][name]');
     select.append('<option value="">(Не выбрана)</option>');
-    countries.forEach(function(c) {
+    countries.forEach(function(c){
         var opt = $('<option>').val(c).text(c);
-        if (c === value) opt.attr('selected', 'selected');
+        if (c === value) opt.attr('selected','selected');
         select.append(opt);
     });
-    if (value && countries.indexOf(value) === -1) {
-        select.append($('<option>').val(value).text(value).attr('selected', 'selected'));
+    if (value && countries.indexOf(value) === -1){
+        select.append($('<option>').val(value).text(value).attr('selected','selected'));
     }
-    var btn = $('<button type="button" class="remove-country btn-msk">Удалить</button>');
-    row.append(handle).append(select).append(btn);
-    return row;
+    var remove = $('<button type="button" class="remove-country btn-msk">Удалить страну</button>');
+    var typeCont = $('<div class="type-container"></div>');
+    var addType = $('<button type="button" class="add-type btn-msk">Добавить тип</button>');
+    block.append(handle, select, remove, typeCont, addType);
+    return block;
 }
 
-function createTypeRow(value) {
-    var row = $('<div class="type-row"></div>');
+function createTypeBlock(cIndex, value) {
+    var tIndex = $('#countryContainer .country-block').eq(cIndex).find('.type-block').length;
+    var block = $('<div class="type-block"></div>');
     var handle = $('<span class="drag-handle">&#9776;</span>');
-    var select = $('<select name="typeOrder[]" class="type-select"></select>');
+    var select = $('<select class="type-select"></select>').attr('name', 'countries[' + cIndex + '][types][' + tIndex + '][name]');
     select.append('<option value="">(Не выбран)</option>');
-    types.forEach(function(t) {
+    types.forEach(function(t){
         var opt = $('<option>').val(t).text(t);
-        if (t === value) opt.attr('selected', 'selected');
+        if (t === value) opt.attr('selected','selected');
         select.append(opt);
     });
-    if (value && types.indexOf(value) === -1) {
-        select.append($('<option>').val(value).text(value).attr('selected', 'selected'));
+    if (value && types.indexOf(value) === -1){
+        select.append($('<option>').val(value).text(value).attr('selected','selected'));
     }
-    var btn = $('<button type="button" class="remove-type btn-msk">Удалить</button>');
-    row.append(handle).append(select).append(btn);
-    return row;
+    var remove = $('<button type="button" class="remove-type btn-msk">Удалить тип</button>');
+    var prodCont = $('<div class="product-container"></div>');
+    var search = $('<input type="text" class="product-search" placeholder="Введите имя товара" style="width:300px;">');
+    var btnSearch = $('<button type="button" class="btnSearchProduct">Найти</button>');
+    var results = $('<select class="productResults" style="width:300px; display:none;"></select>');
+    var addProd = $('<button type="button" class="addProduct" style="display:none;">Добавить</button>');
+    block.append(handle, select, remove, prodCont, search, btnSearch, results, addProd);
+    return block;
 }
 
-function createProductRow(articul, name) {
+function createProductRow(cIndex, tIndex, id, name){
+    var pIndex = $('#countryContainer .country-block').eq(cIndex).find('.type-block').eq(tIndex).find('.product-row').length;
     var row = $('<div class="product-row"></div>');
     var handle = $('<span class="drag-handle">&#9776;</span>');
-    var text   = $('<span class="product-name"></span>').text(name);
-    var hiddenId = $('<input type="hidden" name="productOrder[]">').val(articul);
-    var hiddenName = $('<input type="hidden" name="productName[]">').val(name);
-    var btn    = $('<button type="button" class="remove-product btn-msk">Удалить</button>');
-    row.append(handle, text, hiddenId, hiddenName, btn);
+    var text = $('<span class="product-name"></span>').text(name);
+    var hidId = $('<input type="hidden">').attr('name','countries['+cIndex+'][types]['+tIndex+'][products]['+pIndex+'][id]').val(id);
+    var hidName = $('<input type="hidden">').attr('name','countries['+cIndex+'][types]['+tIndex+'][products]['+pIndex+'][name]').val(name);
+    var remove = $('<button type="button" class="remove-product btn-msk">Удалить</button>');
+    row.append(handle, text, hidId, hidName, remove);
     return row;
 }
 
@@ -919,9 +891,9 @@ function createColumnRow(id, title, cls, enabled) {
     if (!enabled) row.addClass('disabled');
     var handle = $('<span class="drag-handle">&#9776;</span>');
     var select = $('<select name="col_id[]" class="column-select"></select>');
-    $.each(columnOptions, function(key, val) {
+    $.each(columnOptions, function(key, val){
         var opt = $('<option>').val(key).text(val);
-        if (key === id) opt.attr('selected', 'selected');
+        if (key === id) opt.attr('selected','selected');
         select.append(opt);
     });
     var titleInput = $('<input type="text" name="col_title[]" class="ms-form-control">').val(title || '');
@@ -933,81 +905,63 @@ function createColumnRow(id, title, cls, enabled) {
     return row;
 }
 
-$(function() {
+$(function(){
     $('select').select2();
+    $('#countryContainer').sortable({handle: '.drag-handle'}).disableSelection();
 
-    $('#countryFields').sortable({
-        handle: '.drag-handle'
-    }).disableSelection();
-
-    $('#typeFields').sortable({
-        handle: '.drag-handle'
-    }).disableSelection();
-
-    $('#productFields').sortable({
-        handle: '.drag-handle'
-    }).disableSelection();
-
-    $('#addCountry').on('click', function() {
-        var newRow = createCountryRow('');
-        $('#countryFields').append(newRow);
-        newRow.find('select').select2();
-        $('#countryFields').sortable('refresh');
+    $(document).on('click','#addCountry', function(){
+        var block = createCountryBlock('');
+        $('#countryContainer').append(block);
+        block.find('select').select2();
+        $('#countryContainer').sortable('refresh');
     });
 
-    $('#addType').on('click', function() {
-        var newRow = createTypeRow('');
-        $('#typeFields').append(newRow);
-        newRow.find('select').select2();
-        $('#typeFields').sortable('refresh');
+    $(document).on('click','.add-type', function(){
+        var cBlock = $(this).closest('.country-block');
+        var cIndex = cBlock.index();
+        var block = createTypeBlock(cIndex, '');
+        cBlock.find('.type-container').append(block);
+        block.find('select').select2();
+        cBlock.find('.type-container').sortable({handle: '.drag-handle'}).disableSelection();
     });
 
-    $('#btnSearchProduct').on('click', function() {
-        var term = $('#productSearch').val().trim();
-        if (term.length < 2) return;
-        $.getJSON('search_product.php', { q: term }, function(data) {
-            var select = $('#productResults');
+    $(document).on('click','.btnSearchProduct', function(){
+        var tBlock = $(this).closest('.type-block');
+        var term = tBlock.find('.product-search').val().trim();
+        if(term.length < 2) return;
+        $.getJSON('search_product.php',{q: term}, function(data){
+            var select = tBlock.find('.productResults');
             select.empty();
-            data.forEach(function(item) {
-                select.append($('<option>').val(item.id).text(item.text));
-            });
+            data.forEach(function(item){ select.append($('<option>').val(item.id).text(item.text)); });
             select.show();
-            $('#addProduct').show();
+            tBlock.find('.addProduct').show();
         });
     });
 
-    $('#addProduct').on('click', function() {
-        var select = $('#productResults');
-        var articul = select.val();
+    $(document).on('click','.addProduct', function(){
+        var tBlock = $(this).closest('.type-block');
+        var cIndex = tBlock.closest('.country-block').index();
+        var tIndex = tBlock.index();
+        var select = tBlock.find('.productResults');
+        var id = select.val();
         var name = select.find('option:selected').text();
-        if (!articul) return;
-        var newRow = createProductRow(articul, name);
-        $('#productFields').append(newRow);
-        $('#productFields').sortable('refresh');
+        if(!id) return;
+        var row = createProductRow(cIndex, tIndex, id, name);
+        tBlock.find('.product-container').append(row);
+        tBlock.find('.product-container').sortable({handle: '.drag-handle'}).disableSelection();
     });
 
-    $(document).on('click', '.remove-country', function() {
-        $(this).closest('.country-row').remove();
-    });
+    $(document).on('click','.remove-country', function(){ $(this).closest('.country-block').remove(); });
+    $(document).on('click','.remove-type', function(){ $(this).closest('.type-block').remove(); });
+    $(document).on('click','.remove-product', function(){ $(this).closest('.product-row').remove(); });
 
-    $(document).on('click', '.remove-type', function() {
-        $(this).closest('.type-row').remove();
-    });
+    $('#columnFields').sortable({handle: '.drag-handle'}).disableSelection();
 
-    $(document).on('click', '.remove-product', function() {
-        $(this).closest('.product-row').remove();
-    });
-
-    $('#columnFields').sortable({
-        handle: '.drag-handle'
-    }).disableSelection();
-
-
-    $(document).on('click', '.toggle-column', function() {
+    $(document).on('click', '.toggle-column', function(){
         var row = $(this).closest('.column-row');
         var input = row.find('.col-enabled');
         var val = input.val() === '1';
-        if (val) {
+        if (val){
             input.val('0');
             $(this).text('Включить').removeClass('active');
             row.addClass('disabled');
@@ -1018,35 +972,13 @@ $(function() {
         }
     });
 
-    $('#openUsersModal').on('click', function() {
-        $('#usersModal').show();
-    });
-
-    $('#closeUsersModal').on('click', function() {
-        $('#usersModal').hide();
-    });
-
-    $('#usersModal').on('click', function(e) {
-        if (e.target.id === 'usersModal') {
-            $('#usersModal').hide();
-        }
-    });
-
-    $('#openAddUserModal').on('click', function() {
-        $('#addUserModal').show();
-    });
-
-    $('#closeAddUserModal').on('click', function() {
-        $('#addUserModal').hide();
-    });
-
-    $('#addUserModal').on('click', function(e) {
-        if (e.target.id === 'addUserModal') {
-            $('#addUserModal').hide();
-        }
-    });
-
+    $('#openUsersModal').on('click', function(){ $('#usersModal').show(); });
+    $('#closeUsersModal').on('click', function(){ $('#usersModal').hide(); });
+    $('#usersModal').on('click', function(e){ if(e.target.id === 'usersModal'){ $('#usersModal').hide(); } });
+    $('#openAddUserModal').on('click', function(){ $('#addUserModal').show(); });
+    $('#closeAddUserModal').on('click', function(){ $('#addUserModal').hide(); });
 });
 </script>
+
 </body>
 </html>

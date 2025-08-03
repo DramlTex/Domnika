@@ -1,26 +1,139 @@
 {
-    "countryOrder": [
-        "Индия",
-        "Шри-ланка",
-        "Иран, Исламская Республика",
-        "Вьетнам",
-        "Китай",
-        "Кения",
-        "Египет",
-        "Нигерия",
-        "Южная Африка"
-    ],
-    "typeSort": "order",
-    "typeOrder": [
-        "Белый",
-        "Зеленый",
-        "Связанный",
-        "Жасминовый",
-        "Чаеподобный",
-        "Улун",
-        "Пуэр листовой",
-        "Пуэр прессованный",
-        "Красный",
-        "Черный"
-    ]
+  "countries": [
+    {
+      "name": "Индия",
+      "types": [
+        {"name":"Белый","products":[]},
+        {"name":"Зеленый","products":[]},
+        {"name":"Связанный","products":[]},
+        {"name":"Жасминовый","products":[]},
+        {"name":"Чаеподобный","products":[]},
+        {"name":"Улун","products":[]},
+        {"name":"Пуэр листовой","products":[]},
+        {"name":"Пуэр прессованный","products":[]},
+        {"name":"Красный","products":[]},
+        {"name":"Черный","products":[]}
+      ]
+    },
+    {
+      "name": "Шри-ланка",
+      "types": [
+        {"name":"Белый","products":[]},
+        {"name":"Зеленый","products":[]},
+        {"name":"Связанный","products":[]},
+        {"name":"Жасминовый","products":[]},
+        {"name":"Чаеподобный","products":[]},
+        {"name":"Улун","products":[]},
+        {"name":"Пуэр листовой","products":[]},
+        {"name":"Пуэр прессованный","products":[]},
+        {"name":"Красный","products":[]},
+        {"name":"Черный","products":[]}
+      ]
+    },
+    {
+      "name": "Иран, Исламская Республика",
+      "types": [
+        {"name":"Белый","products":[]},
+        {"name":"Зеленый","products":[]},
+        {"name":"Связанный","products":[]},
+        {"name":"Жасминовый","products":[]},
+        {"name":"Чаеподобный","products":[]},
+        {"name":"Улун","products":[]},
+        {"name":"Пуэр листовой","products":[]},
+        {"name":"Пуэр прессованный","products":[]},
+        {"name":"Красный","products":[]},
+        {"name":"Черный","products":[]}
+      ]
+    },
+    {
+      "name": "Вьетнам",
+      "types": [
+        {"name":"Белый","products":[]},
+        {"name":"Зеленый","products":[]},
+        {"name":"Связанный","products":[]},
+        {"name":"Жасминовый","products":[]},
+        {"name":"Чаеподобный","products":[]},
+        {"name":"Улун","products":[]},
+        {"name":"Пуэр листовой","products":[]},
+        {"name":"Пуэр прессованный","products":[]},
+        {"name":"Красный","products":[]},
+        {"name":"Черный","products":[]}
+      ]
+    },
+    {
+      "name": "Китай",
+      "types": [
+        {"name":"Белый","products":[]},
+        {"name":"Зеленый","products":[]},
+        {"name":"Связанный","products":[]},
+        {"name":"Жасминовый","products":[]},
+        {"name":"Чаеподобный","products":[]},
+        {"name":"Улун","products":[]},
+        {"name":"Пуэр листовой","products":[]},
+        {"name":"Пуэр прессованный","products":[]},
+        {"name":"Красный","products":[]},
+        {"name":"Черный","products":[]}
+      ]
+    },
+    {
+      "name": "Кения",
+      "types": [
+        {"name":"Белый","products":[]},
+        {"name":"Зеленый","products":[]},
+        {"name":"Связанный","products":[]},
+        {"name":"Жасминовый","products":[]},
+        {"name":"Чаеподобный","products":[]},
+        {"name":"Улун","products":[]},
+        {"name":"Пуэр листовой","products":[]},
+        {"name":"Пуэр прессованный","products":[]},
+        {"name":"Красный","products":[]},
+        {"name":"Черный","products":[]}
+      ]
+    },
+    {
+      "name": "Египет",
+      "types": [
+        {"name":"Белый","products":[]},
+        {"name":"Зеленый","products":[]},
+        {"name":"Связанный","products":[]},
+        {"name":"Жасминовый","products":[]},
+        {"name":"Чаеподобный","products":[]},
+        {"name":"Улун","products":[]},
+        {"name":"Пуэр листовой","products":[]},
+        {"name":"Пуэр прессованный","products":[]},
+        {"name":"Красный","products":[]},
+        {"name":"Черный","products":[]}
+      ]
+    },
+    {
+      "name": "Нигерия",
+      "types": [
+        {"name":"Белый","products":[]},
+        {"name":"Зеленый","products":[]},
+        {"name":"Связанный","products":[]},
+        {"name":"Жасминовый","products":[]},
+        {"name":"Чаеподобный","products":[]},
+        {"name":"Улун","products":[]},
+        {"name":"Пуэр листовой","products":[]},
+        {"name":"Пуэр прессованный","products":[]},
+        {"name":"Красный","products":[]},
+        {"name":"Черный","products":[]}
+      ]
+    },
+    {
+      "name": "Южная Африка",
+      "types": [
+        {"name":"Белый","products":[]},
+        {"name":"Зеленый","products":[]},
+        {"name":"Связанный","products":[]},
+        {"name":"Жасминовый","products":[]},
+        {"name":"Чаеподобный","products":[]},
+        {"name":"Улун","products":[]},
+        {"name":"Пуэр листовой","products":[]},
+        {"name":"Пуэр прессованный","products":[]},
+        {"name":"Красный","products":[]},
+        {"name":"Черный","products":[]}
+      ]
+    }
+  ]
 }
